@@ -1,0 +1,8 @@
+{
+  "name": "future-ppt-prototype",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test tests/engine.test.cjs"
+  }
+}

@@ -1,0 +1,44 @@
+# 上游接入基线
+
+日期：2026-10-16（Asia/Shanghai）。本文件记录源码接入，不代表 Phase 0 运行验收已经通过。
+
+- 目标仓库：https://github.com/YZqwwq/HyperFrames-ppt
+- 上游仓库：https://github.com/heygen-com/hyperframes
+- 固定上游提交：0e9f380c2e2295db4b88945a77cfa81001ac5c27
+- 目标仓库原有提交：292aebedd29b19eea0353006af83db109015efa0
+- 接入方式：合并两个已有 Git 历史，保留原始提交，不强制覆盖目标分支。
+- GitHub 原生 Fork 标识：本次 Git 合并不会建立 GitHub fork network 关系。
+
+本地 remotes：origin 指向目标仓库，upstream 指向官方仓库。其他开发者克隆后需要自行执行 `git remote add upstream https://github.com/heygen-com/hyperframes.git`。
+
+上游根目录 README 与许可证保留；本项目说明位于 docs/future-ppt。上游现有包结构及业务源码不作修改。
+
+## 已有原型
+
+experiments/future-ppt-prototype 是此前独立实现的 DOM 时间轴验证样例，非 HyperFrames Composition。打开其 index.html 即可使用。核心测试命令：
+
+```sh
+node --test experiments/future-ppt-prototype/tests/engine.test.cjs
+```
+
+原型验证范围为确定性 seek、跨页面区间连续运动、整体平移与终点修改、JSON 往返。它仅作为后续上游能力评估的对照，不建立与 HTML Composition 并行的数据真源。
+
+## 待完成
+
+- 按上游 AGENTS.md 使用 Bun 安装依赖、构建，运行 Studio。
+- 实际运行普通 Composition 和 Slideshow 示例。
+- 审计稳定 ID、SDK Overrides、Undo/Redo 与持久化链路。
+- 验证人工微调与动画绑定、跨页实例的兼容性。
+- 逐项检查 NOTICE、第三方素材与依赖授权；本次仅保留上游声明，不宣称已完成许可证审计。
+
+完成后再记录依赖版本、运行日志、源码位置以及已复用/需扩展/暂不处理能力清单。
+
+## 本地检出限制
+
+上游检出包含 LFS 媒体引用。初次检出尝试从目标仓库获取素材时返回 404；本轮采用 GIT_LFS_SKIP_SMUDGE=1 保留指针完成源码接入，媒体素材尚未完整下载或迁移。后续运行媒体样例前需要从 upstream 获取相应 LFS 对象；发布到独立仓库前也需核对所需 LFS 对象可用性。
+
+上游当前提交另有 65 个路径被 LFS 属性覆盖但实际内容并非指针，Git 检出会报告警告。未改写这些上游文件，也未将其转换为新指针。
+
+目标仓库初始 README 和 LICENSE 原文分别保存为 INITIAL_README.md、INITIAL_LICENSE.txt，根目录采用上游原文。
+
+初次接入目录保留不动；完整源码及本次提交使用相邻的 HyperFrames-ppt-integration 工作区和 setup/ppt-foundation 分支。
