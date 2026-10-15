@@ -42,3 +42,11 @@ node --test experiments/future-ppt-prototype/tests/engine.test.cjs
 目标仓库初始 README 和 LICENSE 原文分别保存为 INITIAL_README.md、INITIAL_LICENSE.txt，根目录采用上游原文。
 
 初次接入目录保留不动；完整源码及本次提交使用相邻的 HyperFrames-ppt-integration 工作区和 setup/ppt-foundation 分支。
+
+## 2026-10-16 补齐验证
+
+设备 SSH 已成功认证为 YZqwwq，origin 使用 git@github.com:YZqwwq/HyperFrames-ppt.git，upstream 使用 git@github.com:heygen-com/hyperframes.git。
+
+已通过 `git fetch --refetch --no-filter --no-tags --no-write-fetch-head upstream main` 补齐完整 Git 历史对象，并成功执行 `git lfs fetch --all upstream HEAD`。随后独立枚举所有历史 LFS 对象，逐个验证文件存在、大小和 SHA-256：409 / 409 个通过，总计 1,479,655,403 字节，缺失及损坏均为 0。此前“素材尚未下载”的状态已解除；GitHub 分支更新以实际 push 结果为准。检出的媒体仍为指针，需要使用时可执行 `git lfs checkout`。
+
+此次接入仅增加项目文档及独立验证原型。上游构建、Studio 运行和编辑能力审计仍未执行。
