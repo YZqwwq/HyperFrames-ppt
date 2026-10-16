@@ -13,15 +13,9 @@
 
 上游根目录 README 与许可证保留；本项目说明位于 docs/future-ppt。上游现有包结构及业务源码不作修改。
 
-## 已有原型
+## 开发基线调整
 
-experiments/future-ppt-prototype 是此前独立实现的 DOM 时间轴验证样例，非 HyperFrames Composition。打开其 index.html 即可使用。核心测试命令：
-
-```sh
-node --test experiments/future-ppt-prototype/tests/engine.test.cjs
-```
-
-原型验证范围为确定性 seek、跨页面区间连续运动、整体平移与终点修改、JSON 往返。它仅作为后续上游能力评估的对照，不建立与 HTML Composition 并行的数据真源。
+2026-10-16：按项目决定移除独立 Future PPT DOM 原型，后续直接基于 HyperFrames 原生 Studio、SDK 和 Player 开发。原型的历史测试不作为上游能力验收依据。当前本地运行结果见 [本地环境与能力验证](LOCAL_EVALUATION.md)；以下待完成事项保留为初次接入时的记录。
 
 ## 待完成
 
