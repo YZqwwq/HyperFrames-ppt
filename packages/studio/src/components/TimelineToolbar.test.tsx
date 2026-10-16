@@ -58,6 +58,7 @@ describe("TimelineToolbar — auto-keyframe toggle (#1808)", () => {
     );
     expect(btn).not.toBeNull();
     expect(btn?.getAttribute("aria-pressed")).toBe("true");
+    expect(btn?.textContent).toContain("Edit keyframe");
     act(() => root.unmount());
   });
 
@@ -74,6 +75,7 @@ describe("TimelineToolbar — auto-keyframe toggle (#1808)", () => {
 
     expect(usePlayerStore.getState().autoKeyframeEnabled).toBe(false);
     expect(btn.getAttribute("aria-pressed")).toBe("false");
+    expect(btn.textContent).toContain("Move animation");
     act(() => root.unmount());
   });
 });

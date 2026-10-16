@@ -5,6 +5,7 @@ import type { GsapAnimation } from "@hyperframes/core/gsap-parser";
 import type { DomEditSelection } from "../components/editor/domEditingTypes";
 import { commitGsapPositionFromDrag } from "./gsapDragPositionCommit";
 import {
+  commitWholePathOffset,
   commitStaticGsapPosition,
   commitStaticGsapRotation,
   commitStaticGsapSize,
@@ -540,5 +541,40 @@ describe("parkPlayheadOnKeyframe", () => {
     expect(usePlayerStore.getState().requestedSeekTime).toBe(3.4);
     parkPlayheadOnKeyframe(tween(), 50); // midpoint
     expect(usePlayerStore.getState().requestedSeekTime).toBe(2.3);
+  });
+});
+
+describe("whole-path movement preserves flat tween direction", () => {
+  it.each([
+    ["from", -260, 0],
+    ["to", 0, -260],
+    ["fromTo", 80, -260],
+  ] as const)("moves both endpoints of %s by the same delta", async (method, start, end) => {
+    const commitMutation = vi.fn();
+    await commitWholePathOffset(
+      selection(),
+      {
+        ...flatTween(),
+        method,
+        ease: "none",
+        ...(method === "fromTo" ? { fromProperties: { x: 80 } } : {}),
+      },
+      { x: -5, y: 10 },
+      { x: -130, y: 0 },
+      null,
+      "#puck-a",
+      { commitMutation },
+    );
+    expect(commitMutation).toHaveBeenCalledOnce();
+    const mutation = commitMutation.mock.calls[0][1];
+    expect(mutation).toMatchObject({
+      type: "replace-with-keyframes",
+      position: 1.2,
+      duration: 2.2,
+      keyframes: [
+        { percentage: 0, properties: { x: start - 5, y: 10 } },
+        { percentage: 100, properties: { x: end - 5, y: 10 } },
+      ],
+    });
   });
 });

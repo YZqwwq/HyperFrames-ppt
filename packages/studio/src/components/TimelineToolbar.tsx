@@ -333,8 +333,8 @@ export const TimelineToolbar = memo(function TimelineToolbar({
               <Tooltip
                 label={
                   autoKeyframeEnabled
-                    ? "Auto-record manual edits as keyframes (click to turn off)"
-                    : "Manual edits will not be recorded as keyframes (click to turn on)"
+                    ? "Edits change the current keyframe. Click to move the animation path instead."
+                    : "Edits move the animation path. Click to edit the current keyframe instead."
                 }
               >
                 <button
@@ -342,12 +342,15 @@ export const TimelineToolbar = memo(function TimelineToolbar({
                   onClick={() => setAutoKeyframeEnabled(!autoKeyframeEnabled)}
                   aria-label="Auto-record manual edits as keyframes"
                   aria-pressed={autoKeyframeEnabled}
-                  className={`${flatBtn} active:scale-[0.98] hover:bg-hover ${
+                  className={`flex h-7 shrink-0 items-center justify-center gap-1 rounded-md px-2 transition-colors active:scale-[0.98] hover:bg-hover ${
                     autoKeyframeEnabled
                       ? "text-danger-ink"
                       : "text-neutral-600 hover:text-neutral-400"
                   }`}
                 >
+                  <span className="px-1 text-xs whitespace-nowrap">
+                    {autoKeyframeEnabled ? "Edit keyframe" : "Move animation"}
+                  </span>
                   <svg width="16" height="16" viewBox="0 0 10 10" fill="none">
                     {/* Same diamond outline as the Add-keyframe icon, with a
                       record-style dot inside: filled = auto-recording,

@@ -22,6 +22,7 @@ import type { CommitMutation } from "./gsapScriptCommitTypes";
 import { isGestureTransactionCommit, runGestureTransaction } from "./gestureTransaction";
 import { setPatchFromUpdateProperty } from "./gsapDragStaticSetHelpers";
 import { GsapEditBlockedError, type PlayheadEditRefusal } from "./gsapEditOutcome";
+import { synthesizeFlatTweenKeyframes } from "./gsapTweenSynth";
 import { isTweenConfigKey } from "@hyperframes/parsers/gsap-constants";
 export {
   findExistingPositionWrite,
@@ -382,18 +383,11 @@ export async function commitWholePathOffset(
 
   let kfs = effectiveAnim.keyframes?.keyframes ?? [];
   if (kfs.length === 0) {
-    const fromProps = effectiveAnim.fromProperties ?? {};
-    const toProps = effectiveAnim.properties ?? {};
-    const startX =
-      typeof fromProps.x === "number" ? fromProps.x : typeof toProps.x === "number" ? 0 : 0;
-    const startY =
-      typeof fromProps.y === "number" ? fromProps.y : typeof toProps.y === "number" ? 0 : 0;
-    const endX = typeof toProps.x === "number" ? toProps.x : startX;
-    const endY = typeof toProps.y === "number" ? toProps.y : startY;
-    kfs = [
-      { percentage: 0, properties: { x: startX, y: startY } },
-      { percentage: 100, properties: { x: endX, y: endY } },
-    ];
+    const synthesized = synthesizeFlatTweenKeyframes(effectiveAnim);
+    if (!synthesized) {
+      throw new GsapEditBlockedError("keyframes-uneditable", "not-a-tween");
+    }
+    kfs = synthesized.keyframes;
   }
 
   const shifted = kfs.map((kf) => ({

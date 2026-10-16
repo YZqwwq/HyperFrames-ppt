@@ -2,6 +2,7 @@
 
 import { describe, expect, it, vi } from "vitest";
 import { Window } from "happy-dom";
+import { parseTimelineFromDOM } from "../lib/timelineDOM";
 import { buildTimelineElementsFromClips } from "./timelineSyncHydration";
 import { findTimelineDomNodeForClip } from "../lib/timelineElementHelpers";
 import { canMoveTimelineElement } from "../components/timelineAuthoredMoveTarget";
@@ -165,5 +166,27 @@ describe("live DOM manifest hydration", () => {
     );
     expect(findTimelineDomNodeForClip(doc, clip({ id: "stable" }), 0)?.id).toBe("stable");
     expect(findTimelineDomNodeForClip(doc, clip({ start: 9 }), 0)?.id).toBe("stable");
+  });
+});
+
+describe("time-group layout wrappers", () => {
+  it("omits the auto-timed wrapper in both hydration paths, retaining its letters", () => {
+    const doc = documentWith(
+      '<div id="word" data-start="0" data-duration="4" data-hf-autostamped="1"><div id="h" class="clip" data-start="0" data-duration="4"></div><div id="e" class="clip" data-start="0" data-duration="4"></div></div>',
+    );
+    const clips = ["word", "h", "e"].map((id) => clip({ id }));
+    expect(buildTimelineElementsFromClips(clips, doc).map((e) => e.id)).toEqual(["h", "e"]);
+    expect(parseTimelineFromDOM(doc, 10).map((e) => e.id)).toEqual(["h", "e"]);
+  });
+  it("retains deliberately timed wrappers and auto-timed standalone artwork", () => {
+    const doc = documentWith(
+      '<div id="group" data-start="0" data-duration="4"><div id="h" data-start="0" data-duration="4"></div></div><div id="backdrop" data-start="0" data-duration="4" data-hf-autostamped="1"></div>',
+    );
+    const clips = ["group", "h", "backdrop"].map((id) => clip({ id }));
+    expect(buildTimelineElementsFromClips(clips, doc).map((e) => e.id)).toEqual([
+      "group",
+      "h",
+      "backdrop",
+    ]);
   });
 });

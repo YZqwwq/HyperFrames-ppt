@@ -11,6 +11,8 @@
   "type": "module",
   "scripts": {
     "dev": "bun run studio",
+    "desktop": "bun run --cwd packages/desktop dev",
+    "desktop:build": "bun run --cwd packages/desktop build",
     "build": "bun run --filter '@hyperframes/{parsers,lint,studio-server}' build && bun run --filter @hyperframes/core build && bun run --filter '@hyperframes/{engine,producer,player,studio,shader-transitions,aws-lambda,gcp-cloud-run,sdk,inspector}' build && bun run --filter @hyperframes/cli build && bun run --filter @hyperframes/sdk-playground build",
     "build:producer": "bun run --filter @hyperframes/producer build",
     "studio": "bun run --filter @hyperframes/studio dev",

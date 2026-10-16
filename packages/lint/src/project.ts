@@ -522,15 +522,34 @@ function lintTextureMaskAssetNotFound(
   });
 }
 
+// A root-level file explicitly mounted by index.html is a child, not another entry point.
+function mountedCompositionFiles(projectDir: string): Set<string> {
+  const visited = new Set<string>();
+  const pending = [join(projectDir, "index.html")];
+  while (pending.length) {
+    const file = pending.pop()!;
+    if (visited.has(file) || !existsSync(file)) continue;
+    visited.add(file);
+    for (const src of collectSubCompositionSrcs(readFileSync(file, "utf-8"))) {
+      if (isRemoteOrInlineUrl(src)) continue;
+      const target = resolve(dirname(file), src);
+      if (isWithinProjectRoot(projectDir, target)) pending.push(target);
+    }
+  }
+  visited.delete(join(projectDir, "index.html"));
+  return visited;
+}
+
 function lintMultipleRootCompositions(projectDir: string): HyperframeLintFinding[] {
   const findings: HyperframeLintFinding[] = [];
   try {
     const rootHtmlFiles = readdirSync(projectDir).filter(
       (file) => file.endsWith(".html") && !file.startsWith("._"),
     );
+    const mounted = mountedCompositionFiles(projectDir);
     const rootCompositions: string[] = [];
     for (const file of rootHtmlFiles) {
-      if (file === "caption-skin.html") continue;
+      if (file === "caption-skin.html" || mounted.has(resolve(projectDir, file))) continue;
       const content = readFileSync(join(projectDir, file), "utf-8");
       if (/data-composition-id/i.test(content)) {
         rootCompositions.push(file);

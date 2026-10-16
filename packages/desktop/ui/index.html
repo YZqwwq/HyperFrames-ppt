@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'"
+    />
+    <title>Future PPT</title>
+    <link rel="stylesheet" href="home.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <span class="mark">F</span><span>FUTURE PPT</span><span class="tag">桌面预览版</span>
+      </header>
+      <section class="intro">
+        <p class="eyebrow">从想法，到清晰的讲解</p>
+        <h1>你的下一场演示，<br />从这里开始。</h1>
+        <p class="description">打开本地作品，继续编辑文字、画面和动画。</p>
+        <div class="actions">
+          <button id="create" class="primary">＋ 新建演示</button
+          ><button id="open">打开项目文件夹</button>
+        </div>
+      </section>
+      <section class="recent">
+        <div class="section-title">
+          <h2>最近打开</h2>
+          <span>项目保存在你的电脑上</span>
+        </div>
+        <div id="projects"></div>
+      </section>
+      <p id="status" role="status" aria-live="polite"></p>
+      <footer>Future PPT · 基于 HyperFrames Studio</footer>
+    </main>
+    <script src="home.js"></script>
+  </body>
+</html>

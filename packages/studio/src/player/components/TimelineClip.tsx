@@ -169,7 +169,7 @@ export const TimelineClip = memo(function TimelineClip({
       style={style}
       title={
         isComposition
-          ? `${el.compositionSrc} • Double-click to open`
+          ? `${displayLabel} · 时间组 · 双击编辑内部时序`
           : `${displayLabel} • ${startLabel}s to ${endLabel}s`
       }
       onPointerEnter={onHoverStart}

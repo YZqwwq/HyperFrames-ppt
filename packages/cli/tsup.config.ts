@@ -20,6 +20,7 @@ export default defineConfig({
     sherpaWorker: "src/whisper/sherpaWorker.ts",
     shaderTransitionWorker: "../producer/src/services/shaderTransitionWorker.ts",
     api: "src/api.ts",
+    studioHost: "src/server/studioServer.ts",
   },
   format: ["esm"],
   outDir: "dist",
@@ -28,8 +29,8 @@ export default defineConfig({
   bundle: true,
   splitting: true,
   sourcemap: false,
-  // Types for the `./api` export only; the other entries are programs, not libraries.
-  dts: { entry: { api: "src/api.ts" } },
+  // Types for the public API and embedded desktop host; other entries are programs.
+  dts: { entry: { api: "src/api.ts", studioHost: "src/server/studioServer.ts" } },
   clean: true,
   banner: {
     js: `import { createRequire as __hf_createRequire } from "node:module";

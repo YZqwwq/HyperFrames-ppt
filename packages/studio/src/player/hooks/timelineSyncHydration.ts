@@ -9,7 +9,11 @@
  * an argument, so each is callable — and readable — on its own.
  */
 
-import { createTimelineDomNodeResolver, findClipElementById } from "../lib/timelineElementHelpers";
+import {
+  createTimelineDomNodeResolver,
+  findClipElementById,
+  isTimelineIgnoredElement,
+} from "../lib/timelineElementHelpers";
 import { usePlayerStore } from "../store/playerStore";
 import type { TimelineElement, DomClipChild, SubCompositionHostState } from "../store/playerStore";
 import { resolveCssStackingContextId } from "@hyperframes/core/runtime/stacking-context";
@@ -203,8 +207,9 @@ export function buildTimelineElementsFromClips(
   iframeDoc: Document | null,
 ): TimelineElement[] {
   const resolveHost = iframeDoc ? createTimelineDomNodeResolver(iframeDoc) : null;
-  return clips.map((clip, index) => {
+  return clips.flatMap((clip, index) => {
     const hostEl = resolveHost?.(clip, index) ?? null;
+    if (hostEl && isTimelineIgnoredElement(hostEl)) return [];
     return createTimelineElementFromManifestClip({
       clip,
       fallbackIndex: index,

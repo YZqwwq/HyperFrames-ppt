@@ -1,3 +1,4 @@
+import { PageTimeGroupButton } from "./components/PageTimeGroupButton";
 import { useOwnPreviewIframe, usePreviewIframeStore } from "./player/store/previewIframeStore";
 import { buildProjectApiPath } from "./utils/projectRouting";
 import { useState, useCallback, useRef, useMemo, type SetStateAction } from "react";
@@ -446,14 +447,18 @@ export function StudioApp({ readOnlyPreview = false, readOnlyPreviewReason }: St
     handlePreviewIframeRef,
     refreshPreviewDocumentVersion,
   });
-  const timelineToolbar = useMemo(
-    () => (
-      <TimelineToolbar
-        domEditSession={toolbarSession}
-        onSplitElement={timelineEditing.handleTimelineElementSplit}
-      />
-    ),
-    [toolbarSession, timelineEditing.handleTimelineElementSplit],
+  const timelineToolbar = (
+    <TimelineToolbar
+      domEditSession={toolbarSession}
+      onSplitElement={timelineEditing.handleTimelineElementSplit}
+      rightActions={
+        <PageTimeGroupButton
+          recordEdit={editHistory.recordEdit}
+          onGrouped={reloadPreview}
+          resync={sdkHandle.forceReload}
+        />
+      }
+    />
   );
   const handleExport = useCallback(() => {
     void previewPersistence

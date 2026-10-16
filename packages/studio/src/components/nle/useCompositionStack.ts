@@ -16,7 +16,7 @@ interface UseCompositionStackResult {
   compositionStack: CompositionLevel[];
   updateCompositionStack: React.Dispatch<React.SetStateAction<CompositionLevel[]>>;
   handleNavigateComposition: (index: number) => void;
-  handleDrillDown: (element: { id: string; compositionSrc?: string }) => void;
+  handleDrillDown: (element: { id: string; compositionSrc?: string; label?: string }) => void;
   masterSeekRef: React.MutableRefObject<number>;
   compIdToSrc: Map<string, string>;
   setCompIdToSrc: React.Dispatch<React.SetStateAction<Map<string, string>>>;
@@ -77,7 +77,7 @@ export function useCompositionStack({
   );
 
   const handleDrillDown = useCallback(
-    (element: { id: string; compositionSrc?: string }) => {
+    (element: { id: string; compositionSrc?: string; label?: string }) => {
       if (!element.compositionSrc) return;
 
       const src = compIdToSrcRef.current.get(element.id) ?? element.compositionSrc;
@@ -92,10 +92,12 @@ export function useCompositionStack({
           return prev.slice(0, -1);
         }
         const label =
+          element.label ||
           resolvedPath
             .split("/")
             .pop()
-            ?.replace(/\.html$/, "") || resolvedPath;
+            ?.replace(/\.html$/, "") ||
+          resolvedPath;
         const previewUrl = buildProjectApiPath(
           projectId,
           `/preview/comp/${encodePreviewPath(resolvedPath)}`,

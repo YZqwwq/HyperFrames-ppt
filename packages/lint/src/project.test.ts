@@ -1112,3 +1112,31 @@ describe("sub-composition files", () => {
     );
   });
 });
+
+describe("mounted root-level time groups", () => {
+  it("does not count an explicitly mounted child as another entry", async () => {
+    const dir = makeProject(
+      validHtml().replace(
+        "</body>",
+        '<div data-composition-id="child" data-composition-src="./group.html" data-start="0" data-duration="5"></div></body>',
+      ),
+    );
+    writeFileSync(join(dir, "group.html"), validHtml("child"));
+    const result = await lintProject(dir);
+    expect(
+      result.results
+        .flatMap((r) => r.result.findings)
+        .some((f) => f.code === "multiple_root_compositions"),
+    ).toBe(false);
+  });
+  it("still reports an unrelated root entry", async () => {
+    const dir = makeProject(validHtml());
+    writeFileSync(join(dir, "other.html"), validHtml("other"));
+    const result = await lintProject(dir);
+    expect(
+      result.results
+        .flatMap((r) => r.result.findings)
+        .some((f) => f.code === "multiple_root_compositions"),
+    ).toBe(true);
+  });
+});

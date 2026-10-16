@@ -87,6 +87,15 @@ function readDurationAttribute(el: Element | null | undefined): number {
 }
 
 export function isTimelineIgnoredElement(el: Element): boolean {
+  // Runtime timing makes layout wrappers selectable, but their authored child
+  // clips already represent the contents on the timeline. Keep real media and
+  // composition hosts, and do not hide deliberately timed containers.
+  if (
+    el.hasAttribute("data-hf-autostamped") &&
+    !el.matches("video, audio, img, [data-composition-id]") &&
+    el.querySelector("[data-start]:not([data-hf-autostamped])")
+  )
+    return true;
   // An `<hf-audio-group>` is a mixer bus with no timing of its own, drawn as a group row, never a clip.
   if (el.tagName.toLowerCase() === HF_AUDIO_GROUP_TAG) return true;
   return Boolean(

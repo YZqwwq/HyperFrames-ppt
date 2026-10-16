@@ -7,6 +7,12 @@
       "types": "./dist/api.d.ts",
       "environments": ["node"]
     },
+    "./studio-host": {
+      "source": "./dist/studioHost.js",
+      "runtime": "./dist/studioHost.js",
+      "types": "./dist/studioHost.d.ts",
+      "environments": ["node"]
+    },
     "./package.json": {
       "source": "./package.json",
       "runtime": "./package.json",

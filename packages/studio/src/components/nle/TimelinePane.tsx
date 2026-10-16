@@ -124,7 +124,18 @@ export function TimelinePane({
               onPasteClip={onPasteClip}
               onDuplicateClip={onDuplicateClip}
               canPasteClip={canPasteClip}
-              clipMenuItems={clipMenuItems}
+              clipMenuItems={(element) => [
+                ...(element.compositionSrc
+                  ? [
+                      {
+                        id: "enter-time-group",
+                        label: "进入时间组",
+                        onSelect: () => handleDrillDown(element),
+                      },
+                    ]
+                  : []),
+                ...(clipMenuItems?.(element) ?? []),
+              ]}
               splitShortcut={splitShortcut}
             />
           </div>
