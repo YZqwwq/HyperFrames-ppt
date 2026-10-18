@@ -1,0 +1,16 @@
+项目快照：初步动画
+
+本目录是可编辑的完整演示素材，包含页面、背景、跨页圆、字体、图片和演示打点。
+保留所有子目录的相对路径。在项目根目录完成 bun install 与 bun run build 后运行：
+node packages/cli/dist/cli.js preview presentations/probation-review --port 5194
+
+中文字体使用 Git LFS。换设备克隆后先执行 git lfs pull。
+圆动画基准为 36px；放大后 604px，分裂后每个圆 64px。
+局部时间：2.1–2.9 放大；14.35–15.05 收缩；15.05–15.95 分裂。
+每段的位置与缩放由唯一动画控制，不得叠加覆盖全程的位置 tween。
+
+验证：设置 HYPERFRAMES_BROWSER_PATH 为本机 Chrome/Edge 可执行文件后：
+node tools/verify-circle-endpoints.mjs
+
+本快照保存在仓库内；原 deliverables 目录仍供当前预览使用。
+后续请优先打开本目录编辑，避免两份素材独立变化。

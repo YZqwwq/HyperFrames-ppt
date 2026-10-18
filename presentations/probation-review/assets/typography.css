@@ -1,0 +1,20 @@
+/* 中文演示文字角色，1280×720 */
+:root{
+--type-cover-size:80px;--type-cover-weight:600;--type-cover-line:1.15;
+--type-section-size:80px;--type-section-weight:600;--type-section-line:1.15;
+--type-title-size:56px;--type-title-weight:600;--type-title-line:1.2;
+--type-lead-size:28px;--type-lead-weight:400;--type-lead-line:1.4;
+--type-heading-size:28px;--type-heading-weight:600;--type-heading-line:1.3;
+--type-body-size:24px;--type-body-weight:400;--type-body-line:1.5;
+--type-compact-size:22px;--type-compact-weight:400;--type-compact-line:1.45;
+--type-caption-size:18px;--type-caption-weight:400;--type-caption-line:1.4;
+--type-label-size:18px;--type-label-weight:500;--type-label-line:1.3;
+--type-page-size:14px;--type-page-weight:400;--type-page-line:1.2;
+--type-metric-size:96px;--type-metric-weight:400;--type-metric-line:1;
+--type-metric-large-size:144px;--type-metric-large-weight:400;--type-metric-large-line:1;
+--type-metric-hero-size:192px;--type-metric-hero-weight:400;--type-metric-hero-line:1;
+--type-sequence-size:24px;--type-sequence-weight:400;--type-sequence-line:1.2;
+}
+[data-text-role]{font-family:"Noto Sans CJK SC",sans-serif;letter-spacing:0;}
+
+:root{--type-metric-compact-size:64px;--type-metric-compact-weight:400;--type-metric-compact-line:1;}

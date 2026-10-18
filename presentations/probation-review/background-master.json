@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "fixed": {
+    "file": "backgrounds/background-global.html",
+    "items": ["brand", "team", "separator", "top-right UI", "bottom-left UI", "page underline"],
+    "scope": "whole-deck"
+  },
+  "variable": {
+    "fields": ["title", "page"],
+    "timing": "host data-linked-clip follows page clip",
+    "frames": [
+      {
+        "page": "01",
+        "title": "转正答辩",
+        "clipId": "page-01",
+        "source": "backgrounds/frame-01.html"
+      },
+      {
+        "page": "02",
+        "title": "汇报目录",
+        "clipId": "page-02",
+        "source": "backgrounds/frame-02.html"
+      },
+      {
+        "page": "03",
+        "title": "阶段 01",
+        "clipId": "page-03",
+        "source": "backgrounds/frame-03.html"
+      },
+      {
+        "page": "04",
+        "title": "实习阶段",
+        "clipId": "page-04",
+        "source": "backgrounds/frame-04.html"
+      },
+      {
+        "page": "05",
+        "title": "实习阶段",
+        "clipId": "page-05",
+        "source": "backgrounds/frame-05.html"
+      },
+      {
+        "page": "06",
+        "title": "阶段 02",
+        "clipId": "page-06",
+        "source": "backgrounds/frame-06.html"
+      },
+      {
+        "page": "07",
+        "title": "试用期阶段工作",
+        "clipId": "page-07",
+        "source": "backgrounds/frame-07.html"
+      },
+      {
+        "page": "08",
+        "title": "试用期阶段工作",
+        "clipId": "page-08",
+        "source": "backgrounds/frame-08.html"
+      },
+      {
+        "page": "09",
+        "title": "重点项目 01",
+        "clipId": "page-09",
+        "source": "backgrounds/frame-09.html"
+      },
+      {
+        "page": "10",
+        "title": "重点项目·行业主题评分",
+        "clipId": "page-10",
+        "source": "backgrounds/frame-10.html"
+      },
+      {
+        "page": "11",
+        "title": "重点项目 02",
+        "clipId": "page-11",
+        "source": "backgrounds/frame-11.html"
+      },
+      {
+        "page": "12",
+        "title": "重点项目 03",
+        "clipId": "page-12",
+        "source": "backgrounds/frame-12.html"
+      },
+      {
+        "page": "13",
+        "title": "重点项目·运营播客",
+        "clipId": "page-13",
+        "source": "backgrounds/frame-13.html"
+      },
+      {
+        "page": "14",
+        "title": "重点项目·运营播客",
+        "clipId": "page-14",
+        "source": "backgrounds/frame-14.html"
+      },
+      {
+        "page": "15",
+        "title": "个人总结",
+        "clipId": "page-15",
+        "source": "backgrounds/frame-15.html"
+      },
+      {
+        "page": "16",
+        "title": "阶段 03",
+        "clipId": "page-16",
+        "source": "backgrounds/frame-16.html"
+      },
+      {
+        "page": "17",
+        "title": "下一阶段",
+        "clipId": "page-17",
+        "source": "backgrounds/frame-17.html"
+      }
+    ]
+  }
+}

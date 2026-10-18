@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "links": [
+    {
+      "source": {
+        "file": "subjects/case-circle-08-10.html",
+        "selector": "#slide-08-case-visual",
+        "ordinal": 0,
+        "clipId": "case-circle-08-10"
+      },
+      "content": {
+        "file": "slides/slide-09.html",
+        "clipId": "page-09",
+        "enter": {
+          "file": "slides/slide-09.html",
+          "selector": "#slide-09-comparison-panel,#slide-09-shape-4,#slide-09-shape-5,#slide-09-shape-6,#slide-09-shape-7,#slide-09-shape-8,#slide-09-shape-9,#slide-09-shape-10,#slide-09-shape-11,#slide-09-shape-12,#slide-09-shape-13,#slide-09-shape-15,#slide-09-shape-20,#slide-09-shape-14,#slide-09-shape-22,#slide-09-shape-23,#slide-09-shape-24",
+          "ordinal": 0
+        },
+        "exit": {
+          "file": "slides/slide-09.html",
+          "selector": "#slide-09-comparison-panel,#slide-09-shape-4,#slide-09-shape-5,#slide-09-shape-6,#slide-09-shape-7,#slide-09-shape-8,#slide-09-shape-9,#slide-09-shape-10,#slide-09-shape-11,#slide-09-shape-12,#slide-09-shape-13,#slide-09-shape-15,#slide-09-shape-20,#slide-09-shape-14,#slide-09-shape-22,#slide-09-shape-23,#slide-09-shape-24",
+          "ordinal": 1
+        },
+        "exitAt": 70,
+        "endAt": 72
+      },
+      "previous": {
+        "clipId": "page-08",
+        "exit": {
+          "file": "slides/slide-08.html",
+          "selector": "#slide-08-tool-panels,#slide-08-shape-3,#slide-08-shape-4,#slide-08-shape-5,#slide-08-shape-6,#slide-08-shape-7,#slide-08-shape-8,#slide-08-shape-9,#slide-08-shape-10,#slide-08-shape-11,#slide-08-shape-12,#slide-08-shape-13,#slide-08-shape-14,#slide-08-shape-15,#slide-08-shape-16,#slide-08-shape-17,#slide-08-shape-18,#slide-08-shape-19,#slide-08-shape-20,#slide-08-shape-43,#slide-08-shape-45,#slide-08-shape-46",
+          "ordinal": 0
+        }
+      },
+      "cueId": "slide-08-to-09",
+      "nextCueId": "slide-09-to-10",
+      "delay": 0,
+      "settle": 0.05
+    }
+  ]
+}
