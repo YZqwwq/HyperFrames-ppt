@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 
 import { afterEach, describe, expect, it } from "vitest";
-import { isTypingTarget, ownsPlainKeys } from "./typingTarget";
+import { isTypingTarget, ownsPlainKeys, typingOwnsEvent } from "./typingTarget";
 import { isEditableTarget } from "./timelineDiscovery";
 
 afterEach(() => {
@@ -69,6 +69,17 @@ describe("isTypingTarget", () => {
 });
 
 describe("ownsPlainKeys", () => {
+  it("protects a shadow-root input even when the event is retargeted to its host", () => {
+    const host = mount("<div></div>");
+    const shadow = host.attachShadow({ mode: "open" });
+    const input = document.createElement("input");
+    shadow.append(input);
+    input.focus();
+    expect(typingOwnsEvent(new KeyboardEvent("keydown", { key: "Delete" }))).toBe(true);
+    input.blur();
+    expect(typingOwnsEvent(new KeyboardEvent("keydown", { key: "Delete" }))).toBe(false);
+  });
+
   it("is true for a native player with controls and for anything typing claims", () => {
     expect(ownsPlainKeys(mount("<video controls></video>"))).toBe(true);
     expect(ownsPlainKeys(mount("<audio controls></audio>"))).toBe(true);

@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 import type { PropertyPanelProps } from "./propertyPanelTypes";
 import { useEffect, useState } from "react";
 import { useTrackDesignInput } from "../../contexts/DesignPanelInputContext";
@@ -75,7 +76,7 @@ function FlatTextFieldEditor({
         {({ value, onCommit }) => (
           <TextAreaField
             flat
-            label="Content"
+            label={t("property.content")}
             value={value ?? field.value}
             autoFocus={autoFocus}
             onCommit={onCommit ?? ((next) => onSetText(next, field.key))}
@@ -99,7 +100,7 @@ function FlatTextFieldEditor({
         )}
       </PromotableControl>
       <FlatRow
-        label="Size"
+        label={t("property.size")}
         value={field.computedStyles["font-size"] || styles["font-size"] || "16px"}
         tier={resolveValueTier(field.inlineStyles["font-size"], styles["font-size"] || "16px")}
         liveCommit
@@ -146,7 +147,7 @@ function FlatTextFieldEditor({
         </label>
       </div>
       <FlatRow
-        label="Letter spacing"
+        label={t("property.letterSpacing")}
         value={getTextStyleValue(field, styles, "letter-spacing", "0px")}
         tier={resolveValueTier(field.inlineStyles["letter-spacing"], "0px")}
         onCommit={(next) =>
@@ -159,7 +160,7 @@ function FlatTextFieldEditor({
         onReset={() => onSetTextFieldStyle(field.key, "letter-spacing", "")}
       />
       <FlatRow
-        label="Line height"
+        label={t("property.lineHeight")}
         value={getTextStyleValue(field, styles, "line-height", "normal")}
         tier={resolveValueTier(field.inlineStyles["line-height"], "normal")}
         onCommit={(next) =>
@@ -172,7 +173,7 @@ function FlatTextFieldEditor({
         onReset={() => onSetTextFieldStyle(field.key, "line-height", "")}
       />
       <FlatSegmentedRow
-        label="Align"
+        label={t("property.align")}
         options={ALIGN_OPTIONS.map((option) => ({
           key: option.key,
           node: option.node,
@@ -195,7 +196,7 @@ function FlatTextFieldEditor({
         }}
       />
       <FlatSegmentedRow
-        label="Case · Style"
+        label={t("property.caseStyle")}
         options={[
           ...CASE_OPTIONS.map((option) => ({
             key: option.key,
@@ -222,7 +223,7 @@ function FlatTextFieldEditor({
         {({ value, onCommit }) => (
           <ColorField
             flat
-            label="Color"
+            label={t("property.color")}
             value={value ?? getTextFieldColor(field, styles)}
             onPreview={(next) => onPreviewTextFieldStyle?.(field.key, "color", next)}
             onCommit={onCommit ?? ((next) => onSetTextFieldStyle(field.key, "color", next))}
@@ -341,7 +342,7 @@ export function FlatTextSection({
         className="mt-0.5 flex items-center gap-[5px] text-[10px] text-panel-text-4 hover:text-panel-text-2"
       >
         <Plus size={10} />
-        Add text field
+        {t("property.addText")}
       </button>
     </div>
   );
@@ -374,7 +375,7 @@ export function FlatTextLayerList({
   return (
     <div className="mb-2 border-l-2 border-panel-border-input py-0.5 pl-[10px]">
       <div className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-panel-text-5">
-        Text layers
+        {t("property.textLayers")}
       </div>
       <div className="space-y-1">
         {fields.map((field, index) => {
@@ -394,7 +395,8 @@ export function FlatTextLayerList({
                 style={{ backgroundColor: getTextFieldColor(field, styles) }}
               />
               <span className="min-w-0 flex-1 truncate text-[11px] text-panel-text-1">
-                {formatTextFieldPreview(field.value) || `Text ${index + 1}`}
+                {formatTextFieldPreview(field.value) ||
+                  t("property.textNumber", { count: index + 1 })}
               </span>
               <span className="shrink-0 font-mono text-[9px] text-panel-text-4">
                 {field.tagName}
@@ -403,7 +405,7 @@ export function FlatTextLayerList({
                 <button
                   type="button"
                   data-flat-text-layer-remove="true"
-                  aria-label="Remove text field"
+                  aria-label={t("property.removeText")}
                   onClick={(e) => {
                     e.stopPropagation();
                     track("button", "Remove text field");
@@ -428,7 +430,7 @@ export function FlatTextLayerList({
         className="mt-1 flex items-center gap-[5px] text-[10px] text-panel-text-4 hover:text-panel-text-2"
       >
         <Plus size={10} />
-        Add text field
+        {t("property.addText")}
       </button>
     </div>
   );

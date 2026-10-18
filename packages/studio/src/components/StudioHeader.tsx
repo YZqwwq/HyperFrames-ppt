@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import { memo, useContext, type MouseEvent } from "react";
 import { Camera } from "../icons/SystemIcons";
 import { useStudioShellContext } from "../contexts/StudioContext";
@@ -65,7 +66,10 @@ export const StudioHeader = memo(function StudioHeader({
       {/* Right: toolbar buttons */}
       <div className="flex items-center gap-3">
         <div className="flex h-ctl items-center divide-x divide-border-strong overflow-hidden rounded-md border border-border-strong bg-bg-2">
-          <Tooltip label={capturing ? "Capturing frame…" : "Capture current frame"} side="bottom">
+          <Tooltip
+            label={capturing ? t("header.capturing") : t("header.captureFrame")}
+            side="bottom"
+          >
             {/* A real download link, so it wears Button's recipe rather than being
               one: `download` on an <a> is what saves the frame, and no <button>
               can do that. `enabled:` never matches a link, so the ghost
@@ -93,7 +97,7 @@ export const StudioHeader = memo(function StudioHeader({
                   ? "text-text-4 cursor-default"
                   : "hover:bg-hover hover:text-text-0 active:scale-[0.98]",
               )}
-              aria-label={capturing ? "Capturing frame" : "Capture current frame"}
+              aria-label={capturing ? t("header.capturingFrame") : t("header.captureFrame")}
             >
               {capturing ? (
                 <svg
@@ -119,13 +123,15 @@ export const StudioHeader = memo(function StudioHeader({
               ) : (
                 <Camera size={14} />
               )}
-              <span className="max-[1000px]:hidden">{capturing ? "Capturing…" : "Capture"}</span>
+              <span className="max-[1000px]:hidden">
+                {capturing ? t("header.capturing") : t("header.capture")}
+              </span>
             </a>
           </Tooltip>
-          <Tooltip label="Inspector" side="bottom">
+          <Tooltip label={t("header.inspector")} side="bottom">
             <Button
               variant="ghost"
-              aria-label="Inspector"
+              aria-label={t("header.inspector")}
               aria-pressed={inspectorButtonActive}
               className={cn(
                 "h-full rounded-none",
@@ -146,7 +152,7 @@ export const StudioHeader = memo(function StudioHeader({
                 setRightCollapsed(true);
               }}
             >
-              Inspector
+              {t("header.inspector")}
             </Button>
           </Tooltip>
         </div>
@@ -156,10 +162,10 @@ export const StudioHeader = memo(function StudioHeader({
         <Tooltip
           label={
             ffmpegMissing
-              ? "FFmpeg is not installed. Opens the Renders panel with the install command."
+              ? t("header.ffmpegMissing")
               : isRendering
-                ? "A render is already in progress"
-                : "Render and export this composition"
+                ? t("header.renderBusy")
+                : t("header.exportHint")
           }
           side="bottom"
         >
@@ -180,7 +186,7 @@ export const StudioHeader = memo(function StudioHeader({
               onExport?.();
             }}
           >
-            {isRendering ? "Rendering…" : "Export"}
+            {isRendering ? t("header.rendering") : t("header.export")}
           </Button>
         </Tooltip>
       </div>

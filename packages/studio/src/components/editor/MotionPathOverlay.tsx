@@ -1,4 +1,3 @@
-import { scopedElementKey } from "../../hooks/gsapKeyframeCacheHelpers";
 import { memo, useEffect, useRef, useState, type RefObject } from "react";
 import type { DomEditSelection } from "./domEditing";
 import { useDomEditContext } from "../../contexts/DomEditContext";
@@ -109,19 +108,12 @@ export const MotionPathOverlay = memo(function MotionPathOverlay({
   // timeline keyframe diamond. The node it was opened on rides along, because
   // which entries apply depends on whether it is a keyframe or a waypoint.
   const [kfMenu, setKfMenu] = useState<{
-    state: KeyframeDiamondContextMenuState;
+    state: KeyframeDiamondContextMenuState<DomEditSelection>;
     ref: MotionNodeRef;
   } | null>(null);
   // The keyframe % selected by clicking its node — highlighted, and the next drag
   // modifies it rather than adding a keyframe.
   const activeKeyframePct = usePlayerStore((s) => s.activeKeyframePct);
-  const timelineElement = usePlayerStore((state) => {
-    if (!selection) return undefined;
-    const sourceScopedId = scopedElementKey(selection);
-    return state.elements.find(
-      (element) => (element.key ?? element.id) === sourceScopedId || element.id === selection.id,
-    );
-  });
   // Set-destination mode is armed from the preview toolbar (replaces the old
   // double-click-on-canvas UX). See createMode effects below.
   const armed = usePlayerStore((s) => s.motionPathArmed);
@@ -369,7 +361,7 @@ export const MotionPathOverlay = memo(function MotionPathOverlay({
         if (e.detail < 2) {
           parkTimerRef.current = setTimeout(() => {
             const anim = selectedGsapAnimations?.find((a) => a.id === animId);
-            if (anim) parkPlayheadOnKeyframe(anim, ref.pct);
+            if (anim) parkPlayheadOnKeyframe(anim, ref.pct, selection ?? undefined);
           }, 250);
         }
       }
@@ -393,7 +385,7 @@ export const MotionPathOverlay = memo(function MotionPathOverlay({
     }).catch((error: unknown) => reportFailure(error, selection, "drag", label));
     // Park on the edited keyframe, or a playhead before the tween hides the edit.
     if (d.ref.type === "keyframe" && anim) {
-      parkPlayheadOnKeyframe(anim, d.ref.pct);
+      parkPlayheadOnKeyframe(anim, d.ref.pct, selection ?? undefined);
     }
   };
 
@@ -452,15 +444,16 @@ export const MotionPathOverlay = memo(function MotionPathOverlay({
   // Right-click any path node → the timeline's keyframe menu. Waypoints too, or the
   // browser's own context menu opens over the editor.
   const onNodeContextMenu = (e: React.MouseEvent, ref: MotionNodeRef) => {
-    if (!animId || !elementId || !timelineElement) return;
     e.preventDefault();
     e.stopPropagation();
+    if (!animId || !elementId || !selection) return;
     setKfMenu({
       ref,
       state: {
         x: e.clientX,
         y: e.clientY,
-        element: timelineElement,
+        element: selection,
+        animationId: animId,
         elementId,
         // A waypoint carries no percentage of its own: one tween-level ease owns
         // every segment, and its index is the identity the delete acts on. The

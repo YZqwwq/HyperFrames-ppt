@@ -1,3 +1,5 @@
+import { planPresentationTimingLinks } from "../helpers/presentationTimingLinks.js";
+import { isMathEaseExpression } from "../helpers/mathEaseExpression";
 // fallow-ignore-file code-duplication
 // executeGsapMutationRecast and executeGsapMutationAcorn are intentionally
 // parallel — two writers, same switch-case interface. Structural duplication
@@ -559,8 +561,23 @@ function writeMutationResult(
   if (readFileSync(absPath, "utf-8") !== original) {
     return c.json({ error: "file changed", conflict: true, path: filePath }, 409);
   }
-  const { version } = writeFileWithReceipt(c, filePath, absPath, html);
-  return { backupPath: backupPathForResponse(projectDir, backup.backupPath), version };
+  try {
+    const { version } = writeFileWithReceipt(c, filePath, absPath, html);
+    return { backupPath: backupPathForResponse(projectDir, backup.backupPath), version };
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    const busy = code === "EPERM" || code === "EBUSY" || code === "EACCES";
+    return c.json(
+      {
+        error: busy
+          ? `Cannot save ${filePath}: the file is busy or access was denied. Release the file and retry.`
+          : `Cannot save ${filePath}: ${error instanceof Error ? error.message : String(error)}`,
+        code: busy ? "FILE_WRITE_BLOCKED" : "FILE_WRITE_FAILED",
+        path: filePath,
+      },
+      busy ? 423 : 500,
+    );
+  }
 }
 
 /** Write `next` to `absPath` only if it differs from `original`, returning a standardized change response. */
@@ -1667,7 +1684,7 @@ function validateGsapMutationRequest(
   if (!body || typeof body !== "object" || !("type" in body) || !body.type) {
     return c.json({ error: "mutation type required" }, 400);
   }
-  if (containsRawGsapExpression(body)) {
+  if (containsRawGsapExpression(body, body.type === "update-meta")) {
     return c.json({ error: "raw JavaScript expressions are not accepted" }, 400);
   }
   const unsafeFields = findUnsafeMutationValues(body);
@@ -1681,11 +1698,20 @@ function validateGsapMutationRequest(
   return null;
 }
 
-function containsRawGsapExpression(value: unknown): boolean {
-  if (typeof value === "string") return value.startsWith("__raw:");
-  if (Array.isArray(value)) return value.some(containsRawGsapExpression);
+function containsRawGsapExpression(value: unknown, allowMathEase = false, path = ""): boolean {
+  if (typeof value === "string") {
+    if (!value.startsWith("__raw:")) return false;
+    return !(
+      allowMathEase &&
+      (path === ".updates.ease" || path === ".updates.easeEach") &&
+      isMathEaseExpression(value)
+    );
+  }
+  if (Array.isArray(value)) return value.some((v) => containsRawGsapExpression(v, false));
   if (!value || typeof value !== "object") return false;
-  return Object.values(value).some(containsRawGsapExpression);
+  return Object.entries(value).some(([key, v]) =>
+    containsRawGsapExpression(v, allowMathEase, `${path}.${key}`),
+  );
 }
 
 async function prepareGsapMutationScript(
@@ -1842,7 +1868,8 @@ async function applyGsapMutations(
   }
 
   const changed = block.scriptText !== initialScript;
-  const newHtml = changed ? block.replaceScript(block.scriptText) : html;
+  let newHtml = changed ? block.replaceScript(block.scriptText) : html;
+  let linkedFiles: Record<string, { before: string; after: string }> | undefined;
   let backupPath: string | null = null;
   // Parsing can await lazy imports. Revalidate before EVERY successful response,
   // including semantic no-ops: a stale no-op response would otherwise claim
@@ -1850,7 +1877,44 @@ async function applyGsapMutations(
   if (readFileSync(res.absPath, "utf-8") !== beforeHtml) {
     return c.json({ error: "file changed during GSAP mutation", conflict: true }, 409);
   }
-  if (changed) {
+  const timingEdit = mutations.some(
+    (m) =>
+      m.type === "update-meta" &&
+      (m.updates.duration !== undefined || m.updates.position !== undefined),
+  );
+  let linkedPlan: ReturnType<typeof planPresentationTimingLinks> = [];
+  if (changed && timingEdit) {
+    try {
+      linkedPlan = planPresentationTimingLinks(res.project.dir, res.filePath, newHtml);
+    } catch (error) {
+      return c.json({ error: String(error) }, 400);
+    }
+  }
+  if (linkedPlan.length > 0) {
+    if (!linkedPlan.some((f) => f.sourceFile === res.filePath))
+      linkedPlan.push({
+        sourceFile: res.filePath,
+        absPath: res.absPath,
+        before: beforeHtml,
+        after: newHtml,
+      });
+    try {
+      const applied = applyFileMutations(
+        res.project.dir,
+        linkedPlan,
+        c.req.header("X-Hyperframes-Write-Token"),
+      );
+      linkedFiles = Object.fromEntries(
+        applied
+          .filter((f) => f.changed)
+          .map((f) => [f.sourceFile, { before: f.before, after: f.after }]),
+      );
+      newHtml = linkedFiles[res.filePath]?.after ?? newHtml;
+      block.scriptText = extractGsapScriptBlock(newHtml)?.scriptText ?? block.scriptText;
+    } catch (error) {
+      return c.json({ error: String(error) }, error instanceof FileChangedError ? 409 : 500);
+    }
+  } else if (changed) {
     const mutationResult = writeMutationResult(
       c,
       res.project.dir,
@@ -1873,6 +1937,7 @@ async function applyGsapMutations(
     after: newHtml,
     scriptText: block.scriptText,
     path: res.filePath,
+    linkedFiles,
     version: fileContentVersion(newHtml),
     backupPath,
   };

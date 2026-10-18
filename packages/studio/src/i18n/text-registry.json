@@ -1,0 +1,1344 @@
+{
+  "defaultLocale": "zh-CN",
+  "generatedBy": "bun run --cwd packages/studio i18n:register",
+  "locations": [
+    {
+      "file": "src/components/dock/Dock.tsx",
+      "line": 290,
+      "column": 10,
+      "key": "window.menu"
+    },
+    {
+      "file": "src/components/dock/Dock.tsx",
+      "line": 317,
+      "column": 14,
+      "key": "window.reset"
+    },
+    {
+      "file": "src/components/dock/panelRegistry.ts",
+      "line": 32,
+      "column": 12,
+      "key": "panel.preview"
+    },
+    {
+      "file": "src/components/dock/panelRegistry.ts",
+      "line": 38,
+      "column": 12,
+      "key": "panel.timeline"
+    },
+    {
+      "file": "src/components/dock/panelRegistry.ts",
+      "line": 44,
+      "column": 12,
+      "key": "panel.compositions"
+    },
+    {
+      "file": "src/components/dock/panelRegistry.ts",
+      "line": 49,
+      "column": 12,
+      "key": "panel.assets"
+    },
+    {
+      "file": "src/components/dock/panelRegistry.ts",
+      "line": 54,
+      "column": 12,
+      "key": "panel.code"
+    },
+    {
+      "file": "src/components/dock/panelRegistry.ts",
+      "line": 59,
+      "column": 12,
+      "key": "panel.catalog"
+    },
+    {
+      "file": "src/components/dock/panelRegistry.ts",
+      "line": 64,
+      "column": 12,
+      "key": "panel.design"
+    },
+    {
+      "file": "src/components/dock/panelRegistry.ts",
+      "line": 69,
+      "column": 12,
+      "key": "panel.layers"
+    },
+    {
+      "file": "src/components/dock/panelRegistry.ts",
+      "line": 74,
+      "column": 12,
+      "key": "panel.renders"
+    },
+    {
+      "file": "src/components/dock/panelRegistry.ts",
+      "line": 79,
+      "column": 12,
+      "key": "panel.variables"
+    },
+    {
+      "file": "src/components/dock/panelRegistry.ts",
+      "line": 84,
+      "column": 12,
+      "key": "panel.slideshow"
+    },
+    {
+      "file": "src/components/editor/AnimationEndpoints.tsx",
+      "line": 117,
+      "column": 50,
+      "key": "animation.states"
+    },
+    {
+      "file": "src/components/editor/AnimationEndpoints.tsx",
+      "line": 121,
+      "column": 23,
+      "key": "animation.segment"
+    },
+    {
+      "file": "src/components/editor/AnimationEndpoints.tsx",
+      "line": 155,
+      "column": 12,
+      "key": "animation.startState"
+    },
+    {
+      "file": "src/components/editor/AnimationEndpoints.tsx",
+      "line": 162,
+      "column": 12,
+      "key": "animation.endState"
+    },
+    {
+      "file": "src/components/editor/AnimationEndpoints.tsx",
+      "line": 165,
+      "column": 25,
+      "key": "animation.stopPreview"
+    },
+    {
+      "file": "src/components/editor/AnimationEndpoints.tsx",
+      "line": 165,
+      "column": 54,
+      "key": "animation.preview"
+    },
+    {
+      "file": "src/components/editor/AnimationEndpoints.tsx",
+      "line": 168,
+      "column": 54,
+      "key": "animation.endpointHint"
+    },
+    {
+      "file": "src/components/editor/MotionDependencyNotice.tsx",
+      "line": 41,
+      "column": 8,
+      "key": "motion.linkedTiming"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 15,
+      "column": 20,
+      "key": "motion.linear"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 16,
+      "column": 18,
+      "key": "motion.both"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 17,
+      "column": 16,
+      "key": "motion.in"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 18,
+      "column": 17,
+      "key": "motion.out"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 46,
+      "column": 7,
+      "key": "motion.segmentSpeeds"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 49,
+      "column": 25,
+      "key": "motion.direct"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 69,
+      "column": 16,
+      "key": "motion.invalid"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 76,
+      "column": 18,
+      "key": "motion.start"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 86,
+      "column": 18,
+      "key": "motion.duration"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 97,
+      "column": 10,
+      "key": "motion.globalRange"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 103,
+      "column": 10,
+      "key": "motion.speed"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 127,
+      "column": 14,
+      "key": "motion.current"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 139,
+      "column": 35,
+      "key": "motion.custom"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 143,
+      "column": 10,
+      "key": "motion.current"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 148,
+      "column": 53,
+      "key": "motion.expressionHint"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 150,
+      "column": 25,
+      "key": "motion.expression"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 157,
+      "column": 25,
+      "key": "motion.name"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 158,
+      "column": 26,
+      "key": "motion.name"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 168,
+      "column": 16,
+      "key": "motion.apply"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 174,
+      "column": 16,
+      "key": "motion.save"
+    },
+    {
+      "file": "src/components/editor/MotionTimingEditor.tsx",
+      "line": 177,
+      "column": 53,
+      "key": "motion.local"
+    },
+    {
+      "file": "src/components/editor/propertyPanelColor.tsx",
+      "line": 473,
+      "column": 23,
+      "key": "property.pickColor"
+    },
+    {
+      "file": "src/components/editor/PropertyPanelEmptyState.tsx",
+      "line": 22,
+      "column": 69,
+      "key": "selection.empty"
+    },
+    {
+      "file": "src/components/editor/PropertyPanelEmptyState.tsx",
+      "line": 24,
+      "column": 10,
+      "key": "selection.hint"
+    },
+    {
+      "file": "src/components/editor/PropertyPanelEmptyState.tsx",
+      "line": 30,
+      "column": 14,
+      "key": "selection.record"
+    },
+    {
+      "file": "src/components/editor/PropertyPanelEmptyState.tsx",
+      "line": 39,
+      "column": 14,
+      "key": "selection.ask"
+    },
+    {
+      "file": "src/components/editor/PropertyPanelEmptyState.tsx",
+      "line": 85,
+      "column": 14,
+      "key": "selection.count"
+    },
+    {
+      "file": "src/components/editor/PropertyPanelEmptyState.tsx",
+      "line": 88,
+      "column": 14,
+      "key": "selection.shift"
+    },
+    {
+      "file": "src/components/editor/PropertyPanelEmptyState.tsx",
+      "line": 94,
+      "column": 23,
+      "key": "selection.clear"
+    },
+    {
+      "file": "src/components/editor/PropertyPanelEmptyState.tsx",
+      "line": 153,
+      "column": 14,
+      "key": "selection.group"
+    },
+    {
+      "file": "src/components/editor/PropertyPanelEmptyState.tsx",
+      "line": 166,
+      "column": 14,
+      "key": "selection.hide"
+    },
+    {
+      "file": "src/components/editor/PropertyPanelFlat.tsx",
+      "line": 559,
+      "column": 68,
+      "key": "animation.states"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatStyleSections.tsx",
+      "line": 93,
+      "column": 16,
+      "key": "property.fill"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatStyleSections.tsx",
+      "line": 110,
+      "column": 18,
+      "key": "property.color"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatStyleSections.tsx",
+      "line": 142,
+      "column": 18,
+      "key": "property.textColor"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatStyleSections.tsx",
+      "line": 177,
+      "column": 16,
+      "key": "property.strokeWidth"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatStyleSections.tsx",
+      "line": 201,
+      "column": 16,
+      "key": "property.strokeStyle"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatStyleSections.tsx",
+      "line": 220,
+      "column": 16,
+      "key": "property.strokeColor"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatStyleSections.tsx",
+      "line": 301,
+      "column": 16,
+      "key": "property.shadow"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatStyleSections.tsx",
+      "line": 316,
+      "column": 16,
+      "key": "property.blend"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatStyleSections.tsx",
+      "line": 347,
+      "column": 16,
+      "key": "property.layerBlur"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatStyleSections.tsx",
+      "line": 359,
+      "column": 16,
+      "key": "property.backdrop"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatStyleSections.tsx",
+      "line": 394,
+      "column": 16,
+      "key": "property.overflow"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatStyleSections.tsx",
+      "line": 403,
+      "column": 16,
+      "key": "property.mask"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatStyleSections.tsx",
+      "line": 445,
+      "column": 14,
+      "key": "property.opacity"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatTextSection.tsx",
+      "line": 79,
+      "column": 20,
+      "key": "property.content"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatTextSection.tsx",
+      "line": 103,
+      "column": 16,
+      "key": "property.size"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatTextSection.tsx",
+      "line": 150,
+      "column": 16,
+      "key": "property.letterSpacing"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatTextSection.tsx",
+      "line": 163,
+      "column": 16,
+      "key": "property.lineHeight"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatTextSection.tsx",
+      "line": 176,
+      "column": 16,
+      "key": "property.align"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatTextSection.tsx",
+      "line": 199,
+      "column": 16,
+      "key": "property.caseStyle"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatTextSection.tsx",
+      "line": 226,
+      "column": 20,
+      "key": "property.color"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatTextSection.tsx",
+      "line": 345,
+      "column": 10,
+      "key": "property.addText"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatTextSection.tsx",
+      "line": 378,
+      "column": 10,
+      "key": "property.textLayers"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatTextSection.tsx",
+      "line": 399,
+      "column": 19,
+      "key": "property.textNumber"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatTextSection.tsx",
+      "line": 408,
+      "column": 31,
+      "key": "property.removeText"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFlatTextSection.tsx",
+      "line": 433,
+      "column": 10,
+      "key": "property.addText"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFont.tsx",
+      "line": 534,
+      "column": 58,
+      "key": "property.font"
+    },
+    {
+      "file": "src/components/editor/propertyPanelFont.tsx",
+      "line": 579,
+      "column": 12,
+      "key": "property.font"
+    },
+    {
+      "file": "src/components/editor/propertyPanelSections.tsx",
+      "line": 260,
+      "column": 18,
+      "key": "property.align"
+    },
+    {
+      "file": "src/components/editor/propertyPanelSections.tsx",
+      "line": 314,
+      "column": 53,
+      "key": "property.text"
+    },
+    {
+      "file": "src/components/editor/propertyPanelSections.tsx",
+      "line": 335,
+      "column": 20,
+      "key": "property.content"
+    },
+    {
+      "file": "src/components/editor/propertyPanelSections.tsx",
+      "line": 349,
+      "column": 20,
+      "key": "property.textColor"
+    },
+    {
+      "file": "src/components/editor/propertyPanelSections.tsx",
+      "line": 358,
+      "column": 18,
+      "key": "property.size"
+    },
+    {
+      "file": "src/components/editor/propertyPanelSections.tsx",
+      "line": 457,
+      "column": 23,
+      "key": "property.text"
+    },
+    {
+      "file": "src/components/editor/propertyPanelSections.tsx",
+      "line": 467,
+      "column": 36,
+      "key": "property.textLayers"
+    },
+    {
+      "file": "src/components/editor/propertyPanelSections.tsx",
+      "line": 529,
+      "column": 21,
+      "key": "property.text"
+    },
+    {
+      "file": "src/components/editor/propertyPanelTimingSection.tsx",
+      "line": 74,
+      "column": 21,
+      "key": "property.timing"
+    },
+    {
+      "file": "src/components/editor/propertyPanelTimingSection.tsx",
+      "line": 77,
+      "column": 18,
+      "key": "property.start"
+    },
+    {
+      "file": "src/components/editor/propertyPanelTimingSection.tsx",
+      "line": 82,
+      "column": 18,
+      "key": "property.end"
+    },
+    {
+      "file": "src/components/editor/propertyPanelTimingSection.tsx",
+      "line": 89,
+      "column": 18,
+      "key": "property.duration"
+    },
+    {
+      "file": "src/components/LinkedSelectionToggle.tsx",
+      "line": 21,
+      "column": 19,
+      "key": "tool.linked"
+    },
+    {
+      "file": "src/components/LinkedSelectionToggle.tsx",
+      "line": 51,
+      "column": 41,
+      "key": "tool.linkedOn"
+    },
+    {
+      "file": "src/components/LinkedSelectionToggle.tsx",
+      "line": 51,
+      "column": 62,
+      "key": "tool.linkedOff"
+    },
+    {
+      "file": "src/components/LinkedSelectionToggle.tsx",
+      "line": 59,
+      "column": 23,
+      "key": "tool.linkedSelection"
+    },
+    {
+      "file": "src/components/nle/CompositionBreadcrumb.tsx",
+      "line": 24,
+      "column": 19,
+      "key": "group.navigation"
+    },
+    {
+      "file": "src/components/nle/CompositionBreadcrumb.tsx",
+      "line": 38,
+      "column": 16,
+      "key": "group.backHint"
+    },
+    {
+      "file": "src/components/nle/CompositionBreadcrumb.tsx",
+      "line": 39,
+      "column": 21,
+      "key": "group.backAria"
+    },
+    {
+      "file": "src/components/nle/CompositionBreadcrumb.tsx",
+      "line": 42,
+      "column": 10,
+      "key": "group.back"
+    },
+    {
+      "file": "src/components/nle/CompositionBreadcrumb.tsx",
+      "line": 53,
+      "column": 42,
+      "key": "group.master"
+    },
+    {
+      "file": "src/components/nle/CompositionBreadcrumb.tsx",
+      "line": 64,
+      "column": 42,
+      "key": "group.master"
+    },
+    {
+      "file": "src/components/nle/TimelinePane.tsx",
+      "line": 133,
+      "column": 32,
+      "key": "group.enter"
+    },
+    {
+      "file": "src/components/PageTimeGroupButton.tsx",
+      "line": 45,
+      "column": 23,
+      "key": "group.done"
+    },
+    {
+      "file": "src/components/PageTimeGroupButton.tsx",
+      "line": 47,
+      "column": 64,
+      "key": "group.failed"
+    },
+    {
+      "file": "src/components/PageTimeGroupButton.tsx",
+      "line": 57,
+      "column": 42,
+      "key": "group.hint"
+    },
+    {
+      "file": "src/components/PageTimeGroupButton.tsx",
+      "line": 61,
+      "column": 15,
+      "key": "group.creating"
+    },
+    {
+      "file": "src/components/PageTimeGroupButton.tsx",
+      "line": 61,
+      "column": 37,
+      "key": "group.create"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 70,
+      "column": 18,
+      "key": "presentation.browseTitle"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 73,
+      "column": 14,
+      "key": "presentation.backEditor"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 80,
+      "column": 14,
+      "key": "presentation.play"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 86,
+      "column": 21,
+      "key": "presentation.groups"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 109,
+      "column": 34,
+      "key": "presentation.endState"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 109,
+      "column": 63,
+      "key": "presentation.startState"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 112,
+      "column": 28,
+      "key": "presentation.endState"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 112,
+      "column": 57,
+      "key": "presentation.startState"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 118,
+      "column": 46,
+      "key": "presentation.noStates"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 125,
+      "column": 15,
+      "key": "presentation.seekFailed"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 127,
+      "column": 17,
+      "key": "presentation.loading"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 128,
+      "column": 17,
+      "key": "presentation.waiting"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 131,
+      "column": 16,
+      "key": "presentation.retry"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 142,
+      "column": 12,
+      "key": "presentation.play"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 105,
+      "column": 14,
+      "key": "presentation.segment"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 110,
+      "column": 23,
+      "key": "presentation.invalidRange"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 130,
+      "column": 23,
+      "key": "presentation.next"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 135,
+      "column": 14,
+      "key": "presentation.previous"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 140,
+      "column": 17,
+      "key": "presentation.running"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 142,
+      "column": 19,
+      "key": "presentation.finished"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 143,
+      "column": 19,
+      "key": "presentation.waiting"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 150,
+      "column": 42,
+      "key": "presentation.running"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 150,
+      "column": 70,
+      "key": "presentation.next"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 152,
+      "column": 18,
+      "key": "presentation.keys"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 154,
+      "column": 14,
+      "key": "presentation.exit"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 187,
+      "column": 12,
+      "key": "presentation.browseTitle"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 189,
+      "column": 36,
+      "key": "presentation.title"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 198,
+      "column": 12,
+      "key": "presentation.start"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 201,
+      "column": 12,
+      "key": "presentation.end"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 203,
+      "column": 48,
+      "key": "presentation.pending"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 205,
+      "column": 23,
+      "key": "presentation.segments"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 218,
+      "column": 29,
+      "key": "presentation.choose"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 224,
+      "column": 25,
+      "key": "presentation.invalid"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 234,
+      "column": 41,
+      "key": "presentation.name"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 239,
+      "column": 12,
+      "key": "presentation.rename"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 248,
+      "column": 12,
+      "key": "presentation.delete"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 255,
+      "column": 12,
+      "key": "presentation.play"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 258,
+      "column": 60,
+      "key": "presentation.masterOnly"
+    },
+    {
+      "file": "src/components/presentation/PresentationThumbnail.tsx",
+      "line": 57,
+      "column": 15,
+      "key": "presentation.thumbnailFailed"
+    },
+    {
+      "file": "src/components/presentation/PresentationThumbnail.tsx",
+      "line": 58,
+      "column": 15,
+      "key": "presentation.loading"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 70,
+      "column": 32,
+      "key": "header.capturing"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 70,
+      "column": 56,
+      "key": "header.captureFrame"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 100,
+      "column": 39,
+      "key": "header.capturingFrame"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 100,
+      "column": 68,
+      "key": "header.captureFrame"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 127,
+      "column": 30,
+      "key": "header.capturing"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 127,
+      "column": 54,
+      "key": "header.capture"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 131,
+      "column": 27,
+      "key": "header.inspector"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 134,
+      "column": 27,
+      "key": "header.inspector"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 155,
+      "column": 16,
+      "key": "header.inspector"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 165,
+      "column": 17,
+      "key": "header.ffmpegMissing"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 167,
+      "column": 19,
+      "key": "header.renderBusy"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 168,
+      "column": 19,
+      "key": "header.exportHint"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 189,
+      "column": 28,
+      "key": "header.rendering"
+    },
+    {
+      "file": "src/components/StudioHeader.tsx",
+      "line": 189,
+      "column": 52,
+      "key": "header.export"
+    },
+    {
+      "file": "src/components/TimelineHistoryButtons.tsx",
+      "line": 23,
+      "column": 41,
+      "key": "history.undo"
+    },
+    {
+      "file": "src/components/TimelineHistoryButtons.tsx",
+      "line": 23,
+      "column": 61,
+      "key": "history.redo"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 225,
+      "column": 49,
+      "key": "timeline.snapOn"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 225,
+      "column": 72,
+      "key": "timeline.snapOff"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 229,
+      "column": 27,
+      "key": "timeline.snapToggle"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 236,
+      "column": 47,
+      "key": "timeline.rippleOn"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 236,
+      "column": 72,
+      "key": "timeline.rippleOff"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 240,
+      "column": 27,
+      "key": "timeline.rippleToggle"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 249,
+      "column": 43,
+      "key": "timeline.metersHide"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 249,
+      "column": 70,
+      "key": "timeline.metersShow"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 254,
+      "column": 29,
+      "key": "timeline.metersToggle"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 269,
+      "column": 23,
+      "key": "keyframe.endpointHint"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 271,
+      "column": 25,
+      "key": "keyframe.select"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 274,
+      "column": 29,
+      "key": "keyframe.extendPathHint"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 276,
+      "column": 31,
+      "key": "keyframe.removeWaypointHint"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 277,
+      "column": 31,
+      "key": "keyframe.addWaypointHint"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 279,
+      "column": 29,
+      "key": "keyframe.removeAtHint"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 282,
+      "column": 33,
+      "key": "keyframe.extend"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 283,
+      "column": 33,
+      "key": "keyframe.addAtHint"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 284,
+      "column": 31,
+      "key": "keyframe.add"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 293,
+      "column": 25,
+      "key": "keyframe.endpoint"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 296,
+      "column": 29,
+      "key": "keyframe.removeWaypoint"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 298,
+      "column": 31,
+      "key": "keyframe.extendPath"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 299,
+      "column": 31,
+      "key": "keyframe.addWaypoint"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 301,
+      "column": 29,
+      "key": "keyframe.removeAt"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 302,
+      "column": 29,
+      "key": "keyframe.addAt"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 331,
+      "column": 46,
+      "key": "keyframe.editMode"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 331,
+      "column": 71,
+      "key": "keyframe.moveMode"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 345,
+      "column": 44,
+      "key": "keyframe.edit"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 345,
+      "column": 65,
+      "key": "keyframe.move"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 380,
+      "column": 25,
+      "key": "timeline.splitHint"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 382,
+      "column": 27,
+      "key": "timeline.splitInside"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 383,
+      "column": 27,
+      "key": "timeline.splitSelect"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 389,
+      "column": 33,
+      "key": "timeline.split"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 426,
+      "column": 23,
+      "key": "timeline.beatTrack"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 428,
+      "column": 25,
+      "key": "timeline.addBeat"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 429,
+      "column": 25,
+      "key": "timeline.beatExists"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 435,
+      "column": 31,
+      "key": "timeline.addBeat"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 462,
+      "column": 40,
+      "key": "timeline.hideThumbnails"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 462,
+      "column": 71,
+      "key": "timeline.showThumbnails"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 467,
+      "column": 37,
+      "key": "timeline.hideThumbnails"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 467,
+      "column": 68,
+      "key": "timeline.showThumbnails"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 480,
+      "column": 27,
+      "key": "timeline.fitWidth"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 484,
+      "column": 27,
+      "key": "timeline.fitWidth"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 495,
+      "column": 27,
+      "key": "timeline.zoomOut"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 498,
+      "column": 27,
+      "key": "timeline.zoomOut"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 511,
+      "column": 25,
+      "key": "timeline.zoom"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 521,
+      "column": 27,
+      "key": "timeline.zoomIn"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 524,
+      "column": 27,
+      "key": "timeline.zoomIn"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 534,
+      "column": 25,
+      "key": "timeline.zoomLevel"
+    },
+    {
+      "file": "src/components/TimelineToolbar.tsx",
+      "line": 536,
+      "column": 25,
+      "key": "timeline.fit"
+    },
+    {
+      "file": "src/components/TimelineToolPicker.tsx",
+      "line": 32,
+      "column": 14,
+      "key": "tool.select"
+    },
+    {
+      "file": "src/components/TimelineToolPicker.tsx",
+      "line": 39,
+      "column": 14,
+      "key": "tool.split"
+    },
+    {
+      "file": "src/components/TimelineToolPicker.tsx",
+      "line": 49,
+      "column": 16,
+      "key": "tool.left"
+    },
+    {
+      "file": "src/components/TimelineToolPicker.tsx",
+      "line": 56,
+      "column": 16,
+      "key": "tool.right"
+    },
+    {
+      "file": "src/components/TimelineToolPicker.tsx",
+      "line": 67,
+      "column": 19,
+      "key": "tool.menu"
+    },
+    {
+      "file": "src/components/TimelineToolPicker.tsx",
+      "line": 71,
+      "column": 23,
+      "key": "tool.current"
+    },
+    {
+      "file": "src/player/components/TimelineCanvas.tsx",
+      "line": 99,
+      "column": 38,
+      "key": "timeline.drop"
+    },
+    {
+      "file": "src/player/components/TimelineEmptyState.tsx",
+      "line": 73,
+      "column": 62,
+      "key": "timeline.import"
+    },
+    {
+      "file": "src/player/components/TimelineEmptyState.tsx",
+      "line": 95,
+      "column": 31,
+      "key": "timeline.emptyDrop"
+    },
+    {
+      "file": "src/player/components/TimelineEmptyState.tsx",
+      "line": 95,
+      "column": 57,
+      "key": "timeline.emptyDescribe"
+    }
+  ]
+}

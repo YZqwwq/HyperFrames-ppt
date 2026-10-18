@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 import { ArrowLeft, CaretRight } from "@phosphor-icons/react";
 import { trackStudioEvent } from "../../utils/studioTelemetry";
 
@@ -20,7 +21,7 @@ export function CompositionBreadcrumb({ stack, onNavigate }: CompositionBreadcru
 
   return (
     <nav
-      aria-label="时间组导航"
+      aria-label={t("group.navigation")}
       className="flex items-center gap-1 px-2 h-8 border-b border-hairline bg-bg-1 shrink-0"
     >
       {/* Back button — always goes to parent */}
@@ -34,11 +35,11 @@ export function CompositionBreadcrumb({ stack, onNavigate }: CompositionBreadcru
           onNavigate(stack.length - 2);
         }}
         className="flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-xs text-text-3 hover:text-text-0 hover:bg-hover active:scale-[0.98] transition-colors"
-        title="返回上一级（Esc）"
-        aria-label="返回上一级时间轴"
+        title={t("group.backHint")}
+        aria-label={t("group.backAria")}
       >
         <ArrowLeft size={12} weight="bold" />
-        返回上一级
+        {t("group.back")}
       </button>
 
       {/* Breadcrumb path */}
@@ -49,7 +50,7 @@ export function CompositionBreadcrumb({ stack, onNavigate }: CompositionBreadcru
             {i > 0 && <CaretRight size={10} className="text-text-4 shrink-0" />}
             {isLast ? (
               <span className="text-xs text-text-1 font-medium">
-                {level.id === "master" ? "总时间轴" : level.label}
+                {level.id === "master" ? t("group.master") : level.label}
               </span>
             ) : (
               <button
@@ -60,7 +61,7 @@ export function CompositionBreadcrumb({ stack, onNavigate }: CompositionBreadcru
                 }}
                 className="text-xs text-text-3 hover:text-text-1 transition-colors"
               >
-                {level.id === "master" ? "总时间轴" : level.label}
+                {level.id === "master" ? t("group.master") : level.label}
               </button>
             )}
           </span>

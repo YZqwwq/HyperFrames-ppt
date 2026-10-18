@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 import { Eye, Layers } from "../../icons/SystemIcons";
 import type { DomEditSelection } from "./domEditingTypes";
 import { canHideSelections } from "../../utils/timelineInspector";
@@ -18,15 +19,15 @@ function FlatEmptyState() {
           <path d="M4 3l6 14 2-6 6-2z" strokeLinejoin="round" />
         </svg>
       </span>
-      <div className="text-[13px] font-semibold text-panel-text-0">Nothing selected</div>
+      <div className="text-[13px] font-semibold text-panel-text-0">{t("selection.empty")}</div>
       <div className="max-w-[250px] text-[11px] leading-normal text-panel-text-3">
-        Click any element on the canvas to edit it, or drag to select several.
+        {t("selection.hint")}
       </div>
       <div className="mt-2 flex w-full flex-col gap-1.5">
         <span className="flex items-center justify-between rounded-lg border border-panel-border bg-panel-bg px-3 py-2">
           <span className="flex items-center gap-2 text-[11px] text-panel-text-2">
             <span className="text-danger-ink">●</span>
-            Record a gesture
+            {t("selection.record")}
           </span>
           <span className="rounded-sm border border-panel-border-input px-[5px] py-px font-mono text-[9px] text-panel-text-5">
             R
@@ -35,7 +36,7 @@ function FlatEmptyState() {
         <span className="flex items-center justify-between rounded-lg border border-panel-border bg-panel-bg px-3 py-2">
           <span className="flex items-center gap-2 text-[11px] text-panel-text-2">
             <span className="text-accent-ink">✦</span>
-            Describe a change to the agent
+            {t("selection.ask")}
           </span>
           <span className="rounded-sm border border-panel-border-input px-[5px] py-px font-mono text-[9px] text-panel-text-5">
             ⌘K
@@ -81,16 +82,16 @@ function FlatMultiSelectState({
         </span>
         <div className="min-w-0 flex-1">
           <div className="text-[13px] font-semibold text-panel-text-0">
-            {multiSelectCount} elements selected
+            {t("selection.count", { count: multiSelectCount })}
           </div>
           <div className="mt-px font-mono text-[10px] text-panel-text-3">
-            shift-click to add or remove
+            {t("selection.shift")}
           </div>
         </div>
         <button
           type="button"
           data-flat-multiselect-clear="true"
-          aria-label="Clear selection"
+          aria-label={t("selection.clear")}
           onClick={onClearSelection}
           className="flex h-[26px] w-[26px] shrink-0 items-center justify-center text-panel-text-3"
         >
@@ -149,7 +150,7 @@ function FlatMultiSelectState({
             className="flex h-[34px] flex-1 items-center justify-center gap-2 rounded-lg bg-panel-hover text-[11px] font-semibold text-panel-text-0"
           >
             <Layers size={13} />
-            Group selection
+            {t("selection.group")}
           </button>
           <button
             type="button"
@@ -162,7 +163,7 @@ function FlatMultiSelectState({
             className="flex h-[34px] items-center gap-1.5 rounded-lg border border-panel-border-input bg-panel-input px-3 text-[11px] font-medium text-panel-text-2"
           >
             <Eye size={13} />
-            Hide all
+            {t("selection.hide")}
           </button>
         </div>
       )}

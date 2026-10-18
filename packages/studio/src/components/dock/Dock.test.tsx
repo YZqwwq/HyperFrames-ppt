@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 // @vitest-environment happy-dom
 
 import React, { act, type ComponentProps } from "react";
@@ -266,10 +267,16 @@ describe("a host's dock", () => {
     expect(useDockLayoutStore.getState().openPanels).toEqual(new Set(panels));
     expect(useDockLayoutStore.getState().visiblePanels).toEqual(new Set(panels));
     expect(dockApi?.getPanel("assets")?.group.id).not.toBe(dockApi?.getPanel("renders")?.group.id);
-    const menu = [...host.querySelectorAll("button")].find((b) => b.textContent === "Window");
+    const menu = [...host.querySelectorAll("button")].find(
+      (b) => b.textContent === t("window.menu"),
+    );
     act(() => menu?.click());
     const items = [...host.querySelectorAll('[role="menuitemcheckbox"]')].map((i) => i.textContent);
-    expect(items).toEqual(["✓Preview", "✓Timeline", "✓Assets", "✓Renders"]);
+    expect(items).toEqual(
+      [t("panel.preview"), t("panel.timeline"), t("panel.assets"), t("panel.renders")].map(
+        (label) => "✓" + label,
+      ),
+    );
   });
 
   it("keeps its layout alone under its own key, never in Studio's preferences", () => {

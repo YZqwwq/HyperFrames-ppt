@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 // @vitest-environment happy-dom
 
 import React, { act } from "react";
@@ -31,7 +32,7 @@ function makeElement(overrides: Partial<DomEditSelection> = {}): DomEditSelectio
     textFields: [
       {
         key: "field-0",
-        label: "Text",
+        label: t("property.text"),
         value: "PACKETS / FRAME",
         tagName: "div",
         attributes: [],
@@ -89,11 +90,11 @@ describe("FlatTextSection", () => {
   it("renders the content block and every row from #10a", () => {
     const { host, root } = renderSection();
     expect(host.textContent).toContain("PACKETS / FRAME");
-    expect(host.textContent).toContain("Font");
+    expect(host.textContent).toContain(t("property.font"));
     expect(host.textContent).toContain("Weight");
-    expect(host.textContent).toContain("Letter spacing");
-    expect(host.textContent).toContain("Line height");
-    expect(host.textContent).toContain("Align");
+    expect(host.textContent).toContain(t("property.letterSpacing"));
+    expect(host.textContent).toContain(t("property.lineHeight"));
+    expect(host.textContent).toContain(t("property.align"));
     act(() => root.unmount());
   });
 
@@ -139,7 +140,7 @@ describe("FlatTextSection", () => {
         makeElement().textFields[0],
         {
           key: "field-1",
-          label: "Text",
+          label: t("property.text"),
           value: "SECOND FIELD",
           tagName: "div",
           attributes: [],
@@ -155,7 +156,7 @@ describe("FlatTextSection", () => {
     // delegation to the legacy component.
     expect(host.querySelector('[data-panel-section="text"]')).toBeNull();
     // The flat layer list's own content must render.
-    expect(host.textContent).toContain("Text layers");
+    expect(host.textContent).toContain(t("property.textLayers"));
     act(() => root.unmount());
   });
 });

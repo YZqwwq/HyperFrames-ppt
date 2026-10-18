@@ -1796,6 +1796,25 @@ const tl = gsap.timeline({ paused: true });
     },
   );
 
+  it("accepts a pure math easing function and persists executable code", async () => {
+    const projectDir = createProjectDir();
+    writeHtml(projectDir, "comp.html", FROMTO_COMP);
+    const app = new Hono();
+    registerFileRoutes(app, createAdapter(projectDir));
+    const animation = await getFirstAnimation(app, "comp.html");
+    const response = await app.request("http://localhost/projects/demo/gsap-mutations/comp.html", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "update-meta",
+        animationId: animation.id,
+        updates: { ease: "__raw:(t) => (t * t * (3 - 2 * t))" },
+      }),
+    });
+    expect(response.status).toBe(200);
+    expect(readFileSync(join(projectDir, "comp.html"), "utf8")).toContain("ease: (t) =>");
+  });
+
   it("rejects raw JavaScript expressions at the GSAP mutation boundary", async () => {
     const projectDir = createProjectDir();
     writeHtml(projectDir, "comp.html", FROMTO_COMP);

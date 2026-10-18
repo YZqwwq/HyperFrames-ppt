@@ -32,6 +32,7 @@ import { resolveTweenDuration } from "../utils/globalTimeCompiler";
 import { roundTo3 } from "../utils/rounding";
 import type { GsapDragCommitCallbacks } from "./gsapDragCommit";
 import { readDragStamp, type DragStamp } from "./draggedGsapPosition";
+import { animationEndpointTarget } from "./animationEndpointTarget";
 import { editMoment } from "./editMoment";
 import type { EditMoment } from "../components/editor/manualEditsTypes";
 import { isInstantHold, selectorFromSelection, writeTargetSelector } from "./gsapShared";
@@ -71,6 +72,8 @@ export async function resolveGroupTween(
   time?: number,
 ): Promise<{ anim: GsapAnimation; animations: GsapAnimation[] } | null> {
   const inGroup = (list: GsapAnimation[]) => {
+    const endpoint = animationEndpointTarget(_selection, list, time);
+    if (endpoint) return endpoint;
     const tagged = list.filter((a) => a.propertyGroup === group);
     const props = new Set(PROPERTY_GROUPS[group]);
     const mixed = list.filter((a) => !a.propertyGroup && animationWritesAnyProperty(a, props));
@@ -226,7 +229,9 @@ async function planDrag(
     moment.time,
   );
   const posAnim = resolved?.anim ?? findGsapPositionAnimation(animations, selector, moment.time);
-  const route = dragRoute(posAnim, iframe, selector, options.altKey);
+  const route = animationEndpointTarget(selection, animations, moment.time)
+    ? "at-playhead"
+    : dragRoute(posAnim, iframe, selector, options.altKey);
   if (route === "static") return { status: "persisted" };
   if (!posAnim) {
     return { status: "blocked", reason: "source-uneditable", detail: "no-position-tween" };
@@ -259,7 +264,7 @@ export async function tryGsapDragIntercept(
   },
 ): Promise<GsapEditOutcome> {
   const stamp = options?.stamp ?? readDragStamp(selection.element);
-  const moment = editMoment(stamp);
+  const moment = editMoment(stamp, selection);
   const time = moment.time;
   if (!options?.preflightPassed) {
     const preflight = await preflightGsapDragIntercept(
@@ -331,7 +336,9 @@ export async function tryGsapDragIntercept(
   }
 
   const gsapPos = readGsapPositionFromIframe(iframe, selector) ?? { x: 0, y: 0 };
-  const route = dragRoute(posAnim, iframe, selector, options?.altKey);
+  const route = animationEndpointTarget(selection, resolvedAnimations, time)
+    ? "at-playhead"
+    : dragRoute(posAnim, iframe, selector, options?.altKey);
   if (route === "static") {
     const existingSet =
       posAnim && isInstantHold(posAnim) && posAnim.targetSelector === selector
@@ -356,6 +363,7 @@ export async function tryGsapDragIntercept(
   if (fetchFallbackAnimations) {
     const fresh = await fetchFallbackAnimations();
     const freshMatch =
+      animationEndpointTarget(selection, fresh, time) ??
       fresh.find((a) => a.id === posAnim!.id) ??
       pickClosestToPlayhead(
         fresh.filter(
@@ -430,7 +438,7 @@ export async function tryGsapRotationIntercept(
   fetchFallbackAnimations?: () => Promise<GsapAnimation[]>,
   stamp?: DragStamp,
 ): Promise<GsapEditOutcome> {
-  const time = editMoment(stamp).time;
+  const time = editMoment(stamp, selection).time;
   const fetchedAnimations = fetchFallbackAnimations ? await fetchFallbackAnimations() : [];
   const outcome = preflightGsapRotationIntercept(selection, animations, iframe, fetchedAnimations);
   if (outcome.status === "blocked") return outcome;

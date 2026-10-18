@@ -335,24 +335,21 @@ describe("PropertyPanel — STUDIO_FLAT_INSPECTOR_ENABLED on", () => {
   it("renders the flat header, the Text group open by default, and the flat footer", async () => {
     const { host, root } = await renderPanel(true);
     expect(host.querySelector('[data-flat-header-icon="true"]')).not.toBeNull();
-    expect(host.querySelector('[data-flat-group-open="true"]')).not.toBeNull();
+    expect(host.querySelector('[data-text-editor="true"]')).not.toBeNull();
     expect(host.textContent).toContain("Ask agent about this element");
     act(() => root.unmount());
   });
 
-  it("collapses the Text group on caret click and can reopen it", async () => {
+  it("keeps text visible while animation states expand independently", async () => {
     const { host, root } = await renderPanel(true);
-    const collapseButton = host.querySelector<HTMLButtonElement>(
-      '[data-flat-group-open="true"] button[title="Collapse"]',
-    );
-    act(() => collapseButton?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
-    expect(host.querySelector('[data-flat-group-open="true"]')).toBeNull();
-    const collapsedRow = host.querySelector<HTMLButtonElement>(
-      '[data-flat-group-collapsed="true"]',
-    );
-    expect(collapsedRow).not.toBeNull();
-    act(() => collapsedRow?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
-    expect(host.querySelector('[data-flat-group-open="true"]')).not.toBeNull();
+    const animation = host.querySelector("details")!;
+    expect(animation.open).toBe(false);
+    expect(host.querySelector("textarea")).not.toBeNull();
+    act(() => {
+      animation.open = true;
+    });
+    expect(animation.open).toBe(true);
+    expect(host.querySelector("textarea")).not.toBeNull();
     act(() => root.unmount());
   });
 
@@ -379,10 +376,10 @@ describe("PropertyPanel — STUDIO_FLAT_INSPECTOR_ENABLED on", () => {
     // the legacy TextSection's internal Section heading (data-panel-section
     // ="text") must never appear, since the flat multi-field path no longer
     // delegates to that component at all.
-    expect(host.querySelector('[data-flat-group-open="true"]')).not.toBeNull();
+    expect(host.querySelector('[data-text-editor="true"]')).not.toBeNull();
     expect(host.querySelector('[data-panel-section="text"]')).toBeNull();
     // Content from the flat multi-field layer list must render.
-    expect(host.textContent).toContain("Text layers");
+    expect(host.textContent).toContain("文本图层");
     act(() => root.unmount());
   });
 });
@@ -391,16 +388,17 @@ describe("PropertyPanel — Style group (flag on)", () => {
   it("renders the Style group for a style-editable, non-text element", async () => {
     const { host, root } = await renderPanel(true, styleOnlyElement());
     expect(host.textContent).toContain("Style");
-    expect(host.textContent).toContain("Fill");
+    openFlatGroup(host, "Style");
+    expect(host.textContent).toContain("填充");
     act(() => root.unmount());
   });
 
-  it("one-open accordion: opening Style closes Text", async () => {
+  it("opening Style keeps the common text editor visible", async () => {
     // baseElement() is text-editable and has capabilities.canEditStyles:
     // true, so both the Text and Style groups render for it.
     const { host, root } = await renderPanel(true);
     const textGroup = () => host.querySelector('[data-flat-group-open="true"]');
-    expect(textGroup()?.textContent).toContain("Text");
+    expect(host.querySelector("textarea")).not.toBeNull();
     const styleCollapsedRow = Array.from(
       host.querySelectorAll('[data-flat-group-collapsed="true"]'),
     ).find((el) => el.textContent?.includes("Style"));
@@ -416,7 +414,7 @@ describe("PropertyPanel — Layout group (Plan 3a)", () => {
   it("always renders the Layout group, and opening it closes whichever other group was open", async () => {
     const { host, root } = await renderPanel(true);
     // Text group is open by default for the base text-editable fixture.
-    expect(host.querySelector('[data-flat-group-open="true"]')?.textContent).toContain("Text");
+    expect(host.querySelector("textarea")).not.toBeNull();
 
     const layoutCollapsedRow = Array.from(
       host.querySelectorAll('[data-flat-group-collapsed="true"]'),
@@ -455,7 +453,7 @@ describe("PropertyPanel — Motion group (Plan 3b)", () => {
   it("renders the Motion group with Timing, and opening it closes the previously open group (4-way exclusivity)", async () => {
     const { host, root } = await renderPanel(true, animatedElement());
     // Text is open by default for the text-editable fixture.
-    expect(openGroupText(host)).toContain("Text");
+    expect(host.querySelector("textarea")).not.toBeNull();
 
     openFlatGroup(host, "Motion");
     const openGroup = openGroupText(host);
@@ -741,6 +739,7 @@ describe("PropertyPanel — Media group (Plan 4)", () => {
     // videoElement() has canEditStyles: true and no text fields, so Style is
     // the default-open group; Layout and Media render collapsed alongside it.
     const { host, root } = await renderPanel(true, videoElement() as never);
+    openFlatGroup(host, "Style");
     expect(openGroupText(host)).toContain("Style");
 
     // Opening Media closes Style.
@@ -803,14 +802,14 @@ describe("PropertyPanel — fixed headers + scrollable open section (Plan 11)", 
     });
     // Filter to just the group entries (drop any non-group nulls).
     const groupTitles = titles.filter((t): t is string => t !== null);
-    expect(groupTitles).toHaveLength(7);
-    expect(groupTitles[0]).toContain("Text");
-    expect(groupTitles[1]).toContain("Style");
-    expect(groupTitles[2]).toContain("Layout");
-    expect(groupTitles[3]).toContain("Motion");
-    expect(groupTitles[4]).toContain("Grade");
-    expect(groupTitles[5]).toContain("Effects");
-    expect(groupTitles[6]).toContain("Media");
+    expect(groupTitles).toHaveLength(6);
+    expect(host.querySelector("textarea")).not.toBeNull();
+    expect(groupTitles[0]).toContain("Style");
+    expect(groupTitles[1]).toContain("Layout");
+    expect(groupTitles[2]).toContain("Motion");
+    expect(groupTitles[3]).toContain("Grade");
+    expect(groupTitles[4]).toContain("Effects");
+    expect(groupTitles[5]).toContain("Media");
 
     // The open group (Motion, index 3) is the one wrapped in
     // data-flat-group-open, sitting between the before/after collapsed
@@ -841,18 +840,18 @@ describe("PropertyPanel — fixed headers + scrollable open section (Plan 11)", 
     const collapsedRows = Array.from(
       host.querySelectorAll<HTMLButtonElement>('[data-flat-group-collapsed="true"]'),
     );
-    expect(collapsedRows).toHaveLength(7);
+    expect(collapsedRows).toHaveLength(6);
     const titlesInOrder = collapsedRows.map((el) => el.textContent ?? "");
-    expect(titlesInOrder[0]).toContain("Text");
-    expect(titlesInOrder[1]).toContain("Style");
-    expect(titlesInOrder[2]).toContain("Layout");
-    expect(titlesInOrder[3]).toContain("Motion");
-    expect(titlesInOrder[4]).toContain("Grade");
-    expect(titlesInOrder[5]).toContain("Effects");
-    expect(titlesInOrder[6]).toContain("Media");
+    expect(host.querySelector("textarea")).not.toBeNull();
+    expect(titlesInOrder[0]).toContain("Style");
+    expect(titlesInOrder[1]).toContain("Layout");
+    expect(titlesInOrder[2]).toContain("Motion");
+    expect(titlesInOrder[3]).toContain("Grade");
+    expect(titlesInOrder[4]).toContain("Effects");
+    expect(titlesInOrder[5]).toContain("Media");
 
     const body = host.querySelector('[data-flat-panel-body="true"]');
-    expect(body?.querySelector(".overflow-y-auto")).toBeNull();
+    expect(body?.querySelector('[data-flat-group-open="true"]')).toBeNull();
     for (const row of collapsedRows) {
       expect(row.style.position).toBe("");
     }
@@ -867,8 +866,8 @@ describe("PropertyPanel — flat group entrance animation scoping (fix round)", 
     // shift position in the open slices without being toggled: what justToggledIds guards.
     openFlatGroup(host, "Motion");
     expect(openGroupText(host)).toContain("Motion");
-    openFlatGroup(host, "Text");
-    expect(openGroupText(host)).toContain("Text");
+    openFlatGroup(host, "Style");
+    expect(host.querySelector("textarea")).not.toBeNull();
 
     const collapsedRowByTitle = (title: string) => {
       const row = Array.from(host.querySelectorAll('[data-flat-group-collapsed="true"]')).find(
@@ -880,7 +879,7 @@ describe("PropertyPanel — flat group entrance animation scoping (fix round)", 
 
     // Untouched, non-adjacent siblings must NOT receive the entrance class,
     // even though they shifted position in the collapsed-header list.
-    expect(collapsedRowByTitle("Style").classList.contains("hf-flat-group-enter")).toBe(false);
+    expect(host.querySelector("textarea")).not.toBeNull();
     expect(collapsedRowByTitle("Layout").classList.contains("hf-flat-group-enter")).toBe(false);
     expect(collapsedRowByTitle("Grade").classList.contains("hf-flat-group-enter")).toBe(false);
     expect(collapsedRowByTitle("Media").classList.contains("hf-flat-group-enter")).toBe(false);

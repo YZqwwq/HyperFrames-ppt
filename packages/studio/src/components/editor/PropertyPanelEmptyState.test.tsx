@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 // @vitest-environment happy-dom
 
 import React, { act } from "react";
@@ -25,9 +26,9 @@ function renderInto(node: React.ReactElement) {
 describe("PropertyPanelEmptyState — flat empty", () => {
   it("shows the cursor glyph, headline, and the two shortcut rows", () => {
     const { host, root } = renderInto(<PropertyPanelEmptyState flat multiSelectCount={0} />);
-    expect(host.textContent).toContain("Nothing selected");
-    expect(host.textContent).toContain("Record a gesture");
-    expect(host.textContent).toContain("Describe a change to the agent");
+    expect(host.textContent).toContain(t("selection.empty"));
+    expect(host.textContent).toContain(t("selection.record"));
+    expect(host.textContent).toContain(t("selection.ask"));
     act(() => root.unmount());
   });
 });
@@ -52,7 +53,7 @@ describe("PropertyPanelEmptyState — flat multi-select", () => {
         onClearSelection={onClearSelection}
       />,
     );
-    expect(host.textContent).toContain("2 elements selected");
+    expect(host.textContent).toContain(t("selection.count", { count: 2 }));
     expect(host.textContent).toContain("Mono Label");
     expect(host.textContent).toContain("S2 Chart");
 
@@ -100,7 +101,7 @@ describe("PropertyPanelEmptyState — flat multi-select", () => {
     // timeline owns that write as a mute.
     expect(host.querySelector('[data-flat-multiselect-hide-all="true"]')).toBeNull();
     // The list still names what is selected; only the actions go.
-    expect(host.textContent).toContain("2 elements selected");
+    expect(host.textContent).toContain(t("selection.count", { count: 2 }));
     act(() => root.unmount());
   });
 

@@ -1,5 +1,13 @@
 # Hyperframes
 
+## Future PPT presentation rules
+
+Before creating, importing, restructuring, or editing a Future PPT presentation, read
+[PRESENTATION_RULES.md](PRESENTATION_RULES.md). Design continuous object animation first,
+then add presentation stops. Persistent objects must have a single owning track/group
+across presentation frames; do not recreate them per slide. This is an authoring contract,
+not a claim that every required editor capability is already implemented.
+
 Open-source video rendering framework: write HTML, render video.
 
 ## Skills

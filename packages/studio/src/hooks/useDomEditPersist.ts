@@ -40,7 +40,7 @@ export interface UseDomEditPersistParams {
     operations: PatchOperation[],
     originalContent: string,
     targetPath: string,
-    options?: { label?: string; coalesceKey?: string; skipRefresh?: boolean },
+    options?: { label?: string; coalesceKey?: string; coalesceMs?: number; skipRefresh?: boolean },
   ) => Promise<CutoverResult>;
 }
 
@@ -117,6 +117,7 @@ export function useDomEditPersist({
         const cutover = await onTrySdkPersist(selection, operations, originalContent, targetPath, {
           label: options?.label,
           coalesceKey: options?.coalesceKey,
+          coalesceMs: options?.coalesceMs,
           skipRefresh: options?.skipRefresh,
         });
         if (cutover.status === "failed") throw cutover.error;

@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 import type { Direction } from "dockview-react";
 
 export const PANEL_IDS = [
@@ -28,34 +29,62 @@ export interface PanelDefinition {
 
 export const PANEL_DEFINITIONS = {
   preview: {
-    title: "Preview",
+    title: t("panel.preview"),
     zone: "center",
     reopen: { near: "timeline", direction: "above" },
     keepMounted: true,
   },
   timeline: {
-    title: "Timeline",
+    title: t("panel.timeline"),
     zone: "center",
     reopen: { near: "preview", direction: "below" },
     keepMounted: true,
   },
   compositions: {
-    title: "Compositions",
+    title: t("panel.compositions"),
     zone: "left",
     reopen: { near: "preview", direction: "left" },
   },
-  assets: { title: "Assets", zone: "left", reopen: { near: "compositions", direction: "within" } },
-  code: { title: "Code", zone: "left", reopen: { near: "compositions", direction: "within" } },
-  catalog: {
-    title: "Catalog",
+  assets: {
+    title: t("panel.assets"),
     zone: "left",
     reopen: { near: "compositions", direction: "within" },
   },
-  design: { title: "Design", zone: "right", reopen: { near: "preview", direction: "right" } },
-  layers: { title: "Layers", zone: "right", reopen: { near: "design", direction: "within" } },
-  renders: { title: "Renders", zone: "right", reopen: { near: "design", direction: "within" } },
-  variables: { title: "Variables", zone: "right", reopen: { near: "design", direction: "within" } },
-  slideshow: { title: "Slideshow", zone: "right", reopen: { near: "design", direction: "within" } },
+  code: {
+    title: t("panel.code"),
+    zone: "left",
+    reopen: { near: "compositions", direction: "within" },
+  },
+  catalog: {
+    title: t("panel.catalog"),
+    zone: "left",
+    reopen: { near: "compositions", direction: "within" },
+  },
+  design: {
+    title: t("panel.design"),
+    zone: "right",
+    reopen: { near: "preview", direction: "right" },
+  },
+  layers: {
+    title: t("panel.layers"),
+    zone: "right",
+    reopen: { near: "design", direction: "within" },
+  },
+  renders: {
+    title: t("panel.renders"),
+    zone: "right",
+    reopen: { near: "design", direction: "within" },
+  },
+  variables: {
+    title: t("panel.variables"),
+    zone: "right",
+    reopen: { near: "design", direction: "within" },
+  },
+  slideshow: {
+    title: t("panel.slideshow"),
+    zone: "right",
+    reopen: { near: "design", direction: "within" },
+  },
 } as const satisfies Record<PanelId, PanelDefinition>;
 
 export function isPanelId(value: unknown): value is PanelId {

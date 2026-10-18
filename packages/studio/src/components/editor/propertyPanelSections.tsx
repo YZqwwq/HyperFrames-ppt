@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Plus, Type } from "../../icons/SystemIcons";
 import { isTextEditableSelection, type DomEditSelection } from "./domEditing";
@@ -78,59 +79,41 @@ export function TextAreaField({
   const track = useTrackDesignInput();
   const [draft, setDraft] = useState(value);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const commitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const interactionChangedRef = useRef(false);
+  const composingRef = useRef(false);
+  const lastSubmittedRef = useRef(value);
   const focusedRef = useRef(false);
-  const valueRef = useRef(value);
-  valueRef.current = value;
 
   useEffect(() => {
     if (focusedRef.current) return;
     setDraft(value);
+    lastSubmittedRef.current = value;
   }, [value]);
-  useEffect(
-    () => () => {
-      if (commitTimerRef.current) clearTimeout(commitTimerRef.current);
-    },
-    [],
-  );
   useEffect(() => {
     if (!autoFocus) return;
     textareaRef.current?.focus();
   }, [autoFocus]);
 
   const commitDraft = (d: string) => {
-    if (commitTimerRef.current) clearTimeout(commitTimerRef.current);
     if (interactionChangedRef.current) {
       interactionChangedRef.current = false;
       track("text", label);
     }
-    if (d !== valueRef.current) onCommit(d);
+    if (d !== lastSubmittedRef.current) {
+      lastSubmittedRef.current = d;
+      onCommit(d);
+    }
   };
-  const scheduleCommit = (d: string) => {
-    if (commitTimerRef.current) clearTimeout(commitTimerRef.current);
-    commitTimerRef.current = setTimeout(() => {
-      if (d !== valueRef.current) {
-        if (interactionChangedRef.current) {
-          interactionChangedRef.current = false;
-          track("text", label);
-        }
-        onCommit(d);
-      }
-    }, 120);
-  };
-
   const handleFocus = () => {
     focusedRef.current = true;
   };
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setDraft(e.target.value);
     interactionChangedRef.current = true;
-    scheduleCommit(e.target.value);
   };
   const handleBlur = () => {
     focusedRef.current = false;
-    commitDraft(draft);
+    if (!composingRef.current) commitDraft(draft);
   };
 
   if (flat) {
@@ -145,6 +128,14 @@ export function TextAreaField({
           disabled={disabled}
           rows={2}
           onFocus={handleFocus}
+          onCompositionStart={() => {
+            composingRef.current = true;
+          }}
+          onCompositionEnd={(event) => {
+            composingRef.current = false;
+            setDraft(event.currentTarget.value);
+            if (!focusedRef.current) commitDraft(event.currentTarget.value);
+          }}
           onChange={handleChange}
           onBlur={handleBlur}
           className="field-sizing-content max-h-[40vh] min-h-12 w-full resize-y overflow-x-hidden overflow-y-auto bg-transparent font-mono text-[11px] leading-normal text-panel-text-0 outline-hidden disabled:cursor-not-allowed disabled:text-panel-text-4"
@@ -163,6 +154,14 @@ export function TextAreaField({
           disabled={disabled}
           rows={4}
           onFocus={handleFocus}
+          onCompositionStart={() => {
+            composingRef.current = true;
+          }}
+          onCompositionEnd={(event) => {
+            composingRef.current = false;
+            setDraft(event.currentTarget.value);
+            if (!focusedRef.current) commitDraft(event.currentTarget.value);
+          }}
           onChange={handleChange}
           onBlur={handleBlur}
           className="field-sizing-content max-h-[40vh] min-h-20 w-full resize-y overflow-x-hidden overflow-y-auto bg-transparent text-[11px] font-medium text-neutral-100 outline-hidden disabled:cursor-not-allowed disabled:text-neutral-600"
@@ -258,7 +257,7 @@ function AdvancedTextControls({
       </div>
       <div className={RESPONSIVE_GRID}>
         <SelectField
-          label="Align"
+          label={t("property.align")}
           value={getTextStyleValue(field, inheritedStyles, "text-align", "start")}
           disabled={disabled}
           onChange={(n) => onCommit("text-align", n)}
@@ -312,7 +311,7 @@ function TextFieldEditor({
       <div className={showRemove ? "flex min-w-0 items-center justify-between gap-2" : "min-w-0"}>
         <div className="min-w-0">
           <div className="truncate text-[11px] font-medium text-neutral-100">
-            {formatTextFieldPreview(field.value) || "Text"}
+            {formatTextFieldPreview(field.value) || t("property.text")}
           </div>
           <div className="text-[10px] text-neutral-500">{field.tagName}</div>
         </div>
@@ -333,7 +332,7 @@ function TextFieldEditor({
         {({ value, onCommit }) => (
           <TextAreaField
             key={field.key}
-            label="Content"
+            label={t("property.content")}
             value={value ?? field.value}
             disabled={false}
             autoFocus={showRemove}
@@ -347,7 +346,7 @@ function TextFieldEditor({
       >
         {({ value, onCommit }) => (
           <ColorField
-            label="Text color"
+            label={t("property.textColor")}
             value={value ?? getTextFieldColor(field, styles)}
             disabled={false}
             onCommit={onCommit ?? ((next) => onSetTextFieldStyle(field.key, "color", next))}
@@ -356,7 +355,7 @@ function TextFieldEditor({
       </PromotableControl>
       <div className={RESPONSIVE_GRID}>
         <MetricField
-          label="Size"
+          label={t("property.size")}
           value={field.computedStyles["font-size"] || styles["font-size"] || "16px"}
           disabled={false}
           liveCommit
@@ -455,7 +454,7 @@ export function TextSection({
     );
     if (hideOwnHeading) return content;
     return (
-      <Section title="Text" icon={<Type size={15} />} defaultCollapsed>
+      <Section title={t("property.text")} icon={<Type size={15} />} defaultCollapsed>
         {content}
       </Section>
     );
@@ -465,7 +464,7 @@ export function TextSection({
     <div className="space-y-4">
       <div className="grid gap-1.5">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-          <span className={LABEL}>Text layers</span>
+          <span className={LABEL}>{t("property.textLayers")}</span>
           <button
             type="button"
             onClick={() => {
@@ -527,7 +526,7 @@ export function TextSection({
   );
   if (hideOwnHeading) return content;
   return (
-    <Section title="Text" icon={<Type size={15} />}>
+    <Section title={t("property.text")} icon={<Type size={15} />}>
       {content}
     </Section>
   );

@@ -1,0 +1,3 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+const path='../deliverables/转正答辩-HyperFrames/slides/slide-08.html';const original=readFileSync(path,'utf8');
+try{let r=await fetch('http://127.0.0.1:5194/api/projects/probation-review/gsap-mutations/slides%2Fslide-08.html',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'replace-with-keyframes',animationId:'#slide-08-case-visual-fromTo-5900',targetSelector:'#slide-08-case-visual',position:5.9,duration:1.4,keyframes:[{percentage:0,properties:{x:2,y:0,scale:1}},{percentage:100,properties:{x:-180.5,y:197.589,scale:9.4375}}],easeEach:'power2.inOut'})});console.log(r.status,(await r.text()).slice(0,400));}finally{writeFileSync(path,original)}

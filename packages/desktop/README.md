@@ -51,3 +51,21 @@ Windows 本地未签名验证可传 `--config.win.signAndEditExecutable=false` �
 时间轴工具栏的“页面打组”把当前页面的全部图层和动画保存为一个子合成，总轴仅显示一个带起点和时长的片段。双击片段或右键“进入时间组”编辑内部时序，点击面包屑“总时间轴”返回。支持撤销、重做及重载后恢复；当前入口作用于整页，不是任意多选图层的局部打组。原子文件与页面放在同一目录以保留相对资源路径，文件名自动生成。
 
 本次 Windows 预览包位于 release/time-groups/win-unpacked/Future PPT.exe。浏览器实测覆盖打组、撤销重做、双击/右键进入、返回、重载，以及组内拖动字母后片段起点与 GSAP 起点同步保存。Studio 相关 36 项测试、项目 lint 62 项测试及 TypeScript 检查通过。
+
+## 编辑器中文补丁（2026-10-17）
+
+首批覆盖编辑器顶部操作、面板导航、时间轴工具、时间组导航和常用文字/外观属性。默认简体中文；高级效果、部分弹窗和原生系统菜单尚未全部汉化。作品内容、项目名、文件路径、CSS 属性值及协议字段不参与翻译。
+
+- 中文文案：`packages/studio/src/i18n/zh-CN.json`
+- 英文对照：`packages/studio/src/i18n/en.json`
+- 调用入口：`packages/studio/src/i18n/index.ts`，组件通过 `t("panel.timeline")` 引用语义键。带参数示例：`t("selection.count", { count: 3 })`。第三个参数可指定 `en`；此版尚未提供运行中切换语言的界面。
+- 位置登记：`packages/studio/src/i18n/text-registry.json`，每项记录源文件、行、列与文本键；重复使用同一文本键的控件分别登记。
+
+新增文案时同时补全两份语言文件，在组件中引用字面量文本键，再运行：
+
+```sh
+bun run --cwd packages/studio i18n:register
+bun run --cwd packages/studio i18n:check
+```
+
+注册器读取源码 AST，拒绝不存在的键、缺少翻译、参数不匹配、无人使用的键；校验模式还会检测位置索引过期。源码格式化后应重新生成登记表。此表是依赖索引，不参与运行时渲染，不含用户作品文字。

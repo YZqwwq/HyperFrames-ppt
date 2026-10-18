@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
+import { typingOwnsEvent } from "../utils/typingTarget";
 import { usePlayerStore } from "../player";
 import type { TimelineElement } from "../player";
 import type { DomEditSelection } from "../components/editor/domEditing";
@@ -223,6 +224,7 @@ export function useAppHotkeys({
   // ── Keydown dispatch ──
 
   const handleAppKeyDown = useCallback((event: KeyboardEvent) => {
+    if (document.querySelector("[data-presentation-mode]") || typingOwnsEvent(event)) return;
     const cb = cbRef.current;
     const key = event.key.toLowerCase();
     if (dispatchLinkShortcut(event, cb)) return;

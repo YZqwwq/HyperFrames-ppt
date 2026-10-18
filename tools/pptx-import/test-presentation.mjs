@@ -1,0 +1,34 @@
+import puppeteer from 'puppeteer-core';
+import assert from 'node:assert/strict';
+const b=await puppeteer.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true});
+try{
+const p=await b.newPage();await p.setViewport({width:1600,height:1000});const errors=[];p.on('pageerror',e=>errors.push(e.message));
+await p.goto('http://127.0.0.1:5194/#project/probation-review?v=1&t=68.5&tab=design&rc=0');
+await p.waitForFunction(()=>{const e=[...document.querySelectorAll('button')].find(e=>e.textContent==='从这里放映');return e&&!e.disabled;});
+const click=async text=>{await p.evaluate(text=>{const e=[...document.querySelectorAll('button')].find(e=>e.textContent===text);if(!e)throw new Error(text);e.click()},text)};
+await p.screenshot({path:'tools/pptx-import/presentation-after.png'});
+await click('设为起点');
+await click('从这里放映');await p.waitForSelector('[data-presentation-mode]');
+const frame=p.frames().find(f=>f.url().includes('/preview?'));
+console.log('PLAYER',await frame.evaluate(()=>Object.keys(window.__player||{})));
+console.log('READY',await p.$eval('[data-presentation-mode]',e=>e.innerText));
+await p.keyboard.press('Space');await new Promise(r=>setTimeout(r,5200));
+console.log('STOP',await p.$eval('[data-presentation-mode]',e=>e.innerText));
+console.log('STATE',await frame.evaluate(()=>({time:window.__player?.getTime?.(),playing:window.__player?.isPlaying?.()})));
+assert.ok(Math.abs(await frame.evaluate(()=>window.__player.getTime())-73.05)<0.04);
+await p.screenshot({path:'tools/pptx-import/presentation-stop.png'});
+await p.keyboard.press('ArrowLeft');await new Promise(r=>setTimeout(r,200));
+assert.ok(Math.abs(await frame.evaluate(()=>window.__player.getTime())-68.5)<0.04);
+await p.keyboard.press('Space');await new Promise(r=>setTimeout(r,250));await p.keyboard.press('Space');
+console.log('SKIP',await p.$eval('[data-presentation-mode]',e=>e.innerText));
+await p.keyboard.press('Escape');await p.waitForSelector('[data-presentation-controls]');
+assert.equal(await p.$('[data-presentation-mode]'),null);assert.deepEqual(errors,[]);console.log('EXIT OK');
+await click('设为停留点');
+await p.waitForFunction(()=>[...document.querySelectorAll('option')].some(e=>e.textContent.includes('演示段 2')));
+await p.reload();
+await p.waitForFunction(()=>[...document.querySelectorAll('option')].some(e=>e.textContent.includes('演示段 2')));
+const id=await p.$eval('[aria-label=演示段]',e=>[...e.options].find(o=>o.textContent.includes('演示段 2')).value);
+await p.select('[aria-label=演示段]',id);await click('删除段');
+await p.waitForFunction(()=>![...document.querySelectorAll('option')].some(e=>e.textContent.includes('演示段 2')));
+console.log('SAVE, RELOAD, DELETE OK');
+}finally{await b.close()}

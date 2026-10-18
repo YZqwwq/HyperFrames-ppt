@@ -10,11 +10,16 @@ import type { DomEditSelection } from "./domEditing";
 
 Reflect.set(globalThis, "IS_REACT_ACT_ENVIRONMENT", true);
 
-const { commitMutation } = vi.hoisted(() => ({
+const { commitMutation, removeKeyframe } = vi.hoisted(() => ({
+  removeKeyframe: vi.fn(),
   commitMutation: vi.fn(async (..._args: unknown[]) => {}),
 }));
 vi.mock("../../contexts/DomEditContext", () => ({
-  useDomEditContext: () => ({ selectedGsapAnimations: [], commitMutation }),
+  useDomEditContext: () => ({
+    selectedGsapAnimations: [],
+    commitMutation,
+    handleGsapRemoveKeyframe: removeKeyframe,
+  }),
 }));
 const showToast = vi.hoisted(() => vi.fn());
 vi.mock("../../contexts/StudioContext", () => ({
@@ -93,7 +98,11 @@ function mount() {
   });
   const captured = vi.spyOn(Element.prototype, "setPointerCapture").mockImplementation(() => {});
   const root = createRoot(host);
-  const selection = { element: document.createElement("div") } as unknown as DomEditSelection;
+  const selection = {
+    id: "box",
+    sourceFile: "slides/08.html",
+    element: document.createElement("div"),
+  } as unknown as DomEditSelection;
   act(() =>
     root.render(
       <MotionPathOverlay
@@ -122,35 +131,15 @@ function mount() {
   return { host, boxPresses, handlePresses, state, captured, fire };
 }
 
-it("the layer's node, and any node inside the layer's box, press the layer; outside it a node keeps the press", () => {
-  const { host, boxPresses, state, captured, fire } = mount();
-  const press = (node: number, x: number, inBox: Under) => {
-    const hit = [...host.querySelectorAll("circle.pointer-events-auto")].find(
-      (c) => c.getAttribute("cx") === String(node),
-    )!;
-    fire(hit, "pointerdown", x, inBox);
-  };
-  press(60, 63, false);
-  press(140, 130, true);
-  // On the dot itself: a drag from the layer's middle moves the layer (the edit bench's keys case).
-  press(140, 140, true);
-  expect(boxPresses).toEqual([63, 130, 140]);
-  act(() => usePlayerStore.setState({ activeKeyframePct: 100 }));
-  press(140, 140, true);
+it("nodes inside the selection box select the keyframe instead of starting a layer drag", () => {
+  const { host, boxPresses, captured, fire } = mount();
+  const node = host.querySelector('circle.pointer-events-auto[cx="140"]')!;
+  fire(node, "pointerdown", 140, true);
+  fire(node, "pointerup", 140, true);
+  expect(boxPresses).toEqual([]);
+  expect(captured).toHaveBeenCalledTimes(1);
+  expect(usePlayerStore.getState().activeKeyframePct).toBe(100);
   act(() => usePlayerStore.setState({ activeKeyframePct: null }));
-  expect(boxPresses).toEqual([63, 130, 140, 140]);
-  press(140, 138, false);
-  expect(boxPresses).toEqual([63, 130, 140, 140]);
-  // Over another layer's off-canvas marker the node keeps its press; the canvas starts no marquee.
-  captured.mockClear();
-  press(140, 138, "marker");
-  expect(captured).toHaveBeenCalledTimes(1);
-  expect(boxPresses).toEqual([63, 130, 140, 140]);
-  // A box that starts no gesture leaves the press to the node.
-  state.boxStarts = false;
-  captured.mockClear();
-  press(60, 63, false);
-  expect(captured).toHaveBeenCalledTimes(1);
 });
 
 it("the path's line inside the layer's box moves the layer and offers no add; outside it adds a keyframe", async () => {
@@ -206,7 +195,11 @@ it("a node drop the writer refuses says why", async () => {
   vi.spyOn(Element.prototype, "setPointerCapture").mockImplementation(() => {});
   const host = document.body.appendChild(document.createElement("div"));
   const root = createRoot(host);
-  const selection = { element: document.createElement("div") } as unknown as DomEditSelection;
+  const selection = {
+    id: "box",
+    sourceFile: "slides/08.html",
+    element: document.createElement("div"),
+  } as unknown as DomEditSelection;
   try {
     act(() =>
       root.render(
@@ -230,4 +223,26 @@ it("a node drop the writer refuses says why", async () => {
     act(() => root.unmount());
     host.remove();
   }
+});
+
+it("opens a nested element's menu without a timeline row and deletes the clicked point", () => {
+  usePlayerStore.setState({ elements: [] });
+  const { host } = mount();
+  const node = host.querySelector('circle.pointer-events-auto[cx="140"]')!;
+  const event = new MouseEvent("contextmenu", {
+    bubbles: true,
+    cancelable: true,
+    clientX: 140,
+    clientY: 30,
+  });
+  act(() => void node.dispatchEvent(event));
+  expect(event.defaultPrevented).toBe(true);
+  const menu = document.querySelector('[role="menu"]');
+  expect(menu).not.toBeNull();
+  const remove = [...menu!.querySelectorAll("button")].find(
+    (button) => button.textContent === "Delete Keyframe",
+  )!;
+  act(() => remove.click());
+  expect(removeKeyframe).toHaveBeenCalledWith("a1", 100);
+  expect(document.querySelector('[role="menu"]')).toBeNull();
 });

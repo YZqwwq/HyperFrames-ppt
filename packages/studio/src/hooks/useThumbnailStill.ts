@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { compositionThumbnailRequest } from "../player/components/CompositionThumbnail";
 import type { ThumbnailPriority } from "../player/lib/thumbnailScheduler";
-import { useThumbnailLease } from "./useThumbnailLease";
+import { useStableThumbnailLease } from "./useStableThumbnailLease";
 
 export interface UseThumbnailStillOptions {
   sessionEpoch?: number;
@@ -26,7 +26,10 @@ export function useThumbnailStill(
     () => (url ? compositionThumbnailRequest(url, projectId, { sessionEpoch, priority }) : null),
     [priority, projectId, sessionEpoch, url],
   );
-  const snapshot = useThumbnailLease(request);
+  const snapshot = useStableThumbnailLease(
+    request,
+    `${projectId}:${sessionEpoch}:${url?.replace(/([?&])revision=[^&]*/g, "$1")}`,
+  );
   const ready =
     snapshot.status === "ready" && snapshot.value.kind === "image" ? snapshot.value.url : null;
   return useMemo(

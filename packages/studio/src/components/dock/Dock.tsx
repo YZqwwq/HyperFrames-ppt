@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 import {
   createContext,
   useCallback,
@@ -286,7 +287,7 @@ function WindowMenu() {
         onClick={() => setOpen((value) => !value)}
         className="h-7 px-2.5 rounded-md text-[11px] font-medium text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition-colors"
       >
-        Window
+        {t("window.menu")}
       </button>
       {open && (
         <div role="menu" className={`${menuClasses.panel} absolute right-0 top-8 z-50 w-44`}>
@@ -313,7 +314,7 @@ function WindowMenu() {
             }}
             className={`${menuClasses.row} ${menuClasses.rowEnabled}`}
           >
-            Reset layout
+            {t("window.reset")}
           </button>
         </div>
       )}

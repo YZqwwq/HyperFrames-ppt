@@ -1,4 +1,12 @@
-import { useCallback, useRef, useSyncExternalStore, type ReactNode } from "react";
+import { PresentationControls } from "../presentation/PresentationControls";
+import {
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import { PlayerControls } from "../../player";
 import type { TimelineElement } from "../../player";
 import { NLEPreview } from "./NLEPreview";
@@ -97,6 +105,13 @@ export function PreviewPane({
   // Preview-only fullscreen: fullscreen targets THIS pane's container, so the
   // browser shows only the preview (sidebars + timeline are excluded naturally).
   const containerRef = useRef<HTMLDivElement>(null);
+  const [presenting, setPresenting] = useState(false);
+  const [browsing, setBrowsing] = useState(false);
+  useLayoutEffect(() => {
+    const pane = containerRef.current;
+    if (browsing) pane?.showPopover?.();
+    else if (pane?.matches(":popover-open")) pane.hidePopover();
+  }, [browsing]);
   const fullscreenElement = useSyncExternalStore(subscribeFullscreen, getFullscreenElement);
   const isFullscreen = fullscreenElement === containerRef.current && fullscreenElement != null;
 
@@ -112,15 +127,34 @@ export function PreviewPane({
   const currentLevel = compositionStack[compositionStack.length - 1];
   const directUrl = compositionStack.length > 1 ? currentLevel.previewUrl : undefined;
 
-  return (
+  const pane = (
     <div
       ref={containerRef}
+      popover={browsing ? "manual" : undefined}
       // A recessed well inset in its dock card; dropped in fullscreen so the
       // preview fills the screen edge-to-edge. The player stays dark in both themes.
       className={`scheme-dark flex-1 min-h-0 flex flex-col overflow-hidden bg-[var(--studio-preview-bg,var(--color-neutral-950))] ${
         isFullscreen ? "" : "m-3 rounded-md border border-border"
       }`}
       data-studio-fullscreen-target=""
+      style={
+        browsing
+          ? {
+              position: "fixed",
+              width: "auto",
+              height: "auto",
+              maxWidth: "none",
+              maxHeight: "none",
+              inset: 0,
+              zIndex: 1000,
+              margin: 0,
+              borderRadius: 0,
+              paddingTop: presenting ? 0 : 64,
+              paddingLeft: presenting ? 0 : 240,
+              paddingBottom: presenting ? 0 : 80,
+            }
+          : { position: "relative" }
+      }
     >
       <div
         className="flex-1 min-h-0 relative overflow-hidden"
@@ -154,27 +188,37 @@ export function PreviewPane({
           {previewDragOver && (
             <div className="absolute inset-2 z-40 rounded-lg border-2 border-dashed border-studio-accent/50 bg-studio-accent/4 pointer-events-none" />
           )}
-          <AssetPreviewOverlay />
+          {!browsing && <AssetPreviewOverlay />}
         </div>
+        {browsing && <div className="absolute inset-0 z-50" />}
         <PreviewOverlayProvider>
-          <PreviewGuides />
-          {!isFullscreen && previewOverlay}
+          {!presenting && !browsing && <PreviewGuides />}
+          {!isFullscreen && !presenting && !browsing && previewOverlay}
         </PreviewOverlayProvider>
       </div>
       {/* Transport row: no own background or border — the controls sit flat on
           the preview panel's surface (CapCut-style). */}
       <div className="shrink-0">
-        {!isFullscreen && compositionStack.length > 1 && (
+        {!isFullscreen && !presenting && !browsing && compositionStack.length > 1 && (
           <CompositionBreadcrumb stack={compositionStack} onNavigate={handleNavigateComposition} />
         )}
-        <PlayerControls
-          onTogglePlay={togglePlay}
-          onSeek={seek}
-          disabled={timelineDisabled}
-          isFullscreen={isFullscreen}
-          onToggleFullscreen={toggleFullscreen}
+        <PresentationControls
+          stage={containerRef}
+          onActiveChange={setPresenting}
+          browsing={browsing}
+          onBrowseChange={setBrowsing}
         />
+        {!presenting && !browsing && (
+          <PlayerControls
+            onTogglePlay={togglePlay}
+            onSeek={seek}
+            disabled={timelineDisabled}
+            isFullscreen={isFullscreen}
+            onToggleFullscreen={toggleFullscreen}
+          />
+        )}
       </div>
     </div>
   );
+  return pane;
 }

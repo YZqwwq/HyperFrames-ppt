@@ -2,7 +2,7 @@ import type { GsapAnimation } from "@hyperframes/core/gsap-parser";
 import type { DomEditSelection } from "../components/editor/domEditingTypes";
 import { usePlayerStore } from "../player/store/playerStore";
 import type { EditMoment } from "../components/editor/manualEditsTypes";
-import { editMoment, playheadMoment } from "./editMoment";
+import { editMoment } from "./editMoment";
 import { resolveTweenDuration, resolveTweenStart } from "../utils/globalTimeCompiler";
 import { ARRAY_STEP_EASE, PERCENTAGE_SEGMENT_EASE, runEaseOf } from "../utils/gsapKeyframeEases";
 import { roundTo3 } from "../utils/rounding";
@@ -292,7 +292,7 @@ export function planValueEdit(
   {
     backfill,
     holdFromStart,
-    moment = playheadMoment(),
+    moment = editMoment(undefined, selection),
   }: Pick<PlayheadEdit, "backfill" | "holdFromStart"> & { moment?: EditMoment } = {},
 ): PlayheadEditPlan {
   // One keyframe of a tween its siblings share would move them all.
@@ -327,7 +327,7 @@ export async function commitValueAtPlayhead(
   },
 ): Promise<GsapEditOutcome> {
   await materializeIfDynamic(anim, iframe, callbacks.commitMutation, selection);
-  const moment = editMoment(callbacks.stamp);
+  const moment = editMoment(callbacks.stamp, selection);
   const { setActiveKeyframePct } = usePlayerStore.getState();
   const tween = findParsedTween(iframe, selection.element, anim);
   const parkAt =
@@ -341,8 +341,8 @@ export async function commitValueAtPlayhead(
     ...(plan.added && { keyframeAction: "add" as const }),
   });
   if (parkAt != null) {
-    setActiveKeyframePct(null);
-    parkPlayheadOnKeyframe(anim, parkAt);
+    setActiveKeyframePct(parkAt);
+    parkPlayheadOnKeyframe(anim, parkAt, selection);
   }
   return { status: "persisted" };
 }

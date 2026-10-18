@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 import type { ReactNode } from "react";
 import { Timeline } from "../../player";
 import type { TimelineElement, TimelineTimeRange } from "../../player";
@@ -129,7 +130,7 @@ export function TimelinePane({
                   ? [
                       {
                         id: "enter-time-group",
-                        label: "进入时间组",
+                        label: t("group.enter"),
                         onSelect: () => handleDrillDown(element),
                       },
                     ]

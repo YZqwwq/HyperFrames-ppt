@@ -1,5 +1,5 @@
 import { memo, useMemo, type CSSProperties } from "react";
-import { useThumbnailLease } from "../../hooks/useThumbnailLease";
+import { useStableThumbnailLease } from "../../hooks/useStableThumbnailLease";
 import { useThumbnailStripSize } from "../../hooks/useThumbnailStripSize";
 import {
   createThumbnailKey,
@@ -157,7 +157,10 @@ export const CompositionThumbnail = memo(function CompositionThumbnail({
     () => compositionThumbnailRequest(url, projectId, { sessionEpoch, priority, rich: true }),
     [priority, projectId, sessionEpoch, url],
   );
-  const snapshot = useThumbnailLease(request);
+  const snapshot = useStableThumbnailLease(
+    request,
+    `${projectId}:${sessionEpoch}:${previewUrl}:${selector}:${selectorIndex}`,
+  );
   const value =
     snapshot.status === "ready" && snapshot.value.kind === "image" ? snapshot.value : null;
   const { frameW, frameCount } = computeThumbnailStrip(

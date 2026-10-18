@@ -54,3 +54,11 @@ function asElement(target: EventTarget | null): HTMLElement | null {
   const candidate = target as { closest?: unknown; isContentEditable?: unknown };
   return typeof candidate.closest === "function" ? (target as HTMLElement) : null;
 }
+
+/** Capture listeners outside a shadow root see its host, not the input. */
+export function typingOwnsEvent(event: KeyboardEvent): boolean {
+  if (event.isComposing || event.composedPath().some(isTypingTarget)) return true;
+  let active = event.view?.document.activeElement ?? document.activeElement;
+  while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement;
+  return isTypingTarget(active);
+}

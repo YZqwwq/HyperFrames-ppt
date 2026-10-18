@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import { memo, useEffect, useRef, type ReactNode } from "react";
 import {
   ArrowsOutLineHorizontal,
@@ -221,28 +222,22 @@ export const TimelineToolbar = memo(function TimelineToolbar({
           {/* Divider: tool-mode | editing-actions */}
           <div aria-hidden="true" className="mx-1 h-4 w-px bg-neutral-800" />
           <LinkedSelectionToggle />
-          <Tooltip label={timelineSnapEnabled ? "Snapping on (N)" : "Snapping off (N)"}>
+          <Tooltip label={timelineSnapEnabled ? t("timeline.snapOn") : t("timeline.snapOff")}>
             <button
               type="button"
               onClick={() => setTimelineSnapEnabled(!timelineSnapEnabled)}
-              aria-label="Toggle timeline snapping"
+              aria-label={t("timeline.snapToggle")}
               aria-pressed={timelineSnapEnabled}
               className={timelineSnapEnabled ? flatActive : flatIdle}
             >
               <Magnet size={16} weight="bold" aria-hidden="true" />
             </button>
           </Tooltip>
-          <Tooltip
-            label={
-              rippleEditEnabled
-                ? "Ripple on: keeps the main track gapless"
-                : "Ripple off: deleting a main-track clip leaves a gap"
-            }
-          >
+          <Tooltip label={rippleEditEnabled ? t("timeline.rippleOn") : t("timeline.rippleOff")}>
             <button
               type="button"
               onClick={() => setRippleEditEnabled(!rippleEditEnabled)}
-              aria-label="Toggle ripple edit"
+              aria-label={t("timeline.rippleToggle")}
               aria-pressed={rippleEditEnabled}
               className={rippleEditEnabled ? flatActive : flatIdle}
             >
@@ -250,11 +245,13 @@ export const TimelineToolbar = memo(function TimelineToolbar({
             </button>
           </Tooltip>
           {projectHasAudio && (
-            <Tooltip label={audioMetersVisible ? "Hide audio meters" : "Show audio meters"}>
+            <Tooltip
+              label={audioMetersVisible ? t("timeline.metersHide") : t("timeline.metersShow")}
+            >
               <button
                 type="button"
                 onClick={() => setAudioMetersVisible(!audioMetersVisible)}
-                aria-label="Toggle audio meters"
+                aria-label={t("timeline.metersToggle")}
                 aria-pressed={audioMetersVisible}
                 className={audioMetersVisible ? flatActive : flatIdle}
               >
@@ -269,22 +266,22 @@ export const TimelineToolbar = memo(function TimelineToolbar({
               <Tooltip
                 label={
                   keyframePathEndpoint
-                    ? "Motion path endpoints cannot be removed"
+                    ? t("keyframe.endpointHint")
                     : !onToggleKeyframe
-                      ? "Select an animated element to add keyframes"
+                      ? t("keyframe.select")
                       : keyframeIsMotionPath
                         ? keyframeWillExtend
-                          ? "Extend motion path to playhead (K)"
+                          ? t("keyframe.extendPathHint")
                           : keyframeState === "active"
-                            ? "Remove waypoint from motion path (K)"
-                            : "Add waypoint to motion path (K)"
+                            ? t("keyframe.removeWaypointHint")
+                            : t("keyframe.addWaypointHint")
                         : keyframeState === "active"
-                          ? "Remove keyframe at playhead (K)"
+                          ? t("keyframe.removeAtHint")
                           : keyframeState === "inactive"
                             ? keyframeWillExtend
-                              ? "Add keyframe at playhead, extends animation (K)"
-                              : "Add keyframe at playhead (K)"
-                            : "Add keyframe (K)"
+                              ? t("keyframe.extend")
+                              : t("keyframe.addAtHint")
+                            : t("keyframe.add")
                 }
               >
                 <button
@@ -293,16 +290,16 @@ export const TimelineToolbar = memo(function TimelineToolbar({
                   onClick={onToggleKeyframe}
                   aria-label={
                     keyframePathEndpoint
-                      ? "Motion path endpoint"
+                      ? t("keyframe.endpoint")
                       : keyframeIsMotionPath
                         ? keyframeState === "active"
-                          ? "Remove motion path waypoint"
+                          ? t("keyframe.removeWaypoint")
                           : keyframeWillExtend
-                            ? "Extend motion path to playhead"
-                            : "Add motion path waypoint"
+                            ? t("keyframe.extendPath")
+                            : t("keyframe.addWaypoint")
                         : keyframeState === "active"
-                          ? "Remove keyframe at playhead"
-                          : "Add keyframe at playhead"
+                          ? t("keyframe.removeAt")
+                          : t("keyframe.addAt")
                   }
                   className={
                     !onToggleKeyframe
@@ -331,11 +328,7 @@ export const TimelineToolbar = memo(function TimelineToolbar({
                 </button>
               </Tooltip>
               <Tooltip
-                label={
-                  autoKeyframeEnabled
-                    ? "Edits change the current keyframe. Click to move the animation path instead."
-                    : "Edits move the animation path. Click to edit the current keyframe instead."
-                }
+                label={autoKeyframeEnabled ? t("keyframe.editMode") : t("keyframe.moveMode")}
               >
                 <button
                   type="button"
@@ -349,7 +342,7 @@ export const TimelineToolbar = memo(function TimelineToolbar({
                   }`}
                 >
                   <span className="px-1 text-xs whitespace-nowrap">
-                    {autoKeyframeEnabled ? "Edit keyframe" : "Move animation"}
+                    {autoKeyframeEnabled ? t("keyframe.edit") : t("keyframe.move")}
                   </span>
                   <svg width="16" height="16" viewBox="0 0 10 10" fill="none">
                     {/* Same diamond outline as the Add-keyframe icon, with a
@@ -384,16 +377,16 @@ export const TimelineToolbar = memo(function TimelineToolbar({
                 <Tooltip
                   label={
                     canSplit
-                      ? `Split at playhead (${splitShortcut})`
+                      ? t("timeline.splitHint", { shortcut: splitShortcut })
                       : splittable
-                        ? "Move the playhead inside the clip to split"
-                        : "Select a clip to split"
+                        ? t("timeline.splitInside")
+                        : t("timeline.splitSelect")
                   }
                 >
                   <button
                     type="button"
                     disabled={!canSplit}
-                    aria-label="Split at playhead"
+                    aria-label={t("timeline.split")}
                     onClick={() => {
                       if (canSplit && el) onSplitElement(el, currentTime);
                     }}
@@ -430,16 +423,16 @@ export const TimelineToolbar = memo(function TimelineToolbar({
               <Tooltip
                 label={
                   !beatAnalysisReady
-                    ? "Add a music track with beat analysis to place beats"
+                    ? t("timeline.beatTrack")
                     : canAdd
-                      ? "Add beat at playhead"
-                      : "A beat already exists at the playhead"
+                      ? t("timeline.addBeat")
+                      : t("timeline.beatExists")
                 }
               >
                 <button
                   type="button"
                   disabled={!canAdd}
-                  aria-label="Add beat at playhead"
+                  aria-label={t("timeline.addBeat")}
                   onClick={() => {
                     if (canAdd) addBeatAtCompositionTime(currentTime);
                   }}
@@ -466,18 +459,12 @@ export const TimelineToolbar = memo(function TimelineToolbar({
         <div className="flex items-center gap-0.5">
           {rightActions}
           <Tooltip
-            label={
-              thumbnailsVisible
-                ? "Hide thumbnails: labels only"
-                : "Show thumbnails: posters stay visible; richer previews appear on interaction"
-            }
+            label={thumbnailsVisible ? t("timeline.hideThumbnails") : t("timeline.showThumbnails")}
           >
             <button
               type="button"
               aria-label={
-                thumbnailsVisible
-                  ? "Hide thumbnails: labels only"
-                  : "Show thumbnails: posters stay visible; richer previews appear on interaction"
+                thumbnailsVisible ? t("timeline.hideThumbnails") : t("timeline.showThumbnails")
               }
               aria-pressed={thumbnailsVisible}
               onClick={() => setThumbnailMode(thumbnailsVisible ? "hidden" : "adaptive")}
@@ -490,11 +477,11 @@ export const TimelineToolbar = memo(function TimelineToolbar({
               <Image size={16} aria-hidden="true" />
             </button>
           </Tooltip>
-          <Tooltip label="Fit timeline to width">
+          <Tooltip label={t("timeline.fitWidth")}>
             <button
               type="button"
               onClick={() => setZoomMode("fit")}
-              aria-label="Fit timeline to width"
+              aria-label={t("timeline.fitWidth")}
               aria-pressed={zoomMode === "fit"}
               className={`h-7 px-2 rounded-md text-[11px] font-medium transition-colors ${
                 zoomMode === "fit"
@@ -505,10 +492,10 @@ export const TimelineToolbar = memo(function TimelineToolbar({
               <ArrowsOutLineHorizontal size={16} aria-hidden="true" />
             </button>
           </Tooltip>
-          <Tooltip label="Zoom out">
+          <Tooltip label={t("timeline.zoomOut")}>
             <button
               type="button"
-              aria-label="Zoom out"
+              aria-label={t("timeline.zoomOut")}
               onClick={() => zoomTimelineStep("out")}
               className={flatIdle}
             >
@@ -521,7 +508,7 @@ export const TimelineToolbar = memo(function TimelineToolbar({
             max="100"
             value={timelineZoomPercentToSlider(displayedTimelineZoomPercent, timelineFitPps)}
             title={`${displayedTimelineZoomPercent}%`}
-            aria-label="Timeline zoom"
+            aria-label={t("timeline.zoom")}
             onChange={(e) =>
               setManualZoomPercent(
                 timelineSliderToZoomPercent(Number(e.target.value), timelineFitPps),
@@ -531,10 +518,10 @@ export const TimelineToolbar = memo(function TimelineToolbar({
             // track stays 2px and the thumb 10px, only the pointer box grows.
             className="mx-1 h-6 w-[96px] cursor-pointer appearance-none bg-transparent [&::-webkit-slider-runnable-track]:h-[2px] [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-neutral-700 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[10px] [&::-webkit-slider-thumb]:h-[10px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-text-0 [&::-webkit-slider-thumb]:-mt-1 [&::-webkit-slider-thumb]:shadow-[0_0_0_2px_#0a0a0a,0_1px_3px_rgba(0,0,0,0.5)] [&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb:active]:cursor-grabbing"
           />
-          <Tooltip label="Zoom in">
+          <Tooltip label={t("timeline.zoomIn")}>
             <button
               type="button"
-              aria-label="Zoom in"
+              aria-label={t("timeline.zoomIn")}
               onClick={() => zoomTimelineStep("in")}
               className={flatIdle}
             >
@@ -544,9 +531,9 @@ export const TimelineToolbar = memo(function TimelineToolbar({
           {/* Numeric zoom readout (main-parity): "Fit" in fit mode, N% in manual. */}
           <span
             className="ml-1 w-[38px] text-right font-mono text-[11px] tabular-nums text-neutral-500 select-none"
-            aria-label="Timeline zoom level"
+            aria-label={t("timeline.zoomLevel")}
           >
-            {showsFit ? "Fit" : `${displayedTimelineZoomPercent}%`}
+            {showsFit ? t("timeline.fit") : `${displayedTimelineZoomPercent}%`}
           </span>
         </div>
       </div>

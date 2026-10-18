@@ -18,6 +18,7 @@ export interface MutationResult {
   ok: boolean;
   changed?: boolean;
   mutationChanges?: boolean[];
+  linkedFiles?: Record<string, { before: string; after: string }>;
   parsed?: ParsedGsap;
   before?: string;
   after?: string;

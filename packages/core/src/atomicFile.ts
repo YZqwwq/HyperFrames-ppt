@@ -11,7 +11,8 @@ type DirectFileSystem = SiblingFileSystem & Pick<typeof fs, "openSync" | "closeS
 const NO_HARD_LINKS = new Set(["EPERM", "ENOTSUP", "EOPNOTSUPP", "EXDEV", "EISDIR"]);
 // Windows refuses a rename while another process briefly holds the target open.
 const BUSY_RENAME = new Set(["EPERM", "EBUSY", "EACCES"]);
-const RENAME_RETRY_DELAYS_MS = [10, 20, 30, 40];
+// Allow transient Windows readers/scanners to release the file without truncating it.
+const RENAME_RETRY_DELAYS_MS = [10, 20, 40, 80, 150, 250, 450];
 const MAX_LINK_HOPS = 40;
 const TEMP_NAME_TRIES = 3;
 const TEMP_SUFFIX = /\.hf[0-9a-f]{6}\.tmp$/;

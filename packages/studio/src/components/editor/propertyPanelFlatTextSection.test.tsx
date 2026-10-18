@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 // @vitest-environment happy-dom
 
 import React, { act, useState } from "react";
@@ -26,7 +27,7 @@ function renderInto(node: React.ReactElement) {
 const FIELDS = [
   {
     key: "a",
-    label: "Text",
+    label: t("property.text"),
     value: "Headline",
     tagName: "div",
     attributes: [],
@@ -36,7 +37,7 @@ const FIELDS = [
   },
   {
     key: "b",
-    label: "Text",
+    label: t("property.text"),
     value: "Subhead",
     tagName: "span",
     attributes: [],
@@ -62,8 +63,8 @@ describe("FlatTextLayerList", () => {
         onRemove={vi.fn()}
       />,
     );
-    expect(host.textContent).toContain("Text 1");
-    expect(host.textContent).toContain("Text 2");
+    expect(host.textContent).toContain("文本 1");
+    expect(host.textContent).toContain("文本 2");
     act(() => root.unmount());
   });
 
@@ -128,7 +129,7 @@ function makeMultiFieldElement(): DomEditSelection {
     textFields: [
       {
         key: "a",
-        label: "Text",
+        label: t("property.text"),
         value: "Headline",
         tagName: "div",
         attributes: [],
@@ -138,7 +139,7 @@ function makeMultiFieldElement(): DomEditSelection {
       },
       {
         key: "b",
-        label: "Text",
+        label: t("property.text"),
         value: "Subhead",
         tagName: "span",
         attributes: [],
@@ -167,7 +168,7 @@ function makeSingleFieldElement(overrides: Partial<DomEditTextField> = {}): DomE
     textFields: [
       {
         key: "a",
-        label: "Text",
+        label: t("property.text"),
         value: "Headline",
         tagName: "div",
         attributes: [],
@@ -202,7 +203,7 @@ describe("FlatTextFieldEditor controls", () => {
         onRemoveTextField={vi.fn()}
       />,
     );
-    const capitalizeButton = segmentedRowButtons(host, "Case · Style").find(
+    const capitalizeButton = segmentedRowButtons(host, t("property.caseStyle")).find(
       (button) => button.textContent === "Ag",
     );
     expect(capitalizeButton).not.toBeUndefined();
@@ -224,7 +225,7 @@ describe("FlatTextFieldEditor controls", () => {
         onRemoveTextField={vi.fn()}
       />,
     );
-    const alignButtons = segmentedRowButtons(host, "Align");
+    const alignButtons = segmentedRowButtons(host, t("property.align"));
     const rightButton = alignButtons.find((button) => button.textContent === "R");
     expect(rightButton).not.toBeUndefined();
     expect(rightButton?.className).toContain("border-panel-accent");
@@ -249,7 +250,7 @@ describe("FlatTextFieldEditor controls", () => {
         onRemoveTextField={vi.fn()}
       />,
     );
-    const alignButtons = segmentedRowButtons(host, "Align");
+    const alignButtons = segmentedRowButtons(host, t("property.align"));
     const centerButton = alignButtons.find((button) => button.textContent === "C");
     expect(centerButton).not.toBeUndefined();
     act(() => centerButton?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
@@ -273,7 +274,7 @@ describe("FlatTextFieldEditor controls", () => {
       />,
     );
     const sizeLabel = Array.from(host.querySelectorAll("span")).find(
-      (el) => el.textContent === "Size",
+      (el) => el.textContent === t("property.size"),
     );
     const input = sizeLabel?.parentElement?.querySelector<HTMLInputElement>("input");
     if (!input) throw new Error("expected the Size row's input");
@@ -315,7 +316,7 @@ describe("FlatTextSection — multi-field", () => {
     expect(host.textContent).toContain("Weight");
     // Exactly one "Text layers" micro-label — this component doesn't duplicate its own list.
     const layerLabels = Array.from(host.querySelectorAll("div")).filter(
-      (el) => el.textContent === "Text layers",
+      (el) => el.textContent === t("property.textLayers"),
     );
     expect(layerLabels.length).toBeLessThanOrEqual(1);
 
@@ -345,7 +346,7 @@ describe("FlatTextSection — multi-field", () => {
                 ...prev,
                 {
                   key: "c",
-                  label: "Text",
+                  label: t("property.text"),
                   value: "Third",
                   tagName: "div",
                   attributes: [],
@@ -443,7 +444,7 @@ describe("FlatTextSection — multi-field", () => {
                 ...prev,
                 {
                   key: "c",
-                  label: "Text",
+                  label: t("property.text"),
                   value: "",
                   tagName: "div",
                   attributes: [],

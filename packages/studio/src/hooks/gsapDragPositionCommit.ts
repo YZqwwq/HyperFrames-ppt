@@ -136,7 +136,7 @@ export async function commitGsapPositionFromDrag(
   const restoreOffset = () => restoreDragOffset(el, stamp);
 
   if (anim.arcPath?.enabled) {
-    const { keyframePct: activeKeyframePct, time: currentTime } = editMoment(stamp);
+    const { keyframePct: activeKeyframePct, time: currentTime } = editMoment(stamp, selection);
     const { setActiveKeyframePct } = usePlayerStore.getState();
     const tweenStart = resolveTweenStart(anim);
     const tweenDuration = resolveTweenDuration(anim);
@@ -188,8 +188,8 @@ export async function commitGsapPositionFromDrag(
         },
         { label: "Move layer (waypoint)", softReload: true, beforeReload: restoreOffset },
       );
-      setActiveKeyframePct(null);
-      parkPlayheadOnKeyframe(anim, pct);
+      setActiveKeyframePct(pct);
+      parkPlayheadOnKeyframe(anim, pct, selection);
       return { status: "persisted" };
     }
 

@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 import type { GsapAnimation } from "@hyperframes/core/gsap-parser";
 import { Clock } from "../../icons/SystemIcons";
 import type { DomEditSelection } from "./domEditing";
@@ -70,14 +71,22 @@ export function TimingSection({
   };
 
   return (
-    <Section title="Timing" icon={<Clock size={15} />}>
+    <Section title={t("property.timing")} icon={<Clock size={15} />}>
       <div className={RESPONSIVE_GRID}>
-        <MetricField label="Start" value={formatTimingValue(start)} onCommit={commitStart} />
-        <MetricField label="End" value={formatTimingValue(end)} onCommit={commitEnd} />
+        <MetricField
+          label={t("property.start")}
+          value={formatTimingValue(start)}
+          onCommit={commitStart}
+        />
+        <MetricField
+          label={t("property.end")}
+          value={formatTimingValue(end)}
+          onCommit={commitEnd}
+        />
       </div>
       <div className="mt-3">
         <MetricField
-          label="Duration"
+          label={t("property.duration")}
           value={formatTimingValue(duration)}
           onCommit={commitDuration}
         />

@@ -186,7 +186,10 @@ export function useDomEditTextCommits({
         persist: () =>
           persistDomEditOperations(selection, textCommit.operations, {
             label: "Edit text",
+            coalesceKey: `text:${getDomEditTargetKey(selection)}:${fieldKey ?? "self"}`,
+            coalesceMs: 3000,
             skipRefresh: true,
+            deferRender: true,
             shouldSave: isLatestTextCommit,
           }),
         shouldRevert: () => isLatestTextCommit(),
@@ -284,6 +287,7 @@ export function useDomEditTextCommits({
           const result = await persistDomEditOperations(selection, operations, {
             label: "Edit text",
             skipRefresh: true,
+            deferRender: true,
             shouldSave: isLatestTextCommit,
           });
           if (result?.changed) trackPreviewFeatureUsed("text_edit", "field");
@@ -361,6 +365,7 @@ export function useDomEditTextCommits({
           await persistDomEditOperations(selection, textCommit.operations, {
             label: "Edit text",
             skipRefresh: true,
+            deferRender: true,
             importedFont: importedFont ?? undefined,
           });
         },

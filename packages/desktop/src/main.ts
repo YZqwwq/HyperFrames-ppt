@@ -328,7 +328,7 @@ else {
           await new Promise((resolve) => setTimeout(resolve, 3000));
           const text: string =
             await editor.webContents.executeJavaScript("document.body.innerText");
-          if (!text.includes("Timeline") || text.includes("Waiting for preview server"))
+          if (!/(Timeline|时间轴)/.test(text) || text.includes("Waiting for preview server"))
             throw new Error(`Editor not ready: ${text.slice(0, 300)}`);
           await new Promise<void>((resolve, reject) => {
             const timer = setTimeout(
@@ -344,7 +344,7 @@ else {
             child.postMessage({ type: "probe-node" });
           });
           const interaction = await editor.webContents.executeJavaScript(
-            "(() => { const tab = [...document.querySelectorAll('[role=tab], button')].find(el => el.textContent.trim() === 'Assets'); if (!tab) return document.body.innerHTML.slice(0,12000); tab.click(); return 'clicked'; })()",
+            "(() => { const tab = [...document.querySelectorAll('[role=tab], button')].find(el => ['Assets', '素材'].includes(el.textContent.trim())); if (!tab) return document.body.innerHTML.slice(0,12000); tab.click(); return 'clicked'; })()",
           );
           if (interaction !== "clicked") throw new Error(`Assets target missing: ${interaction}`);
           const editorUrl = editor.webContents.getURL();

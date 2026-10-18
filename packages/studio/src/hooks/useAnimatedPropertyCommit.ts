@@ -1,3 +1,6 @@
+import { pickPropertyAnimation } from "./pickPropertyAnimation";
+import { commitValueAtPlayhead } from "./gsapValueAtPlayhead";
+import { selectionTimeOffset } from "./selectionClock";
 /**
  * Unified helper for committing any GSAP property value from the design panel.
  *
@@ -44,41 +47,6 @@ interface CommitAnimatedPropertyDeps {
   convertToKeyframes: (selection: DomEditSelection, animId: string) => void;
   previewIframeRef: React.RefObject<HTMLIFrameElement | null>;
   bumpGsapCache: () => void;
-}
-
-function pickBestAnimation(
-  animations: GsapAnimation[],
-  selector: string | null,
-  property?: string,
-): GsapAnimation | undefined {
-  const targetGroup = property ? classifyPropertyGroup(property) : undefined;
-  // Group-aware: never hand back a tween from a DIFFERENT property group. The old
-  // `animations.length <= 1` early return merged a rotation/3D edit into the element's
-  // only tween even when that was a `position` tween — contaminating it and leaving the
-  // new property with no clean keyframe baseline. When a target group is known, only
-  // same-group tweens are candidates; if none exist we return undefined and the caller
-  // creates a fresh same-group tween.
-  const candidates =
-    targetGroup !== undefined
-      ? animations.filter((a) => a.propertyGroup === targetGroup)
-      : animations;
-  if (candidates.length === 0) return undefined;
-  if (candidates.length === 1) return candidates[0];
-  const currentTime = usePlayerStore.getState().currentTime;
-  // Intentional multi-signal ranking: group match, selector specificity, and playhead overlap.
-  // fallow-ignore-next-line complexity
-  const scored = candidates.map((a) => {
-    let score = 0;
-    if (a.keyframes) score += 10;
-    if (selector && a.targetSelector === selector) score += 5;
-    else if (a.targetSelector.includes(",")) score -= 3;
-    const pos = a.resolvedStart ?? (typeof a.position === "number" ? a.position : 0);
-    const dur = a.duration ?? 0;
-    if (currentTime >= pos - 0.05 && currentTime <= pos + dur + 0.05) score += 8;
-    return { anim: a, score };
-  });
-  scored.sort((a, b) => b.score - a.score);
-  return scored[0]?.anim;
 }
 
 /**
@@ -338,7 +306,7 @@ async function commitKeyframeProps(
       { label: "Convert to keyframes", keyframeTelemetry: false, skipReload: true },
     );
   }
-  const ct = usePlayerStore.getState().currentTime;
+  const ct = usePlayerStore.getState().currentTime - selectionTimeOffset(selection);
   const runtimeProps = selector ? readAllAnimatedProperties(iframe, selector, anim) : {};
   const properties: Record<string, number | string> = { ...runtimeProps, ...props };
 
@@ -398,10 +366,11 @@ async function commitKeyframeProps(
 
   const pct = computeElementPercentage(ct, selection, anim);
   const existingKf = anim.keyframes?.keyframes.some((kf) => Math.abs(kf.percentage - pct) < 0.05);
+  const committedProperties = existingKf ? props : properties;
   // Rebuild the live keyframe tween in place so the edit shows instantly (no flash);
   // rebuildKeyframeTween declines → soft reload if the tween can't be safely rebuilt.
   const numericProps: Record<string, number> = {};
-  for (const [k, v] of Object.entries(properties)) {
+  for (const [k, v] of Object.entries(committedProperties)) {
     if (typeof v === "number") numericProps[k] = v;
   }
   const instantPatch =
@@ -411,7 +380,12 @@ async function commitKeyframeProps(
   await commit(
     selection,
     existingKf
-      ? { type: "update-keyframe", animationId: anim.id, percentage: pct, properties }
+      ? {
+          type: "update-keyframe",
+          animationId: anim.id,
+          percentage: pct,
+          properties: committedProperties,
+        }
       : {
           type: "add-keyframe",
           animationId: anim.id,
@@ -452,10 +426,11 @@ export function useAnimatedPropertyCommit(deps: CommitAnimatedPropertyDeps) {
       const iframe = previewIframeRef.current;
       const selector = selectorFromSelection(selection);
 
-      const anim: GsapAnimation | undefined = pickBestAnimation(
+      const anim: GsapAnimation | undefined = pickPropertyAnimation(
         selectedGsapAnimations,
         selector,
         primaryProp,
+        usePlayerStore.getState().currentTime - selectionTimeOffset(selection),
       );
       if (!anim && !writeTargetSelector(selection)) {
         throw new GsapEditBlockedError("no-selector");
@@ -471,6 +446,25 @@ export function useAnimatedPropertyCommit(deps: CommitAnimatedPropertyDeps) {
       // so the rejection doesn't escape as an uncaught promise, and bump the cache
       // so selectedGsapAnimations re-syncs and the user's next edit self-heals.
       try {
+        // Explicit endpoint edits also work on a flat fromTo, before it has any keyframe array.
+        if (
+          anim &&
+          !isInstantHold(anim) &&
+          usePlayerStore.getState().activeKeyframePct != null &&
+          propEntries.every(([, value]) => typeof value === "number")
+        ) {
+          assertGsapEditPersisted(
+            await commitValueAtPlayhead(
+              selection,
+              anim,
+              props as Record<string, number>,
+              iframe,
+              { commitMutation: commit },
+              { label: `Edit ${primaryProp} endpoint` },
+            ),
+          );
+          return;
+        }
         // Animated element → keyframe at the playhead, EXACTLY like manual drag /
         // resize / rotate: if the picked anim is still a static `set`,
         // commitKeyframeProps converts it to keyframes first, then writes the new
@@ -484,7 +478,7 @@ export function useAnimatedPropertyCommit(deps: CommitAnimatedPropertyDeps) {
           // adding/updating a keyframe at the playhead.
           if (!usePlayerStore.getState().autoKeyframeEnabled) {
             const pct = computeElementPercentage(
-              usePlayerStore.getState().currentTime,
+              usePlayerStore.getState().currentTime - selectionTimeOffset(selection),
               selection,
               anim,
             );
@@ -553,7 +547,7 @@ export function useAnimatedPropertyCommit(deps: CommitAnimatedPropertyDeps) {
           const template = selectedGsapAnimations.find((a) => !!a.keyframes);
           const tStart = template ? (resolveTweenStart(template) ?? 0) : 0;
           const tDur = template ? resolveTweenDuration(template) || 1 : 1;
-          const ct = usePlayerStore.getState().currentTime;
+          const ct = usePlayerStore.getState().currentTime - selectionTimeOffset(selection);
           const pct =
             tDur > 0
               ? Math.max(0, Math.min(100, Math.round(((ct - tStart) / tDur) * 1000) / 10))

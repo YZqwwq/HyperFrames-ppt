@@ -898,6 +898,35 @@ describe("runCommit — instantPatch wiring", () => {
     expect(deps.reloadPreview).not.toHaveBeenCalled();
   });
 
+  it("routes a cross-composition group to each source file", async () => {
+    applySoftReload.mockReturnValue("applied");
+    mockFetchResult();
+    const deps = renderCommitHook();
+    await act(async () => {
+      await deps.api.commitMutation.batch!(
+        [
+          {
+            selection: { ...selection, sourceFile: "subjects/circle.html" },
+            mutation: { x: 10 },
+            options: { label: "Group" },
+          },
+          {
+            selection: { ...selection, sourceFile: "slides/08.html" },
+            mutation: { x: 20 },
+            options: { label: "Group" },
+          },
+        ],
+        { label: "Group", coalesceKey: "group:1", softReload: true },
+      );
+    });
+    const requests = vi.mocked(fetch).mock.calls;
+    expect(requests).toHaveLength(2);
+    expect(requests[0]![0]).toContain("slides%2F08.html");
+    expect(JSON.parse(requests[0]![1]!.body as string).mutations).toEqual([{ x: 20 }]);
+    expect(requests[1]![0]).toContain("subjects%2Fcircle.html");
+    expect(JSON.parse(requests[1]![1]!.body as string).mutations).toEqual([{ x: 10 }]);
+  });
+
   it("batch capability posts ordered mutations and finalizes the result once", async () => {
     applySoftReload.mockReturnValue("applied");
     mockFetchResult();

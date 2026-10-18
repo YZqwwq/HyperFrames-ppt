@@ -19,7 +19,6 @@ let groupDragCommitCounter = 0;
 
 export function useGsapAwareGroupMove({
   gsapCommitMutation,
-  activeCompPath,
   previewIframeRef,
   makeFetchFallback,
   trackGsapInteractionFailure,
@@ -111,12 +110,7 @@ export function useGsapAwareGroupMove({
             assertGsapEditPersisted(outcome);
           }),
         );
-        const preflightFailure = firstPreflightFailure(
-          preflightResults,
-          updates,
-          offsetMembers,
-          activeCompPath,
-        );
+        const preflightFailure = firstPreflightFailure(preflightResults, updates);
         if (preflightFailure) {
           trackGsapInteractionFailure(
             preflightFailure.error,
@@ -177,7 +171,6 @@ export function useGsapAwareGroupMove({
     },
     [
       gsapCommitMutation,
-      activeCompPath,
       previewIframeRef,
       makeFetchFallback,
       trackGsapInteractionFailure,

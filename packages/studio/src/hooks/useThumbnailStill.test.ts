@@ -62,6 +62,24 @@ afterEach(() => {
 });
 
 describe("useThumbnailStill", () => {
+  it("keeps the previous image while the new revision is loading", async () => {
+    await mount(URL_ONE);
+    await vi.waitFor(() => expect(shown).toEqual({ status: "ready", url: "blob:still" }));
+    let resolve!: (response: Response) => void;
+    globalThis.fetch = vi.fn(
+      () =>
+        new Promise<Response>((done) => {
+          resolve = done;
+        }),
+    );
+    URL.createObjectURL = vi.fn(() => "blob:updated");
+    await mount(URL_ONE.replace("revision=1", "revision=2"));
+    expect(shown).toEqual({ status: "ready", url: "blob:still" });
+    expect(URL.revokeObjectURL).not.toHaveBeenCalledWith("blob:still");
+    await act(async () => resolve(new Response(new Blob(["updated"]), { status: 200 })));
+    await vi.waitFor(() => expect(shown).toEqual({ status: "ready", url: "blob:updated" }));
+  });
+
   it("hands back the still's object URL once the scheduler has loaded it", async () => {
     await mount(URL_ONE);
     expect(globalThis.fetch).toHaveBeenCalledWith(URL_ONE, expect.anything());

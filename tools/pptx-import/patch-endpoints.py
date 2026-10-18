@@ -1,0 +1,12 @@
+from pathlib import Path
+import json,re,shutil
+r=Path('packages/studio/src')
+p=r/'components/editor/PropertyPanelFlat.tsx';s=p.read_text(encoding='utf-8');s='import { AnimationEndpoints } from "./AnimationEndpoints";\nimport { selectionTimeOffset } from "../../hooks/selectionClock";\n'+s;s=s.replace('const seekFromKfPct = (pct: number) => onSeekToTime?.(elStart + (pct / 100) * elDuration);','const timeOffset = selectionTimeOffset(element);\n  const seekFromKfPct = (pct: number) => onSeekToTime?.(timeOffset + elStart + (pct / 100) * elDuration);').replace('((currentTime - elStart) / elDuration)', '((currentTime - timeOffset - elStart) / elDuration)').replace('ref={panelBodyRef}', 'ref={panelBodyRef}');s=s.replace('        <div\n          ref={panelBodyRef}', '        <AnimationEndpoints element={element} animations={gsapAnimations} onSeek={onSeekToTime} />\n        <div\n          ref={panelBodyRef}');p.write_text(s,encoding='utf-8')
+p=r/'components/editor/MotionPathOverlay.tsx';s=p.read_text(encoding='utf-8').replace('parkPlayheadOnKeyframe(anim, ref.pct)', 'parkPlayheadOnKeyframe(anim, ref.pct, selection)').replace('parkPlayheadOnKeyframe(anim, d.ref.pct)', 'parkPlayheadOnKeyframe(anim, d.ref.pct, selection)');p.write_text(s,encoding='utf-8')
+zh={'animation.states':'动画状态','animation.segment':'动画片段','animation.startState':'起始状态','animation.endState':'结束状态','animation.preview':'预览动画','animation.stopPreview':'停止预览','animation.endpointHint':'先选择起始或结束状态，再拖动画布中的元素或调整布局属性；保留中间动效。'}
+en=dict(zip(zh,['Animation states','Animation segment','Start state','End state','Preview animation','Stop preview','Choose a start or end state, then drag the element or adjust layout properties. Intermediate motion is preserved.']))
+for lang,data in [('zh-CN',zh),('en',en)]:
+ p=r/f'i18n/{lang}.json';v=json.loads(p.read_text(encoding='utf-8'));v.update(data);p.write_text(json.dumps(v,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+p=Path('../deliverables/转正答辩-HyperFrames/slides/slide-08.html');backup=Path('tools/pptx-import/endpoint-before-slide-08.html');
+if not backup.exists():shutil.copy2(p,backup)
+s=p.read_text(encoding='utf-8');s=re.sub(r'tl\.to\("#slide-08-case-visual",\{ keyframes:.*?duration: 52\.2 \},5\.9\);','tl.fromTo("#slide-08-case-visual",{x:0,y:0,scale:1},{x:-180.5,y:197.589,scale:9.4375,duration:1.4,ease:"power2.inOut"},5.9);',s);s=re.sub(r'tl\.set\("#slide-08-case-visual", \{ x: 0, y: 0, data: "hf-hold" \}, 0\);\s*','',s);p.write_text(s,encoding='utf-8')

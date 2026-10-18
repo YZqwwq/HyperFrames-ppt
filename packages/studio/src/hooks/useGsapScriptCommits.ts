@@ -45,6 +45,7 @@ import {
   useSafeGsapCommitMutation,
 } from "./useSafeGsapCommitMutation";
 import { requestGsapMutation } from "./gsapMutationClient";
+import { commitGsapFileGroups, groupGsapCalls } from "./gsapFileGroups";
 import { whileScriptWrites } from "../player/previewReloading";
 
 async function mutateGsapScript(
@@ -179,6 +180,13 @@ function syncCommittedGsapMutation({
   // Server wrote the file; the in-memory SDK doc is now stale. Resync it so a
   // later SDK-routed edit doesn't serialize the pre-write doc and revert this.
   forceReloadSdkSession?.();
+  if (result.linkedFiles) {
+    for (const [path, file] of Object.entries(result.linkedFiles))
+      onFileContentChanged?.(path, file.after);
+    onCacheInvalidate();
+    reloadPreview();
+    return;
+  }
   if (options.skipReload) return;
   if (result.parsed?.animations) {
     updateKeyframeCacheFromParsed(
@@ -329,7 +337,7 @@ export function useGsapScriptCommits({ projectIdRef, activeCompPath, previewIfra
       label: options.label,
       coalesceKey: options.coalesceKey,
       coalesceMs: options.coalesceMs,
-      files: { [targetPath]: { before: result.before, after: result.after } },
+      files: result.linkedFiles ?? { [targetPath]: { before: result.before, after: result.after } },
     });
   }, [editHistory]);
 
@@ -384,12 +392,12 @@ export function useGsapScriptCommits({ projectIdRef, activeCompPath, previewIfra
     await finalizeSuccessfulMutation(pid, compositionPath, selection, mutation, targetPath, result, options);
   }), [showToast, finalizeSuccessfulMutation]);
 
-  const runBatchCommit = useCallback((pid: string, compositionPath: string | null, targetPath: string, calls: CommitMutationCall[], options: CommitMutationOptions) => whileScriptWrites(async () => {
+  const runBatchCommit = useCallback((pid: string, compositionPath: string | null, targetPath: string, calls: CommitMutationCall[], options: CommitMutationOptions, savedResult?: MutationResult) => whileScriptWrites(async () => {
     const first = calls[0];
     const last = calls.at(-1);
     if (!first || !last) return;
     const mutations = calls.map(({ mutation }) => mutation);
-    const result = await runMutationRequest(mutations, options, showToast, () =>
+    const result = savedResult ?? await runMutationRequest(mutations, options, showToast, () =>
       mutateGsapScript(pid, "gsap-mutations-batch", targetPath, { mutations }),
     );
     if (!result) return;
@@ -437,13 +445,31 @@ export function useGsapScriptCommits({ projectIdRef, activeCompPath, previewIfra
     }) as CommitMutation;
     commit.batch = trackedStudioEdit((calls: CommitMutationCall[], options: CommitMutationOptions) => {
       if (!activeProjectId) return Promise.resolve();
+      const groups = groupGsapCalls(calls, activeCompPath);
+      if (groups.length > 1) {
+        const lockAll = (index: number): Promise<void> => index === groups.length
+          ? whileScriptWrites(async () => {
+              const results = await commitGsapFileGroups(activeProjectId, groups, async (file, members) => {
+                const result = await runMutationRequest(members.map((call) => call.mutation), options, showToast,
+                  () => mutateGsapScript(activeProjectId, "gsap-mutations-batch", file, { mutations: members.map((call) => call.mutation) }));
+                if (!result) throw new Error("Group movement was not saved");
+                return result;
+              });
+              for (const [index, group] of groups.entries()) {
+                await runBatchCommit(activeProjectId, activeCompPath, group.file, group.calls,
+                  { ...options, deferPreviewSync: index < groups.length - 1 || options.deferPreviewSync }, results[index]);
+              }
+            })
+          : serializeFile(groups[index]!.file, () => lockAll(index + 1));
+        return lockAll(0);
+      }
       const file = calls[0] ? gsapWriteFile(calls[0].selection, activeCompPath) : "index.html";
       return serializeCommit(file, options.serializeKey, () =>
         runBatchCommit(activeProjectId, activeCompPath, file, calls, options),
       );
     });
     return commit;
-  }, [runCommit, runBatchCommit, activeCompPath, activeProjectId, writeProjectFile]);
+  }, [runCommit, runBatchCommit, activeCompPath, activeProjectId, writeProjectFile, showToast]);
   const trackGsapSaveFailure = useGsapSaveFailureTelemetry(activeCompPath);
   const handleGsapSaveFailure = useCallback(
     (

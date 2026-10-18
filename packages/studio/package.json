@@ -85,7 +85,9 @@
     "test:colors:browser": "node tests/e2e/native-css-colors.mjs",
     "test:motion-path-home:browser": "node tests/e2e/motion-path-home.mjs",
     "report:sdk-cutover": "bun src/utils/sdkCutoverPolicy.report.ts",
-    "test:timeline-default": "bun run test:timeline-virtualization"
+    "test:timeline-default": "bun run test:timeline-virtualization",
+    "i18n:register": "node scripts/register-ui-text.mjs",
+    "i18n:check": "node scripts/register-ui-text.mjs --check"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

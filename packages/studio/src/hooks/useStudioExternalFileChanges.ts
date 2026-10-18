@@ -1,4 +1,5 @@
 import { useCallback, type MutableRefObject } from "react";
+import { useDeferredThumbnailUpdates } from "./useDeferredThumbnailUpdates";
 import { usePlayerStore } from "../player/store/playerStore";
 import {
   deleteExternalConflictSnapshot,
@@ -53,12 +54,13 @@ export function useStudioExternalFileChanges({
   const { flushPendingSourceSave, discardPendingSourceSave } = fileManager;
   const { drainPendingDomEditSaves, resetDomEditSaveQueueBreaker } = previewPersistence;
   const bumpThumbnailRevisions = usePlayerStore((state) => state.bumpThumbnailRevisions);
+  const deferThumbnails = useDeferredThumbnailUpdates(projectId, bumpThumbnailRevisions);
   const onAcceptedPersistedFileChange = useCallback(
     (_path: string, affectedCompositions: readonly string[] | null) => {
       onOutsideChange?.();
-      bumpThumbnailRevisions(affectedCompositions);
+      deferThumbnails(affectedCompositions);
     },
-    [bumpThumbnailRevisions, onOutsideChange],
+    [deferThumbnails, onOutsideChange],
   );
   const drainPendingChanges = useCallback(async () => {
     const source = await flushPendingSourceSave();

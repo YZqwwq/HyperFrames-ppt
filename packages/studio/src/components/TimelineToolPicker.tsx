@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import type { ReactNode } from "react";
 import { ArrowLineLeft, ArrowLineRight, CaretDown } from "@phosphor-icons/react";
 import { usePlayerStore } from "../player";
@@ -28,14 +29,14 @@ export function TimelineToolPicker({ showSelectAroundPlayhead = true }) {
   const store = () => usePlayerStore.getState();
   const rows: ToolRow[] = [
     {
-      label: "Select",
+      label: t("tool.select"),
       shortcut: "V",
       icon: <SelectIcon />,
       active: activeTool === "select",
       run: () => store().setActiveTool("select"),
     },
     {
-      label: "Split",
+      label: t("tool.split"),
       shortcut: "B",
       icon: <Scissors size={16} />,
       active: activeTool === "razor",
@@ -45,14 +46,14 @@ export function TimelineToolPicker({ showSelectAroundPlayhead = true }) {
   if (showSelectAroundPlayhead) {
     rows.push(
       {
-        label: "Select leftward",
+        label: t("tool.left"),
         shortcut: "[",
         icon: <ArrowLineLeft size={16} aria-hidden="true" />,
         active: false,
         run: () => store().selectLeftward(),
       },
       {
-        label: "Select rightward",
+        label: t("tool.right"),
         shortcut: "]",
         icon: <ArrowLineRight size={16} aria-hidden="true" />,
         active: false,
@@ -63,11 +64,11 @@ export function TimelineToolPicker({ showSelectAroundPlayhead = true }) {
   const current = rows.find((row) => row.active) ?? rows[0];
   return (
     <Menu
-      aria-label="Timeline tools"
+      aria-label={t("tool.menu")}
       trigger={
         <button
           type="button"
-          aria-label={`Timeline tool: ${current.label}`}
+          aria-label={t("tool.current", { tool: current.label })}
           className={cn(flatIdle, "gap-0.5")}
         >
           {current.icon}

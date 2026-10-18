@@ -187,7 +187,7 @@ export async function tryGsapResizeIntercept(
   draw: <T>(run: () => T) => T = (run) => run(),
   stamp?: DragStamp,
 ): Promise<GsapEditOutcome> {
-  const moment = editMoment(stamp);
+  const moment = editMoment(stamp, selection);
   const fetchedAnimations = fetchFallbackAnimations ? await fetchFallbackAnimations() : [];
   const outcome = preflightGsapResizeIntercept(selection, animations, iframe, fetchedAnimations);
   if (outcome.status === "blocked") return outcome;

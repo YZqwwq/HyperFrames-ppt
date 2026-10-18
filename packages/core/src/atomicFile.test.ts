@@ -414,13 +414,20 @@ describe("replaceFileAtomically on a busy target", () => {
     expect(attempts()).toBe(3);
   });
 
-  it("gives up after five attempts and keeps the old file", () => {
+  it("gives up after eight attempts and keeps the old file", () => {
     const { dir, file, operations, attempts } = renamingAfter(Infinity, "EBUSY");
 
     expect(() => replaceFileAtomically(file, "new", 0o644, operations)).toThrow("EBUSY");
-    expect(attempts()).toBe(5);
+    expect(attempts()).toBe(8);
     expect(readFileSync(file, "utf-8")).toBe("old");
     expect(fs.readdirSync(dir)).toEqual(["index.html"]);
+  });
+
+  it("survives a lock that outlasts the old 100ms retry window", () => {
+    const { file, operations, attempts } = renamingAfter(5, "EPERM");
+    replaceFileAtomically(file, "new", 0o644, operations);
+    expect(attempts()).toBe(6);
+    expect(readFileSync(file, "utf-8")).toBe("new");
   });
 
   it("does not retry other rename errors", () => {

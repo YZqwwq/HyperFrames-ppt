@@ -195,3 +195,13 @@ chrome/
 # Hosted catalog item files are generated output the docs host serves; the rules above match their folder names
 !docs/public/catalog/items/**/compositions/
 !docs/public/catalog/items/*-ad/
+
+# Local PPT import diagnostics and generated proof artifacts
+.pptx-*.json
+tools/pptx-import/*-before/
+tools/pptx-import/animation-backup/
+tools/pptx-import/*-proof/
+tools/pptx-import/*.png
+tools/pptx-import/*.txt
+tools/pptx-import/*.json
+tools/pptx-import/endpoint-before-slide-08.html

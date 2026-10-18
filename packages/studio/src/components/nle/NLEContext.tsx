@@ -54,6 +54,10 @@ export interface NLEContextValue {
 
 const NLEContext = createStableContext<NLEContextValue | null>("NLEContext", null);
 
+export function useNLEContextOptional(): NLEContextValue | null {
+  return useContext(NLEContext);
+}
+
 export function useNLEContext(): NLEContextValue {
   const ctx = useContext(NLEContext);
   if (!ctx) throw new Error("useNLEContext must be used within an NLEProvider");

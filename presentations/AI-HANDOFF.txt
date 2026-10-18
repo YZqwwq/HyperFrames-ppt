@@ -1,0 +1,57 @@
+AI 接手说明：Future PPT / 转正答辩
+
+一、这是什么
+这是 HyperFrames HTML/GSAP 可编辑演示项目，不是 PPTX，也不是视频。
+入口为 probation-review/index.html。页面文字、背景、跨页主体、演示停留点均保留为源文件。
+不要转为截图或重新生成 PPTX；在现有结构上继续编辑。
+
+二、代码仓库与分支
+仓库：https://github.com/YZqwwq/HyperFrames-ppt.git
+分支：setup/ppt-foundation
+ZIP 根目录的 VERSION.txt 记录配套提交。请先 checkout 该提交恢复交付版本；后续更新分支前确认没有覆盖素材修改。
+
+三、Mac 初次启动（在终端运行）
+先安装 Git、Git LFS、Node.js 22+、Bun，以及 Chrome 或 Edge。
+git clone --branch setup/ppt-foundation https://github.com/YZqwwq/HyperFrames-ppt.git
+cd HyperFrames-ppt
+git lfs install
+git lfs pull
+bun install --frozen-lockfile
+bun run build
+node packages/cli/dist/cli.js preview presentations/probation-review --port 5194
+
+以仓库内 presentations/probation-review 为唯一日常编辑目录。
+ZIP 中的 probation-review 是包含真实字体文件的备用素材快照，不含 LFS 指针。
+若恢复该 ZIP，先备份仓库中的同名目录，再复制 ZIP 的 probation-review 到 presentations/。
+如浏览器自动发现失败，可设置：
+export HYPERFRAMES_BROWSER_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+不要复制 Windows 的 node_modules、dist、浏览器缓存；必须在 Mac 重新安装和构建。
+
+四、AI 必须先读
+代码仓库 AGENTS.md、packages/studio/AGENTS.md 与 PRESENTATION_RULES.md。
+本包的 PRESENTATION_RULES.md 是制作规则快照。
+assets/ 保存本地字体、图片、GSAP 和样式；不可遗漏。
+backgrounds/ 是统一背景，slides/ 是页内内容，subjects/ 是跨页复用主体。
+presentation-cues.json 定义点击后停留的画面和播放区间。
+presentation-timing-links.json 定义动画时间依赖，调整时间时应检查关联文字。
+
+五、动画约束
+先连续动画，再插入演示停留帧；不要按页重复创建跨页圆。
+圆位于 subjects/case-circle-08-10.html；组开始于总轴 56 秒。
+局部 2.1–2.9 秒放大，14.35–15.05 秒收缩，15.05–15.95 秒分裂。
+基础直径 36px，放大直径 604px，分裂后直径 64px。
+同一时刻同一属性只能有一个动画写入者。修改起点不能联动修改终点。
+固定背景装饰由设计源码维护，不要求编辑器允许选中。
+纯白背景、浅浮雕卡片；中文字体和字号遵循规则文件。
+
+六、验证与接手范围
+node packages/cli/dist/cli.js lint presentations/probation-review
+node packages/cli/dist/cli.js check presentations/probation-review
+node tools/verify-circle-endpoints.mjs
+修改编辑器时运行对应包测试：bun run --cwd packages/studio test <测试路径>
+截图、检查报告、导入临时备份与 Windows 路径脚本不属于运行依赖。
+不包含 Windows 的编辑撤销历史和浏览器面板布局；素材与动画源数据完整保留。
+
+本次交付验证：编辑器相关 26 个测试文件、264 项测试通过；服务端时序/忙写入 4 项测试通过；类型检查、lint、fallow 审查通过。
+额外 atomicFile 测试：26 项通过、8 项跳过，1 项接近 255 字节文件名的测试在当前 Windows 机器因总路径长度失败。Mac 接手时请复验此项，不能据此宣称全仓测试全部通过。
+Windows 提交钩子的 shell 行数检查无法解析，已用等价检查验证所有待提交 Studio 非测试源文件不超过 600 行。

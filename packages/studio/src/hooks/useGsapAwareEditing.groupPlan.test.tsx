@@ -152,17 +152,17 @@ describe("a group drag plans every member before its first write", () => {
     act(() => h.root.unmount());
   });
 
-  it("refuses members animated in two files, since the batch writes one file", async () => {
+  it("sends members animated in two files through the source-aware batch writer", async () => {
     const h = mountGroup(["a", "b", "c"].map((id) => positionTween(id)));
     const updates = h.updates.map((u, i) => ({
       ...u,
       selection: { ...u.selection, sourceFile: i === 2 ? "scenes/intro.html" : "index.html" },
     }));
 
-    await expect(h.groupCommit(updates)).rejects.toMatchObject({ reason: "mixed-files" });
+    await h.groupCommit(updates);
 
-    expect(h.written()).toEqual([]);
-    expect(trackStudioEditBlocked).toHaveBeenCalledWith(expect.objectContaining({ targetId: "c" }));
+    expect(h.written()).toHaveLength(3);
+    expect(trackStudioEditBlocked).not.toHaveBeenCalled();
     act(() => h.root.unmount());
   });
 

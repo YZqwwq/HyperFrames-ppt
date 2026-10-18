@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 // fallow-ignore-file code-duplication
 import { useEffect, useState } from "react";
 import { isTextEditableSelection, type DomEditSelection } from "./domEditing";
@@ -89,7 +90,7 @@ function FlatFillFields({
   return (
     <>
       <FlatSegmentedRow
-        label="Fill"
+        label={t("property.fill")}
         options={[
           { key: "Solid", node: "Solid", label: "Solid", active: preferredFillMode === "Solid" },
           {
@@ -106,7 +107,7 @@ function FlatFillFields({
       {preferredFillMode === "Solid" ? (
         <ColorField
           flat
-          label="Color"
+          label={t("property.color")}
           value={styles["background-color"] ?? "transparent"}
           disabled={styleEditingDisabled}
           onPreview={(next) => onPreviewStyle?.("background-color", next)}
@@ -138,7 +139,7 @@ function FlatFillFields({
       {!hasTextControls && (
         <ColorField
           flat
-          label="Text color"
+          label={t("property.textColor")}
           value={styles.color ?? "rgb(0, 0, 0)"}
           disabled={styleEditingDisabled}
           onCommit={(next) => onSetStyle("color", next)}
@@ -173,7 +174,7 @@ function FlatStrokeRow({
   return (
     <>
       <FlatRow
-        label="Stroke width"
+        label={t("property.strokeWidth")}
         value={widthDisplay}
         tier={resolveValueTier(styles["border-width"], "0px")}
         disabled={disabled}
@@ -197,7 +198,7 @@ function FlatStrokeRow({
         }}
       />
       <FlatSelectRow
-        label="Stroke style"
+        label={t("property.strokeStyle")}
         value={borderStyleValue}
         // Valid border-style keywords — the ONLY way to set this, since a
         // free-text field here would require typing an exact CSS keyword
@@ -216,7 +217,7 @@ function FlatStrokeRow({
       />
       <ColorField
         flat
-        label="Stroke color"
+        label={t("property.strokeColor")}
         value={borderColorValue}
         disabled={disabled}
         onCommit={(next) => onSetStyle("border-color", next)}
@@ -297,7 +298,7 @@ function FlatShadowBlendRows({
   return (
     <>
       <FlatSelectRow
-        label="Shadow"
+        label={t("property.shadow")}
         value={boxShadowPreset}
         options={["none", "soft", "lift", "glow", "custom"]}
         tier={resolveValueTier(boxShadowPreset === "none" ? undefined : boxShadowPreset, "none")}
@@ -312,7 +313,7 @@ function FlatShadowBlendRows({
         onReset={() => void onSetStyle("box-shadow", "none")}
       />
       <FlatSelectRow
-        label="Blend"
+        label={t("property.blend")}
         value={blendValue}
         options={["normal", "multiply", "screen", "overlay", "darken", "lighten"]}
         tier={resolveValueTier(styles["mix-blend-mode"], "normal")}
@@ -343,7 +344,7 @@ function FlatBlurSliders({
   return (
     <>
       <FlatSlider
-        label="Layer blur"
+        label={t("property.layerBlur")}
         value={filterBlurValue}
         min={0}
         max={Math.max(40, Math.ceil(filterBlurValue))}
@@ -355,7 +356,7 @@ function FlatBlurSliders({
         }
       />
       <FlatSlider
-        label="Backdrop"
+        label={t("property.backdrop")}
         value={backdropBlurValue}
         min={0}
         max={Math.max(60, Math.ceil(backdropBlurValue))}
@@ -390,7 +391,7 @@ function FlatOverflowMaskRows({
   return (
     <>
       <FlatSelectRow
-        label="Overflow"
+        label={t("property.overflow")}
         value={styles.overflow || "visible"}
         options={["visible", "hidden", "clip", "auto", "scroll"]}
         tier={resolveValueTier(styles.overflow, "visible")}
@@ -399,7 +400,7 @@ function FlatOverflowMaskRows({
         onReset={() => void onSetStyle("overflow", "visible")}
       />
       <FlatSelectRow
-        label="Mask"
+        label={t("property.mask")}
         value={clipPathPreset}
         // "custom" = authored clip-path; showing "none" invites destroying it.
         options={[...(clipPathPreset === "custom" ? ["custom"] : []), "none", "inset", "circle"]}
@@ -441,7 +442,7 @@ function FlatOpacitySlider({
 
   return (
     <FlatSlider
-      label="Opacity"
+      label={t("property.opacity")}
       value={opacityValue}
       min={0}
       max={100}

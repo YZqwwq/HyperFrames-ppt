@@ -6,12 +6,12 @@ import type { TimelineElement } from "../store/playerStore";
 import type { TimelineKeyframeTarget } from "./timelineKeyframeIdentity";
 import { menuClasses } from "../../components/ui/menuStyle";
 
-export interface KeyframeDiamondContextMenuState {
+export interface KeyframeDiamondContextMenuState<TElement = TimelineElement> {
   x: number;
   y: number;
   /** Timeline project session that created this portaled target. */
   sessionEpoch?: number;
-  element: TimelineElement;
+  element: TElement;
   elementId: string;
   percentage: number;
   tweenPercentage?: number;
@@ -20,14 +20,14 @@ export interface KeyframeDiamondContextMenuState {
   currentEase?: string;
 }
 
-interface KeyframeDiamondContextMenuProps {
-  state: KeyframeDiamondContextMenuState;
+interface KeyframeDiamondContextMenuProps<TElement> {
+  state: KeyframeDiamondContextMenuState<TElement>;
   onClose: () => void;
   /** Omitted where this node cannot be deleted on its own (see the arc-waypoint
    *  floor in removeMotionPathPointInScript): an entry that silently no-ops is
    *  worse than no entry. */
   onDelete?: (elementId: string, keyframe: TimelineKeyframeTarget) => void;
-  onDeleteAll: (element: TimelineElement, animationId?: string) => void;
+  onDeleteAll: (element: TElement, animationId?: string) => void;
   /** Focus this keyframe's ease segment in the inspector. Omitted when the
    *  keyframe carries no tween identity to focus. */
   onEditEase?: (elementId: string, keyframe: TimelineKeyframeTarget) => void;
@@ -37,13 +37,13 @@ interface KeyframeDiamondContextMenuProps {
     keyframe: TimelineKeyframeTarget,
   ) => Promise<boolean> | boolean | void;
   /** Retime the keyframe to the current playhead, preserving its value + ease. */
-  onMoveToPlayhead?: (element: TimelineElement, keyframe: TimelineKeyframeTarget) => void;
+  onMoveToPlayhead?: (element: TElement, keyframe: TimelineKeyframeTarget) => void;
 }
 
 const ITEM_CLS = `${menuClasses.row} ${menuClasses.rowEnabled} flex items-center gap-2`;
 const DESTRUCTIVE_ITEM_CLS = `${menuClasses.row} text-danger-ink hover:bg-neutral-800 focus-visible:bg-neutral-800 cursor-pointer flex items-center gap-2`;
 
-export function KeyframeDiamondContextMenu({
+export function KeyframeDiamondContextMenu<TElement = TimelineElement>({
   state,
   onClose,
   onDelete,
@@ -51,7 +51,7 @@ export function KeyframeDiamondContextMenu({
   onEditEase,
   onCopyProperties,
   onMoveToPlayhead,
-}: KeyframeDiamondContextMenuProps) {
+}: KeyframeDiamondContextMenuProps<TElement>) {
   const menuRef = useContextMenuDismiss(onClose);
   // The clicked diamond's identity, built once: the menu's mutating entries
   // all act on it, and they must not disagree about which keyframe was clicked.

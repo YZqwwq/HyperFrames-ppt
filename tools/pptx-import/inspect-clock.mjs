@@ -1,0 +1,3 @@
+import puppeteer from 'puppeteer-core';
+const b=await puppeteer.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true});
+try {const p=await b.newPage(); await p.goto('http://127.0.0.1:5194/#project/probation-review?v=1&t=58&tab=design&rc=0');await new Promise(r=>setTimeout(r,5000));const f=p.frames().find(f=>f.url().includes('/preview?'));console.log(await f.evaluate(()=>{let e=document.getElementById('slide-08-case-visual');let a=[];while(e){a.push([e.tagName,...Array.from(e.attributes).filter(x=>x.name!=='style').map(x=>[x.name,x.value])]);e=e.parentElement;}return a;}));}finally{await b.close()}

@@ -4,6 +4,7 @@
  */
 import type { GsapAnimation } from "@hyperframes/core/gsap-parser";
 import type { DomEditSelection } from "../components/editor/domEditingTypes";
+import { selectionTimeOffset } from "./selectionClock";
 import { usePlayerStore } from "../player/store/playerStore";
 import {
   percentageToAbsoluteForAnimation,
@@ -57,7 +58,7 @@ function newTweenTarget(selection: DomEditSelection): string | null {
 export function computeCurrentPercentage(
   selection: DomEditSelection,
   animation?: GsapAnimation,
-  time = usePlayerStore.getState().currentTime,
+  time = usePlayerStore.getState().currentTime - selectionTimeOffset(selection),
 ): number {
   return computeElementPercentage(time, selection, animation);
 }
@@ -66,10 +67,14 @@ export function computeCurrentPercentage(
 // time. Otherwise the playhead can sit a frame outside the tween (e.g. 1.1666 vs a
 // 1.2 start), so the post-commit reseek renders the element's base pose and the edit
 // looks like it snapped away. Keeping the playhead on the edited keyframe avoids that.
-export function parkPlayheadOnKeyframe(anim: GsapAnimation, pct: number): void {
+export function parkPlayheadOnKeyframe(
+  anim: GsapAnimation,
+  pct: number,
+  selection?: DomEditSelection,
+): void {
   const time = percentageToAbsoluteForAnimation(pct, anim);
   if (time === null || resolveTweenDuration(anim) <= 0) return;
-  usePlayerStore.getState().requestSeek(roundTo3(time));
+  usePlayerStore.getState().requestSeek(roundTo3(time + selectionTimeOffset(selection)));
 }
 
 async function replaceKeyframedPositionHold(

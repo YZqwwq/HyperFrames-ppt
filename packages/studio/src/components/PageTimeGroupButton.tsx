@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import { useRef, useState } from "react";
 import { useFileManagerContext } from "../contexts/FileManagerContext";
 import { useStudioShellContext } from "../contexts/StudioContext";
@@ -41,9 +42,9 @@ export function PageTimeGroupButton({
       resync();
       onGrouped();
       await files.refreshFileTree();
-      shell.showToast("已打组。双击时间组进入内部，点击总时间轴返回。", "info");
+      shell.showToast(t("group.done"), "info");
     } catch (error) {
-      shell.showToast(error instanceof Error ? error.message : "打组失败", "error");
+      shell.showToast(error instanceof Error ? error.message : t("group.failed"), "error");
     } finally {
       inFlight.current = false;
       setBusy(false);
@@ -53,14 +54,11 @@ export function PageTimeGroupButton({
     <button
       type="button"
       disabled={busy || !!shell.writeBlockedReason}
-      title={
-        shell.writeBlockedReason ||
-        "将当前页面的全部图层和动画收为一个时间组；内部时序保持不变，可撤销。"
-      }
+      title={shell.writeBlockedReason || t("group.hint")}
       onClick={() => void groupPage()}
       className="rounded px-2 py-1 text-xs text-text-1 hover:bg-hover disabled:opacity-40 whitespace-nowrap"
     >
-      {busy ? "正在打组…" : "页面打组"}
+      {busy ? t("group.creating") : t("group.create")}
     </button>
   );
 }

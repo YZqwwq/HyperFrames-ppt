@@ -29,14 +29,14 @@ function press(under: Element[]) {
   return { currentTarget: circle, clientX: 0, clientY: 0 } as unknown as React.PointerEvent;
 }
 
-it("the node GSAP renders the layer at is the layer, inside the box or out", () => {
-  expect(controlForNode(press([box, overlay]), atLayer, live)).toBe(box);
-  expect(controlForNode(press([overlay]), atLayer, live)).toBe(box);
+it("the current node keeps its press inside or outside the selection box", () => {
+  expect(controlForNode(press([box, overlay]), atLayer, live)).toBeNull();
+  expect(controlForNode(press([overlay]), atLayer, live)).toBeNull();
 });
 
-it("inside the layer's box any other node is the layer's, so a drag from its middle moves it", () => {
-  expect(controlForNode(press([box, overlay]), other, live)).toBe(box);
-  expect(controlForNode(press([box, overlay]), other, null)).toBe(box);
+it("other nodes inside the selection box keep their own presses", () => {
+  expect(controlForNode(press([box, overlay]), other, live)).toBeNull();
+  expect(controlForNode(press([box, overlay]), other, null)).toBeNull();
 });
 
 it("a handle above the box under a node takes the press, not the box or the node", () => {

@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import {
   googleFontStylesheetUrl,
@@ -530,7 +531,7 @@ export function FontFamilyField({
   if (flat) {
     return (
       <div ref={containerRef} className="relative flex min-h-[30px] items-center justify-between">
-        <span className="text-[11px] text-panel-text-2">Font</span>
+        <span className="text-[11px] text-panel-text-2">{t("property.font")}</span>
         <button
           type="button"
           data-flat-font-trigger="true"
@@ -575,7 +576,7 @@ export function FontFamilyField({
           {currentFamily}
         </span>
         <span className="shrink-0 text-[10px] uppercase tracking-[0.14em] text-neutral-600">
-          Font
+          {t("property.font")}
         </span>
       </button>
       {dropdown}

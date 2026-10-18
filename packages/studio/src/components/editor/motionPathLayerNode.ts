@@ -13,16 +13,14 @@ export function controlUnder(e: React.PointerEvent): Element | null {
   return hit?.closest(SELECTION_CHROME) ? hit : null;
 }
 
-/** The handle or box above a node, else the box if the layer sits at the node; null: the node. */
+/** Explicit handles keep priority, but a node inside the selection box remains editable. */
 export function controlForNode(
   e: React.PointerEvent,
-  pressed: Point,
-  live: Point | null,
+  _pressed: Point,
+  _live: Point | null,
 ): Element | null {
-  const atLayer = live && Math.abs(pressed.x - live.x) < 0.5 && Math.abs(pressed.y - live.y) < 0.5;
-  return (
-    controlUnder(e) ?? (atLayer ? e.currentTarget.ownerDocument.querySelector(LAYER_BOX) : null)
-  );
+  const control = controlUnder(e);
+  return control?.matches(LAYER_BOX) ? null : control;
 }
 
 /** Hands a press to `control`; true when it started a gesture with it. */

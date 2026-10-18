@@ -108,6 +108,7 @@ export async function commitDomStyles(
         label: "Edit layer style",
         // Inline styles are already live, so a reload would only blank the preview.
         skipRefresh: true,
+        deferRender: true,
         importedFont: importedFont ?? undefined,
       }),
     shouldRevert: ownsAny,

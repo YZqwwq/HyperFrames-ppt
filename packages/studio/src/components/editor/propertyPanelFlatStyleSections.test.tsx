@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 // @vitest-environment happy-dom
 
 import React, { act } from "react";
@@ -81,7 +82,7 @@ function clickSegment(host: HTMLElement, label: string) {
 describe("FlatStyleSection — Fill", () => {
   it("renders the Fill segmented control defaulting to Solid, and a mint Color row when a color is set", () => {
     const { host, root } = renderSection();
-    expect(host.textContent).toContain("Fill");
+    expect(host.textContent).toContain(t("property.fill"));
     expect(host.textContent).toContain("Solid");
     const swatch = host.querySelector('[data-flat-color-trigger="true"]');
     expect(swatch).not.toBeNull();
@@ -178,15 +179,15 @@ function setInputValue(input: HTMLInputElement, nextValue: string) {
 describe("FlatStyleSection — Stroke and Radius", () => {
   it("renders a width-only Stroke width row — style is only ever set through the Stroke style select below it", () => {
     const { host, root } = renderSection(STROKE_STYLES);
-    expect(host.textContent).toContain("Stroke width");
-    expect(host.textContent).toContain("Stroke style");
-    expect(getFlatRowInput(host, "Stroke width").value).toBe("1px");
+    expect(host.textContent).toContain(t("property.strokeWidth"));
+    expect(host.textContent).toContain(t("property.strokeStyle"));
+    expect(getFlatRowInput(host, t("property.strokeWidth")).value).toBe("1px");
     act(() => root.unmount());
   });
 
   it("commits a new stroke width without touching the existing style", async () => {
     const { host, root, onSetStyle } = renderSection(STROKE_STYLES);
-    await commitFlatRowInput(host, "Stroke width", "2px");
+    await commitFlatRowInput(host, t("property.strokeWidth"), "2px");
     expect(onSetStyle).toHaveBeenCalledWith("border-width", "2px");
     expect(onSetStyle).not.toHaveBeenCalledWith("border-style", expect.anything());
     act(() => root.unmount());
@@ -198,28 +199,28 @@ describe("FlatStyleSection — Stroke and Radius", () => {
       "border-style": "none",
       "border-color": "rgba(255,255,255,.12)",
     });
-    await commitFlatRowInput(host, "Stroke width", "3px");
+    await commitFlatRowInput(host, t("property.strokeWidth"), "3px");
     expect(onSetStyle).toHaveBeenCalledWith("border-style", "solid");
     act(() => root.unmount());
   });
 
   it("clamps an out-of-range stroke width commit to 200px (fix 2)", async () => {
     const { host, root, onSetStyle } = renderSection(STROKE_STYLES);
-    await commitFlatRowInput(host, "Stroke width", "9999px");
+    await commitFlatRowInput(host, t("property.strokeWidth"), "9999px");
     expect(onSetStyle).toHaveBeenCalledWith("border-width", "200px");
     act(() => root.unmount());
   });
 
   it("ignores an unparseable stroke width commit", async () => {
     const { host, root, onSetStyle } = renderSection(STROKE_STYLES);
-    await commitFlatRowInput(host, "Stroke width", "bogus");
+    await commitFlatRowInput(host, t("property.strokeWidth"), "bogus");
     expect(onSetStyle).not.toHaveBeenCalled();
     act(() => root.unmount());
   });
 
   it("commits a stroke style change through the discoverable Stroke style select (fix 2)", () => {
     const { host, root, onSetStyle } = renderSection(STROKE_STYLES);
-    changeFlatSelectRow(host, "Stroke style", "dashed");
+    changeFlatSelectRow(host, t("property.strokeStyle"), "dashed");
     expect(onSetStyle).toHaveBeenCalledWith("border-style", "dashed");
     act(() => root.unmount());
   });
@@ -232,7 +233,11 @@ describe("FlatStyleSection — Stroke and Radius", () => {
     });
     const trigger = Array.from(
       host.querySelectorAll<HTMLButtonElement>('[data-flat-color-trigger="true"]'),
-    ).find((btn) => btn.getAttribute("aria-label") === "Pick stroke color color");
+    ).find(
+      (btn) =>
+        btn.getAttribute("aria-label") ===
+        t("property.pickColor", { label: t("property.strokeColor") }),
+    );
     if (!trigger) throw new Error("expected the stroke color trigger");
     act(() => trigger.dispatchEvent(new MouseEvent("click", { bubbles: true })));
     const hexInput = Array.from(document.querySelectorAll<HTMLInputElement>("input")).find(
@@ -320,8 +325,8 @@ function changeFlatSelectRow(host: HTMLElement, label: string, nextValue: string
 describe("FlatStyleSection — Shadow and Blend", () => {
   it("renders Shadow with the inferred preset and a reset when set, Blend with a plain select", () => {
     const { host, root } = renderSection({ "box-shadow": "0 8px 24px rgba(0,0,0,.35)" });
-    expect(host.textContent).toContain("Shadow");
-    expect(host.textContent).toContain("Blend");
+    expect(host.textContent).toContain(t("property.shadow"));
+    expect(host.textContent).toContain(t("property.blend"));
     const selects = host.querySelectorAll("select");
     expect(selects.length).toBeGreaterThanOrEqual(2);
     act(() => root.unmount());
@@ -329,14 +334,14 @@ describe("FlatStyleSection — Shadow and Blend", () => {
 
   it("commits a shadow preset change through onSetStyle", () => {
     const { host, root, onSetStyle } = renderSection({});
-    changeFlatSelectRow(host, "Shadow", "soft");
+    changeFlatSelectRow(host, t("property.shadow"), "soft");
     expect(onSetStyle).toHaveBeenCalledWith("box-shadow", expect.any(String));
     act(() => root.unmount());
   });
 
   it("commits a blend mode change through onSetStyle", () => {
     const { host, root, onSetStyle } = renderSection({});
-    changeFlatSelectRow(host, "Blend", "multiply");
+    changeFlatSelectRow(host, t("property.blend"), "multiply");
     expect(onSetStyle).toHaveBeenCalledWith("mix-blend-mode", "multiply");
     act(() => root.unmount());
   });
@@ -345,7 +350,7 @@ describe("FlatStyleSection — Shadow and Blend", () => {
     const { host, root, onSetStyle } = renderSection({
       "box-shadow": "0 12px 36px rgba(0, 0, 0, 0.28)",
     });
-    const { resetButton } = getFlatSelectRow(host, "Shadow");
+    const { resetButton } = getFlatSelectRow(host, t("property.shadow"));
     if (!resetButton) throw new Error("expected the shadow reset button");
     act(() => resetButton.dispatchEvent(new MouseEvent("click", { bubbles: true })));
     expect(onSetStyle).toHaveBeenCalledWith("box-shadow", "none");
@@ -354,7 +359,7 @@ describe("FlatStyleSection — Shadow and Blend", () => {
 
   it("resets the blend mode back to normal via the reset button", () => {
     const { host, root, onSetStyle } = renderSection({ "mix-blend-mode": "multiply" });
-    const { resetButton } = getFlatSelectRow(host, "Blend");
+    const { resetButton } = getFlatSelectRow(host, t("property.blend"));
     if (!resetButton) throw new Error("expected the blend reset button");
     act(() => resetButton.dispatchEvent(new MouseEvent("click", { bubbles: true })));
     expect(onSetStyle).toHaveBeenCalledWith("mix-blend-mode", "normal");
@@ -381,8 +386,8 @@ describe("FlatStyleSection — blur sliders", () => {
         />,
       );
     });
-    expect(host.textContent).toContain("Layer blur");
-    expect(host.textContent).toContain("Backdrop");
+    expect(host.textContent).toContain(t("property.layerBlur"));
+    expect(host.textContent).toContain(t("property.backdrop"));
     expect(host.textContent).toContain("4px");
     const track = host.querySelectorAll('[data-flat-slider-track="true"]')[0];
     Object.defineProperty(track, "getBoundingClientRect", {
@@ -399,7 +404,7 @@ describe("FlatStyleSection — blur sliders", () => {
 
   it("renders the Backdrop slider from backdrop-filter and commits a new blur value on track click", () => {
     const { host, root, onSetStyle } = renderSection({ "backdrop-filter": "blur(6px)" });
-    expect(host.textContent).toContain("Backdrop");
+    expect(host.textContent).toContain(t("property.backdrop"));
     expect(host.textContent).toContain("6px");
     const tracks = host.querySelectorAll('[data-flat-slider-track="true"]');
     // Track order is Layer blur, Backdrop, Opacity — Backdrop is the second track.
@@ -466,8 +471,8 @@ describe("FlatStyleSection — Overflow and Mask", () => {
       overflow: "hidden",
       "clip-path": "inset(8px round 4px)",
     });
-    expect(host.textContent).toContain("Overflow");
-    expect(host.textContent).toContain("Mask");
+    expect(host.textContent).toContain(t("property.overflow"));
+    expect(host.textContent).toContain(t("property.mask"));
     expect(host.textContent).toContain("hidden");
     act(() => root.unmount());
   });
@@ -504,7 +509,7 @@ describe("FlatStyleSection — Overflow and Mask", () => {
 
   it("resets overflow back to visible via the reset button", () => {
     const { host, root, onSetStyle } = renderSection({ overflow: "scroll" });
-    const { resetButton } = getFlatSelectRow(host, "Overflow");
+    const { resetButton } = getFlatSelectRow(host, t("property.overflow"));
     if (!resetButton) throw new Error("expected the overflow reset button");
     act(() => resetButton.dispatchEvent(new MouseEvent("click", { bubbles: true })));
     expect(onSetStyle).toHaveBeenCalledWith("overflow", "visible");
@@ -513,14 +518,14 @@ describe("FlatStyleSection — Overflow and Mask", () => {
 
   it("commits a mask preset change through onSetStyle, building an inset() clip-path", () => {
     const { host, root, onSetStyle } = renderSection({});
-    changeFlatSelectRow(host, "Mask", "inset");
+    changeFlatSelectRow(host, t("property.mask"), "inset");
     expect(onSetStyle).toHaveBeenCalledWith("clip-path", "inset(0 round 0px)");
     act(() => root.unmount());
   });
 
   it("resets the mask back to none via the reset button", () => {
     const { host, root, onSetStyle } = renderSection({ "clip-path": "circle(50% at 50% 50%)" });
-    const { resetButton } = getFlatSelectRow(host, "Mask");
+    const { resetButton } = getFlatSelectRow(host, t("property.mask"));
     if (!resetButton) throw new Error("expected the mask reset button");
     act(() => resetButton.dispatchEvent(new MouseEvent("click", { bubbles: true })));
     expect(onSetStyle).toHaveBeenCalledWith("clip-path", "none");
@@ -601,7 +606,7 @@ describe("FlatStyleSection — Opacity", () => {
         />,
       );
     });
-    expect(host.textContent).toContain("Opacity");
+    expect(host.textContent).toContain(t("property.opacity"));
     expect(host.textContent).toContain("100%");
     const tracks = host.querySelectorAll('[data-flat-slider-track="true"]');
     const opacityTrack = tracks[tracks.length - 1];

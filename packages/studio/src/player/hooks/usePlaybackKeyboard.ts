@@ -10,6 +10,7 @@ import { useRef, useCallback } from "react";
 import { useCaptionStore } from "../../captions/store";
 import { shouldIgnorePlaybackShortcutEvent, SHUTTLE_SPEEDS } from "../lib/playbackShortcuts";
 import { canvasNudgeKeysClaimed } from "../../utils/canvasNudgeGate";
+import { typingOwnsEvent } from "../../utils/typingTarget";
 import { usePlayerStore } from "../store/playerStore";
 import { stepFrameTime, STUDIO_PREVIEW_FPS } from "../lib/time";
 import type { PlaybackAdapter } from "../lib/playbackTypes";
@@ -94,7 +95,8 @@ export function usePlaybackKeyboard({
   // fallow-ignore-next-line complexity
   const handlePlaybackKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.defaultPrevented) return;
+      if (document.querySelector("[data-presentation-mode]")) return;
+      if (e.defaultPrevented || typingOwnsEvent(e)) return;
       const captionState = useCaptionStore.getState();
       if (
         shouldIgnorePlaybackShortcutEvent(e, {

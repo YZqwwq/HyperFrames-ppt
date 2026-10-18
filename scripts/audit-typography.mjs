@@ -1,0 +1,4 @@
+import{readFileSync}from'node:fs';import{parseHTML}from'linkedom';
+const root='../deliverables/转正答辩-HyperFrames/';const counts={};
+for(let i=1;i<=17;i++){let n=String(i).padStart(2,'0'),d=parseHTML(readFileSync(root+'slides/slide-'+n+'.html','utf8')).document;let items=[...d.querySelectorAll('[style]')].filter(e=>e.style.fontSize&&e.textContent.trim()&&!e.querySelector('[style*="font-size"]')).map(e=>({text:e.textContent.trim(),size:parseFloat(e.style.fontSize),weight:e.style.fontWeight,font:e.style.fontFamily,line:e.style.lineHeight}));for(const a of items)counts[a.font]=(counts[a.font]||0)+1;console.log(JSON.stringify({page:n,title:d.title,texts:items.length,chars:items.reduce((s,a)=>s+a.text.length,0),sizes:[...new Set(items.map(a=>a.size))].sort((a,b)=>a-b),largest:items.sort((a,b)=>b.size-a.size).slice(0,2),small:items.filter(a=>a.size<20).slice(0,2)}));}
+console.log(JSON.stringify({fonts:counts}));

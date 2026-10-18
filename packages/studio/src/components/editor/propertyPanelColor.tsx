@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "../../icons/SystemIcons";
@@ -469,7 +470,7 @@ export function ColorField({
           type="button"
           data-flat-color-trigger="true"
           disabled={disabled}
-          aria-label={`Pick ${label.toLowerCase()} color`}
+          aria-label={t("property.pickColor", { label })}
           ref={buttonRef}
           onClick={openPicker}
           className="flex items-center gap-2 disabled:cursor-not-allowed"

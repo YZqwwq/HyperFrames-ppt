@@ -1,0 +1,2 @@
+from pathlib import Path
+p=Path('packages/studio/src/hooks/useAnimatedPropertyCommit.ts');s=p.read_text(encoding='utf-8');start=s.index('function pickBestAnimation(');end=s.index('\n/**',start);s=s[:start]+s[end:];s='import { pickPropertyAnimation } from "./pickPropertyAnimation";\n'+s;s=s.replace('pickBestAnimation(', 'pickPropertyAnimation(').replace('        selectionTimeOffset(selection),','        usePlayerStore.getState().currentTime - selectionTimeOffset(selection),');p.write_text(s,encoding='utf-8')

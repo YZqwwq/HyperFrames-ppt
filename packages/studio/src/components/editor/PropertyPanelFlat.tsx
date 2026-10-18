@@ -1,3 +1,6 @@
+import { t } from "../../i18n";
+import { AnimationEndpoints } from "./AnimationEndpoints";
+import { selectionTimeOffset } from "../../hooks/selectionClock";
 import { scopedElementKey } from "../../hooks/gsapKeyframeCacheHelpers";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -132,21 +135,7 @@ export function PropertyPanelFlat({
   ...forwardedProps
 }: PropertyPanelFlatProps) {
   // PropertyPanel keys this component by selection, so the default is per element.
-  const [openGroupId, setOpenGroupId] = useState<string>(() =>
-    isTextEditableSelection(element)
-      ? "text"
-      : showEditableSections
-        ? "style"
-        : sections.media
-          ? "media"
-          : // An `<hf-audio-group>` has no style, no layout and no media — its
-            // chain is the only reason to select one. Without this the fallback
-            // landed on "layout", a section a bus does not render, so opening the
-            // rack on a group produced a panel with everything collapsed.
-            sections.audioFx
-            ? "audio-fx"
-            : "layout",
-  );
+  const [openGroupId, setOpenGroupId] = useState<string>(sections.audioFx ? "audio-fx" : "");
 
   // Tracks which group(s) are actively transitioning this toggle cycle, so
   // their header/body gets the fast entrance animation (hf-flat-group-enter)
@@ -260,9 +249,11 @@ export function PropertyPanelFlat({
     }
   };
   const { start: elStart, duration: elDuration } = deriveElementTiming(element, gsapAnimations);
-  const seekFromKfPct = (pct: number) => onSeekToTime?.(elStart + (pct / 100) * elDuration);
+  const timeOffset = selectionTimeOffset(element);
+  const seekFromKfPct = (pct: number) =>
+    onSeekToTime?.(timeOffset + elStart + (pct / 100) * elDuration);
   // Use the same timing basis for seeking and active keyframe state.
-  const currentPct = elDuration > 0 ? ((currentTime - elStart) / elDuration) * 100 : 0;
+  const currentPct = elDuration > 0 ? ((currentTime - timeOffset - elStart) / elDuration) * 100 : 0;
 
   // Match the legacy Motion gate while preserving TypeScript narrowing.
   const showMotionTiming = Boolean(sections.timing);
@@ -522,14 +513,14 @@ export function PropertyPanelFlat({
       ),
     });
   }
-
+  const textGroupIndex = groups.findIndex((group) => group.id === "text");
+  const textGroup = textGroupIndex >= 0 ? groups.splice(textGroupIndex, 1)[0] : null;
   const openIndex = groups.findIndex((g) => g.id === openGroupId);
   const beforeOpen = openIndex === -1 ? groups : groups.slice(0, openIndex);
   const openGroup = openIndex === -1 ? null : groups[openIndex];
   const afterOpen = openIndex === -1 ? [] : groups.slice(openIndex + 1);
   const renderClosedGroup = (group: FlatGroupDescriptor) =>
     closedGroupHeader(group, toggleOpen, justToggledIds);
-
   return (
     <DesignPanelInputProvider ui="flat">
       <div className="flex h-full min-h-0 flex-col overflow-hidden bg-panel-bg text-panel-text-1">
@@ -553,6 +544,27 @@ export function PropertyPanelFlat({
           data-flat-panel-body="true"
           className="flex min-h-0 flex-1 flex-col overflow-y-auto"
         >
+          {textGroup && (
+            <DesignPanelInputProvider section="text">
+              <section
+                data-text-editor="true"
+                aria-label={textGroup.title}
+                className="shrink-0 border-b border-panel-hairline px-4 py-3"
+              >
+                {textGroup.content}
+              </section>
+            </DesignPanelInputProvider>
+          )}
+          <details className="shrink-0 border-b border-panel-hairline">
+            <summary className="cursor-pointer px-4 py-3 text-sm">{t("animation.states")}</summary>
+            <AnimationEndpoints
+              element={element}
+              animations={gsapAnimations}
+              onSeek={onSeekToTime}
+              onUpdateMeta={onUpdateGsapMeta}
+              onSetAllKeyframeEases={onSetAllKeyframeEases}
+            />
+          </details>
           {beforeOpen.map(renderClosedGroup)}
           {openGroup && (
             <DesignPanelInputProvider section={slugifyDesignInput(openGroup.title)}>

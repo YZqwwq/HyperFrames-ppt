@@ -1,0 +1,6 @@
+import{readFileSync,writeFileSync}from'node:fs';import{parseHTML}from'linkedom';const root='../deliverables/转正答辩-HyperFrames/';
+function edit(n,fn){let p=root+'slides/slide-'+n+'.html',d=parseHTML(readFileSync(p,'utf8')).document;fn(d);writeFileSync(p,d.toString());}
+function role(e,r){e.setAttribute('data-text-role',r);e.style.fontSize=`var(--type-${r}-size)`;e.style.fontWeight=`var(--type-${r}-weight)`;e.style.lineHeight=`var(--type-${r}-line)`;}
+edit('01',d=>{for(const[id,r,y,h]of [[8,'cover',240,110],[2,'title',365,82],[3,'caption',458,40],[5,'lead',265,50],[6,'title',325,85],[7,'lead',420,50]]){let b=d.getElementById('slide-01-shape-'+id);for(const p of b.querySelectorAll('p'))role(p,r);b.style.top=y+'px';b.style.height=h+'px';if(id>=5&&id<=7)b.style.width='450px';if(id===2)b.style.width='480px';if(id===3)b.style.left='144px';}});
+edit('07',d=>{for(const id of [17,18,23]){const b=d.getElementById('slide-07-shape-'+id);role(b.querySelector('p'),'metric-compact');b.style.height='80px';b.style.top='534px';} });
+let p=root+'assets/typography.css';writeFileSync(p,readFileSync(p,'utf8')+'\n:root{--type-metric-compact-size:64px;--type-metric-compact-weight:400;--type-metric-compact-line:1;}\n');

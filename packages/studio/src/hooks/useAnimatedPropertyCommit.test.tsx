@@ -475,3 +475,55 @@ it("counts one add when an inspector edit first converts a flat animation", asyn
     act(() => root.unmount());
   }
 });
+
+it("edits the endpoint of a mixed flat tween in one save, without adding another writer", async () => {
+  const host = document.createElement("div");
+  host.setAttribute("data-composition-file", "slides/08.html");
+  host.setAttribute("data-start", "56");
+  const element = document.createElement("div");
+  element.id = "box";
+  host.append(element);
+  document.body.append(host);
+  const sel = { ...selection, element, sourceFile: "slides/08.html" };
+  const animation = {
+    id: "#box-fromTo-5900",
+    targetSelector: "#box",
+    method: "fromTo",
+    position: 5.9,
+    resolvedStart: 5.9,
+    duration: 1.4,
+    ease: "power2.inOut",
+    fromProperties: { x: 0, scale: 1 },
+    properties: { x: -180.5, scale: 9.4375 },
+  } as GsapAnimation;
+  const saved: Record<string, unknown>[] = [];
+  let commit!: Commit;
+  const harness = renderHookWith(
+    [animation],
+    (m) => {
+      saved.push(m);
+    },
+    (fn) => {
+      commit = fn;
+    },
+  );
+  usePlayerStore.setState({ currentTime: 63.3, activeKeyframePct: 100 });
+  try {
+    await act(async () => {
+      await commit(sel, { scale: 8.5 });
+    });
+    expect(saved).toHaveLength(1);
+    expect(saved[0]).toMatchObject({
+      type: "replace-with-keyframes",
+      position: 5.9,
+      duration: 1.4,
+      keyframes: [
+        { percentage: 0, properties: { x: 0, scale: 1 } },
+        { percentage: 100, properties: { x: -180.5, scale: 8.5 } },
+      ],
+    });
+  } finally {
+    harness.unmount();
+    usePlayerStore.setState({ activeKeyframePct: null });
+  }
+});

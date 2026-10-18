@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 // @vitest-environment happy-dom
 
 import React, { act } from "react";
@@ -58,7 +59,7 @@ describe("TimelineToolbar — auto-keyframe toggle (#1808)", () => {
     );
     expect(btn).not.toBeNull();
     expect(btn?.getAttribute("aria-pressed")).toBe("true");
-    expect(btn?.textContent).toContain("Edit keyframe");
+    expect(btn?.textContent).toContain(t("keyframe.edit"));
     act(() => root.unmount());
   });
 
@@ -75,7 +76,7 @@ describe("TimelineToolbar — auto-keyframe toggle (#1808)", () => {
 
     expect(usePlayerStore.getState().autoKeyframeEnabled).toBe(false);
     expect(btn.getAttribute("aria-pressed")).toBe("false");
-    expect(btn.textContent).toContain("Move animation");
+    expect(btn.textContent).toContain(t("keyframe.move"));
     act(() => root.unmount());
   });
 });
@@ -84,16 +85,14 @@ describe("TimelineToolbar — adaptive thumbnails", () => {
   it("keeps a user-controlled hidden mode as the rollback path", () => {
     const { host, root } = renderToolbar();
     const button = host.querySelector<HTMLButtonElement>(
-      'button[aria-label="Hide thumbnails: labels only"]',
+      'button[aria-label="隐藏缩略图，仅显示名称"]',
     );
     if (!button) throw new Error("thumbnail toggle not rendered");
 
     act(() => button.click());
 
     expect(usePlayerStore.getState().thumbnailMode).toBe("hidden");
-    expect(button.getAttribute("aria-label")).toBe(
-      "Show thumbnails: posters stay visible; richer previews appear on interaction",
-    );
+    expect(button.getAttribute("aria-label")).toBe(t("timeline.showThumbnails"));
     act(() => root.unmount());
   });
 });
@@ -132,9 +131,7 @@ describe("TimelineToolbar — motion path endpoints", () => {
     } satisfies NonNullable<React.ComponentProps<typeof TimelineToolbar>["domEditSession"]>;
 
     const { host, root } = renderToolbar(session);
-    const button = host.querySelector<HTMLButtonElement>(
-      'button[aria-label="Motion path endpoint"]',
-    );
+    const button = host.querySelector<HTMLButtonElement>('button[aria-label="运动路径端点"]');
     expect(button?.disabled).toBe(true);
     act(() => root.unmount());
   });
@@ -170,7 +167,7 @@ describe("TimelineToolbar — keyframes on audio tracks", () => {
     // position lane on a track that has no position. Audio is automated instead.
     const { host, root } = renderToolbar(sessionFor("audio"));
     const button = host.querySelector<HTMLButtonElement>(
-      'button[aria-label="Add keyframe at playhead"]',
+      'button[aria-label="在播放头处添加关键帧"]',
     );
     expect(button?.disabled).toBe(true);
     act(() => root.unmount());
@@ -179,14 +176,14 @@ describe("TimelineToolbar — keyframes on audio tracks", () => {
   it("still offers it for a visual clip", () => {
     const { host, root } = renderToolbar(sessionFor("div"));
     const button = host.querySelector<HTMLButtonElement>(
-      'button[aria-label="Add keyframe at playhead"]',
+      'button[aria-label="在播放头处添加关键帧"]',
     );
     expect(button?.disabled).toBe(false);
     act(() => root.unmount());
   });
 
   const keyframeControls = (host: HTMLElement) => [
-    host.querySelector('button[aria-label="Add keyframe at playhead"]'),
+    host.querySelector('button[aria-label="在播放头处添加关键帧"]'),
     host.querySelector('button[aria-label="Auto-record manual edits as keyframes"]'),
   ];
   /** True when the keyframe shortcut claimed K, so playback never saw it. */
@@ -279,7 +276,7 @@ describe("TimelineToolbar Fit", () => {
   it("moves the slider and its readout with a zoom while it is previewed", () => {
     const unregister = mountTimelineViewport();
     const { host, root } = renderToolbar();
-    const slider = host.querySelector<HTMLInputElement>('input[aria-label="Timeline zoom"]')!;
+    const slider = host.querySelector<HTMLInputElement>('input[aria-label="时间轴缩放"]')!;
     const before = slider.value;
     act(() => {
       Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(
@@ -292,7 +289,9 @@ describe("TimelineToolbar Fit", () => {
     // Not laid out yet: the store still holds Fit, but the toolbar shows the zoom on screen.
     expect(usePlayerStore.getState().zoomMode).toBe("fit");
     expect(slider.value).not.toBe(before);
-    expect(host.querySelector('[aria-label="Timeline zoom level"]')?.textContent).not.toBe("Fit");
+    expect(host.querySelector('[aria-label="时间轴缩放比例"]')?.textContent).not.toBe(
+      t("timeline.fit"),
+    );
     act(() => root.unmount());
     act(() => unregister());
   });
@@ -302,13 +301,13 @@ describe("TimelineToolbar Fit", () => {
     const { host, root } = renderToolbar();
     act(() =>
       host
-        .querySelector('button[aria-label="Zoom in"]')
+        .querySelector('button[aria-label="放大"]')
         ?.dispatchEvent(new MouseEvent("click", { bubbles: true })),
     );
 
     act(() =>
       host
-        .querySelector('button[aria-label="Fit timeline to width"]')
+        .querySelector('button[aria-label="让时间轴适应窗口宽度"]')
         ?.dispatchEvent(new MouseEvent("click", { bubbles: true })),
     );
     act(() => vi.advanceTimersByTime(1000));
@@ -319,14 +318,14 @@ describe("TimelineToolbar Fit", () => {
 
   it("shows Fit as a named icon and says whether fit is on", () => {
     const { host, root } = renderToolbar();
-    const fit = () => host.querySelector('button[aria-label="Fit timeline to width"]');
+    const fit = () => host.querySelector('button[aria-label="让时间轴适应窗口宽度"]');
     expect(fit()?.textContent).toBe("");
     expect(fit()?.querySelector("svg")).not.toBeNull();
     act(() => fit()?.dispatchEvent(new MouseEvent("click", { bubbles: true })));
     expect(fit()?.getAttribute("aria-pressed")).toBe("true");
     act(() =>
       host
-        .querySelector('button[aria-label="Zoom in"]')
+        .querySelector('button[aria-label="放大"]')
         ?.dispatchEvent(new MouseEvent("click", { bubbles: true })),
     );
     act(() => vi.advanceTimersToNextFrame());
@@ -339,7 +338,7 @@ describe("TimelineToolbar Fit", () => {
     const before = usePlayerStore.getState().userZoomCount;
     act(() =>
       host
-        .querySelector('button[aria-label="Zoom in"]')
+        .querySelector('button[aria-label="放大"]')
         ?.dispatchEvent(new MouseEvent("click", { bubbles: true })),
     );
     act(() => vi.advanceTimersToNextFrame());
@@ -367,9 +366,7 @@ describe("TimelineToolbar audio meters", () => {
           </>,
         ),
       );
-      const button = host.querySelector<HTMLButtonElement>(
-        'button[aria-label="Toggle audio meters"]',
-      );
+      const button = host.querySelector<HTMLButtonElement>('button[aria-label="切换音量表"]');
       expect(readStudioUiPreferences().audioMetersVisible).toBeUndefined();
       expect(button?.getAttribute("aria-pressed")).toBe("false");
       expect(host.querySelector('[data-testid="audio-meter-strip"]')).toBeNull();
@@ -388,7 +385,7 @@ describe("TimelineToolbar audio meters", () => {
 
 describe("TimelineToolbar history", () => {
   const historyButtons = (host: HTMLElement) =>
-    host.querySelectorAll('button[aria-label="Undo"], button[aria-label="Redo"]').length;
+    host.querySelectorAll('button[aria-label="撤销"], button[aria-label="重做"]').length;
 
   it("shows Undo and Redo by default", () => {
     const { host, root } = renderToolbar();
@@ -406,7 +403,7 @@ describe("TimelineToolbar history", () => {
 describe("TimelineToolbar tool menu", () => {
   async function openMenuRows(props: Partial<React.ComponentProps<typeof TimelineToolbar>>) {
     const { host, root } = renderToolbar(undefined, props);
-    const trigger = host.querySelector<HTMLButtonElement>('button[aria-label^="Timeline tool:"]')!;
+    const trigger = host.querySelector<HTMLButtonElement>('button[aria-label^="时间轴工具："]')!;
     await act(async () => {
       trigger.click();
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -420,15 +417,18 @@ describe("TimelineToolbar tool menu", () => {
 
   it("lists Select, Split, Select leftward and Select rightward by default", async () => {
     expect(await openMenuRows({})).toEqual([
-      "Select",
-      "Split",
-      "Select leftward",
-      "Select rightward",
+      t("tool.select"),
+      t("tool.split"),
+      t("tool.left"),
+      t("tool.right"),
     ]);
   });
 
   it("lists only Select and Split when the host hides select around the playhead", async () => {
-    expect(await openMenuRows({ showSelectAroundPlayhead: false })).toEqual(["Select", "Split"]);
+    expect(await openMenuRows({ showSelectAroundPlayhead: false })).toEqual([
+      t("tool.select"),
+      t("tool.split"),
+    ]);
   });
 
   it.each([true, false])("[ and ] select around the playhead with the rows shown: %s", (shown) => {
@@ -467,7 +467,7 @@ describe("TimelineToolbar tool menu", () => {
 describe("TimelineToolbar add beat", () => {
   it("shows Add beat by default, as Studio does", () => {
     const { host, root } = renderToolbar();
-    expect(host.querySelector('button[aria-label="Add beat at playhead"]')).not.toBeNull();
+    expect(host.querySelector('button[aria-label="在播放头处添加节拍"]')).not.toBeNull();
     act(() => root.unmount());
   });
 });
@@ -476,9 +476,9 @@ describe("TimelineToolbar Linked Selection", () => {
   it("is on by default, first among the editing toggles, and persists a click", async () => {
     const { useLinkedClipPreferences } = await import("../utils/linkedClipPreferences");
     const { host } = renderToolbar();
-    const button = host.querySelector<HTMLButtonElement>('button[aria-label="Linked Selection"]');
+    const button = host.querySelector<HTMLButtonElement>('button[aria-label="关联选择"]');
     expect(button?.getAttribute("aria-pressed")).toBe("true");
-    const snapping = host.querySelector('button[aria-label="Toggle timeline snapping"]');
+    const snapping = host.querySelector('button[aria-label="切换时间轴吸附"]');
     expect(snapping && button?.compareDocumentPosition(snapping)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     );
@@ -491,7 +491,7 @@ describe("TimelineToolbar Linked Selection", () => {
   it("right-click toggles the out-of-sync indicator preference", async () => {
     const { useLinkedClipPreferences } = await import("../utils/linkedClipPreferences");
     const { host } = renderToolbar();
-    const button = host.querySelector('button[aria-label="Linked Selection"]');
+    const button = host.querySelector('button[aria-label="关联选择"]');
     act(() => button?.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true })));
     const item = document.querySelector<HTMLButtonElement>('[role="menuitemcheckbox"]');
     expect(item?.textContent).toContain("Show out-of-sync indicators");
@@ -510,7 +510,7 @@ describe("TimelineToolbar — host right actions", () => {
     });
     const buttons = [...host.querySelectorAll("button")];
     const script = buttons.findIndex((b) => b.textContent === "Script");
-    const thumbs = buttons.findIndex((b) => b.getAttribute("aria-label")?.includes("thumbnails"));
+    const thumbs = buttons.findIndex((b) => b.getAttribute("aria-label")?.includes("缩略图"));
     expect(script).toBeGreaterThan(-1);
     expect(thumbs).toBe(script + 1);
     act(() => root.unmount());
@@ -525,7 +525,7 @@ describe("TimelineToolbar split hint", () => {
       currentTime: 2,
     });
     const { host, root } = renderToolbar(undefined, { onSplitElement: vi.fn(), ...props });
-    const button = host.querySelector<HTMLButtonElement>('button[aria-label="Split at playhead"]');
+    const button = host.querySelector<HTMLButtonElement>('button[aria-label="在播放头处分割"]');
     act(() => button?.focus());
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -537,7 +537,9 @@ describe("TimelineToolbar split hint", () => {
   }
 
   it("names S unless the host binds Split to another key", async () => {
-    expect(await splitTooltip({})).toBe("Split at playhead (S)");
-    expect(await splitTooltip({ splitShortcut: "⌘B" })).toBe("Split at playhead (⌘B)");
+    expect(await splitTooltip({})).toBe(t("timeline.splitHint", { shortcut: "S" }));
+    expect(await splitTooltip({ splitShortcut: "⌘B" })).toBe(
+      t("timeline.splitHint", { shortcut: "⌘B" }),
+    );
   });
 });

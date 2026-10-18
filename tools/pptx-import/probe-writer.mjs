@@ -1,0 +1,2 @@
+import {readFileSync} from 'node:fs';import {addAnimationWithKeyframesToScript} from '@hyperframes/parsers/gsap-parser-recast';
+const html=readFileSync('../deliverables/转正答辩-HyperFrames/slides/slide-08.html','utf8');const s=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].at(-1)[1];try{console.log(addAnimationWithKeyframesToScript(s,'#slide-08-case-visual',5.9,1.4,[{percentage:0,properties:{scale:1}},{percentage:100,properties:{scale:8.5}}]));}catch(e){console.error(e.stack)}

@@ -49,7 +49,12 @@ export function useGsapAnimationOps({
       animationId: string,
       updates: { duration?: number; ease?: string; easeEach?: string; position?: number },
     ) => {
-      if (sdkSession && sdkDeps) {
+      if (
+        sdkSession &&
+        sdkDeps &&
+        updates.duration === undefined &&
+        updates.position === undefined
+      ) {
         const targetPath = selection.sourceFile || activeCompPath || "index.html";
         const handled = await sdkGsapTweenPersist(
           targetPath,

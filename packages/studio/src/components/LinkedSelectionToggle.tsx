@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import { useCallback, useState } from "react";
 import { createPortal } from "react-dom";
 import { LinkSimple } from "@phosphor-icons/react";
@@ -17,7 +18,7 @@ function SyncIndicatorMenu({ x, y, onClose }: { x: number; y: number; onClose: (
     <div
       ref={menuRef}
       role="menu"
-      aria-label="Linked clips"
+      aria-label={t("tool.linked")}
       className={`${menuClasses.panel} fixed z-200 min-w-[200px]`}
       style={{ left: x, top: y }}
     >
@@ -47,13 +48,7 @@ export function LinkedSelectionToggle() {
   const closeMenu = useCallback(() => setMenuAt(null), []);
   return (
     <>
-      <Tooltip
-        label={
-          linkedSelection
-            ? "Linked Selection on: a click selects both halves (⌥-click for one)"
-            : "Linked Selection off: a click selects one clip"
-        }
-      >
+      <Tooltip label={linkedSelection ? t("tool.linkedOn") : t("tool.linkedOff")}>
         <button
           type="button"
           onClick={() => setLinkedSelection(!linkedSelection)}
@@ -61,7 +56,7 @@ export function LinkedSelectionToggle() {
             e.preventDefault();
             setMenuAt({ x: e.clientX, y: e.clientY });
           }}
-          aria-label="Linked Selection"
+          aria-label={t("tool.linkedSelection")}
           aria-pressed={linkedSelection}
           className={linkedSelection ? flatActive : flatIdle}
         >
