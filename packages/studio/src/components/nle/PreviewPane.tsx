@@ -107,12 +107,12 @@ export function PreviewPane({
   const containerRef = useRef<HTMLDivElement>(null);
   const [presenting, setPresenting] = useState(false);
   const [browsing, setBrowsing] = useState(false);
+  const fullscreenElement = useSyncExternalStore(subscribeFullscreen, getFullscreenElement);
   useLayoutEffect(() => {
     const pane = containerRef.current;
-    if (browsing) pane?.showPopover?.();
+    if (browsing || presenting) pane?.showPopover?.();
     else if (pane?.matches(":popover-open")) pane.hidePopover();
-  }, [browsing]);
-  const fullscreenElement = useSyncExternalStore(subscribeFullscreen, getFullscreenElement);
+  }, [browsing, presenting, fullscreenElement]);
   const isFullscreen = fullscreenElement === containerRef.current && fullscreenElement != null;
 
   const toggleFullscreen = useCallback(() => {
@@ -130,7 +130,7 @@ export function PreviewPane({
   const pane = (
     <div
       ref={containerRef}
-      popover={browsing ? "manual" : undefined}
+      popover={browsing || presenting ? "manual" : undefined}
       // A recessed well inset in its dock card; dropped in fullscreen so the
       // preview fills the screen edge-to-edge. The player stays dark in both themes.
       className={`scheme-dark flex-1 min-h-0 flex flex-col overflow-hidden bg-[var(--studio-preview-bg,var(--color-neutral-950))] ${
@@ -138,7 +138,7 @@ export function PreviewPane({
       }`}
       data-studio-fullscreen-target=""
       style={
-        browsing
+        browsing || presenting
           ? {
               position: "fixed",
               width: "auto",
@@ -169,6 +169,7 @@ export function PreviewPane({
       >
         <div className="absolute inset-0 overflow-hidden">
           <NLEPreview
+            fillBox={presenting}
             projectId={projectId}
             iframeRef={iframeRef}
             onIframeLoad={onIframeLoad}

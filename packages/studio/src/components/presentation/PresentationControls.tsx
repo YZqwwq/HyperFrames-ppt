@@ -125,6 +125,11 @@ export function PresentationControls({
     const finished = state.phase === "ended" && state.index === playable.length - 1;
     return (
       <div data-presentation-mode="true" className="absolute inset-0 z-[100] flex flex-col">
+        {playback.fullscreenUnavailable && (
+          <p role="status" className="bg-black/85 px-4 py-2 text-center text-sm text-white">
+            {t("presentation.fullscreenUnavailable")}
+          </p>
+        )}
         <button
           className="flex-1 cursor-default"
           aria-label={t("presentation.next")}
@@ -249,8 +254,8 @@ export function PresentationControls({
         </button>
         <button
           className={button + " bg-emerald-700"}
-          disabled={disabled || !playable.some((c) => c.cue.id === selected)}
-          onClick={() => playback.enter(playable.findIndex((c) => c.cue.id === selected))}
+          disabled={disabled || playable.length === 0}
+          onClick={playback.enterFromCurrentTime}
         >
           {t("presentation.play")}
         </button>

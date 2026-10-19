@@ -137,19 +137,9 @@ export function PropertyPanelFlat({
   // PropertyPanel keys this component by selection, so the default is per element.
   const [openGroupId, setOpenGroupId] = useState<string>(sections.audioFx ? "audio-fx" : "");
 
-  // Tracks which group(s) are actively transitioning this toggle cycle, so
-  // their header/body gets the fast entrance animation (hf-flat-group-enter)
-  // and no one else's does. Deliberately NOT derived from remounting alone:
-  // FlatGroupHeader instances are keyed by group id and React normally
-  // preserves them across re-renders, but toggling a non-adjacent group still
-  // shifts the untouched collapsed siblings between the before/after-open
-  // slices below, and Chromium restarts a CSS animation on that kind of
-  // position shift even though nothing about the sibling actually changed.
-  // Gating on these ids (cleared shortly after the 120ms CSS animation
-  // finishes) keeps the animation scoped to only the groups that actually
-  // just toggled. Two ids, not one: the clicked (newly-opening/closing) group
-  // AND whichever group was open immediately before the click and got
-  // implicitly closed by it — both freshly-mounted headers need to animate.
+  // Animate only the toggled group and the previously open group for 120ms.
+  // Keyed siblings can change position when another group toggles; Chromium
+  // may restart their CSS animation even though their state is unchanged.
   // When the inline timeline ease button focuses a segment on this element,
   // force the Motion group open so its AnimationCard (which only mounts while
   // the group is expanded) can consume the focus and reveal the ease editor.
@@ -546,13 +536,14 @@ export function PropertyPanelFlat({
         >
           {textGroup && (
             <DesignPanelInputProvider section="text">
-              <section
-                data-text-editor="true"
-                aria-label={textGroup.title}
-                className="shrink-0 border-b border-panel-hairline px-4 py-3"
-              >
-                {textGroup.content}
-              </section>
+              <details open className="shrink-0 border-b border-panel-hairline">
+                <summary className="cursor-pointer px-4 py-3 text-sm">
+                  {t("property.basicSettings")}
+                </summary>
+                <section data-text-editor="true" aria-label={textGroup.title} className="px-4 pb-3">
+                  {textGroup.content}
+                </section>
+              </details>
             </DesignPanelInputProvider>
           )}
           <details className="shrink-0 border-b border-panel-hairline">

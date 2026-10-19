@@ -776,7 +776,12 @@ export function createStudioServer(options: StudioServerOptions): StudioServer {
               void document.fonts?.ready;
               const body = document.body;
               if (body && getComputedStyle(body).backgroundColor === "rgba(0, 0, 0, 0)") {
-                body.style.backgroundColor = "#1c2028";
+                // Transparent layers need a neutral matte: a dark fallback hides
+                // dark text and makes sparse background layers look broken.
+                body.style.backgroundColor = "#ffffff";
+                body.style.backgroundImage =
+                  "conic-gradient(#e5e7eb 25%, #ffffff 0 50%, #e5e7eb 0 75%, #ffffff 0)";
+                body.style.backgroundSize = "40px 40px";
               }
             });
             await new Promise((r) => setTimeout(r, 200));

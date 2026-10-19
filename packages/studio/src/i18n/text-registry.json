@@ -82,43 +82,55 @@
     },
     {
       "file": "src/components/editor/AnimationEndpoints.tsx",
-      "line": 117,
+      "line": 167,
       "column": 50,
       "key": "animation.states"
     },
     {
       "file": "src/components/editor/AnimationEndpoints.tsx",
-      "line": 121,
+      "line": 171,
       "column": 23,
       "key": "animation.segment"
     },
     {
       "file": "src/components/editor/AnimationEndpoints.tsx",
-      "line": 155,
+      "line": 207,
       "column": 12,
       "key": "animation.startState"
     },
     {
       "file": "src/components/editor/AnimationEndpoints.tsx",
-      "line": 162,
+      "line": 214,
       "column": 12,
       "key": "animation.endState"
     },
     {
       "file": "src/components/editor/AnimationEndpoints.tsx",
-      "line": 165,
+      "line": 217,
       "column": 25,
       "key": "animation.stopPreview"
     },
     {
       "file": "src/components/editor/AnimationEndpoints.tsx",
-      "line": 165,
+      "line": 217,
       "column": 54,
       "key": "animation.preview"
     },
     {
       "file": "src/components/editor/AnimationEndpoints.tsx",
-      "line": 168,
+      "line": 227,
+      "column": 23,
+      "key": "animation.middlePercent"
+    },
+    {
+      "file": "src/components/editor/AnimationEndpoints.tsx",
+      "line": 238,
+      "column": 12,
+      "key": "animation.middleState"
+    },
+    {
+      "file": "src/components/editor/AnimationEndpoints.tsx",
+      "line": 241,
       "column": 54,
       "key": "animation.endpointHint"
     },
@@ -316,7 +328,13 @@
     },
     {
       "file": "src/components/editor/PropertyPanelFlat.tsx",
-      "line": 559,
+      "line": 551,
+      "column": 20,
+      "key": "property.basicSettings"
+    },
+    {
+      "file": "src/components/editor/PropertyPanelFlat.tsx",
+      "line": 560,
       "column": 68,
       "key": "animation.states"
     },
@@ -749,132 +767,138 @@
     {
       "file": "src/components/presentation/PresentationControls.tsx",
       "line": 130,
+      "column": 14,
+      "key": "presentation.fullscreenUnavailable"
+    },
+    {
+      "file": "src/components/presentation/PresentationControls.tsx",
+      "line": 135,
       "column": 23,
       "key": "presentation.next"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 135,
+      "line": 140,
       "column": 14,
       "key": "presentation.previous"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 140,
+      "line": 145,
       "column": 17,
       "key": "presentation.running"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 142,
+      "line": 147,
       "column": 19,
       "key": "presentation.finished"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 143,
+      "line": 148,
       "column": 19,
       "key": "presentation.waiting"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 150,
+      "line": 155,
       "column": 42,
       "key": "presentation.running"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 150,
+      "line": 155,
       "column": 70,
       "key": "presentation.next"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 152,
+      "line": 157,
       "column": 18,
       "key": "presentation.keys"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 154,
+      "line": 159,
       "column": 14,
       "key": "presentation.exit"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 187,
+      "line": 192,
       "column": 12,
       "key": "presentation.browseTitle"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 189,
+      "line": 194,
       "column": 36,
       "key": "presentation.title"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 198,
+      "line": 203,
       "column": 12,
       "key": "presentation.start"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 201,
+      "line": 206,
       "column": 12,
       "key": "presentation.end"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 203,
+      "line": 208,
       "column": 48,
       "key": "presentation.pending"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 205,
+      "line": 210,
       "column": 23,
       "key": "presentation.segments"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 218,
+      "line": 223,
       "column": 29,
       "key": "presentation.choose"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 224,
+      "line": 229,
       "column": 25,
       "key": "presentation.invalid"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 234,
+      "line": 239,
       "column": 41,
       "key": "presentation.name"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 239,
+      "line": 244,
       "column": 12,
       "key": "presentation.rename"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 248,
+      "line": 253,
       "column": 12,
       "key": "presentation.delete"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 255,
+      "line": 260,
       "column": 12,
       "key": "presentation.play"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
-      "line": 258,
+      "line": 263,
       "column": 60,
       "key": "presentation.masterOnly"
     },

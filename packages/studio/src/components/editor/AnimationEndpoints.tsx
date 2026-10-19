@@ -1,3 +1,4 @@
+import { defaultAnimationEndpoint } from "../../hooks/defaultAnimationEndpoint";
 import {
   setAnimationEndpointTarget,
   clearAnimationEndpointTarget,
@@ -10,7 +11,11 @@ import type { GsapAnimation } from "@hyperframes/core/gsap-parser";
 import type { DomEditSelection } from "./domEditingTypes";
 import { liveTime, usePlayerStore } from "../../player/store/playerStore";
 import { selectionTimeOffset } from "../../hooks/selectionClock";
-import { resolveTweenDuration, resolveTweenStart } from "../../utils/globalTimeCompiler";
+import {
+  percentageToAbsoluteForAnimation,
+  resolveTweenDuration,
+  resolveTweenStart,
+} from "../../utils/globalTimeCompiler";
 import { t } from "../../i18n";
 import { useNLEContextOptional } from "../nle/NLEContext";
 import { afterStudioPendingEdits } from "../../utils/studioPendingEdits";
@@ -37,6 +42,8 @@ export function AnimationEndpoints({
   );
   const [index, setIndex] = useState(0);
   const [previewing, setPreviewing] = useState(false);
+  const [middlePct, setMiddlePct] = useState(50);
+  const initialized = useRef<HTMLElement | null>(null);
   const active = usePlayerStore((s) => s.activeKeyframePct);
   const time = usePlayerStore((s) => s.currentTime);
   const ready = usePlayerStore((s) => s.timelineReady);
@@ -63,6 +70,7 @@ export function AnimationEndpoints({
     setPreviewing(false);
     usePlayerStore.getState().setActiveKeyframePct(null);
     return () => {
+      initialized.current = null;
       pendingChoice.current?.();
       clearAnimationEndpointTarget(element.element);
       if (target.current !== null) pauseRef.current();
@@ -93,6 +101,32 @@ export function AnimationEndpoints({
       cancelAnimationFrame(frame);
     };
   }, [previewing, ready, start]);
+  useEffect(() => {
+    if (
+      !ready ||
+      !runs.length ||
+      initialized.current === element.element ||
+      !element.capabilities.canEditStyles
+    )
+      return;
+    const choice = defaultAnimationEndpoint(runs, usePlayerStore.getState().currentTime - offset);
+    if (!choice) return;
+    initialized.current = element.element;
+    const chosen = runs[choice.index]!;
+    setIndex(choice.index);
+    pauseRef.current();
+    pendingChoice.current = afterStudioPendingEdits(() => {
+      seekRef.current(
+        (resolveTweenStart(chosen) ?? 0) +
+          offset +
+          (resolveTweenDuration(chosen) * choice.pct) / 100,
+      );
+      const store = usePlayerStore.getState();
+      store.setAutoKeyframeEnabled(true);
+      store.setActiveKeyframePct(choice.pct);
+      setAnimationEndpointTarget(element, chosen, choice.pct);
+    });
+  }, [ready, runs, element, offset]);
   if (!run || !element.capabilities.canEditStyles) return null;
   const choose = (pct: number) => {
     target.current = null;
@@ -101,7 +135,10 @@ export function AnimationEndpoints({
     pause();
     pendingChoice.current?.();
     pendingChoice.current = afterStudioPendingEdits(() => {
-      seek(pct === 0 ? start : end);
+      seek(
+        (percentageToAbsoluteForAnimation(pct, run) ??
+          start - offset + ((end - start) * pct) / 100) + offset,
+      );
       store.setAutoKeyframeEnabled(true);
       store.setActiveKeyframePct(pct);
       setAnimationEndpointTarget(element, run, pct);
@@ -178,6 +215,27 @@ export function AnimationEndpoints({
         </button>
         <button className="rounded border border-panel-hairline px-3 py-2" onClick={preview}>
           {previewing ? t("animation.stopPreview") : t("animation.preview")}
+        </button>
+      </div>
+      <div className="mt-2 flex items-center gap-2">
+        <input
+          type="number"
+          min={1}
+          max={99}
+          step={1}
+          value={middlePct}
+          aria-label={t("animation.middlePercent")}
+          className="w-16 rounded border border-panel-hairline px-2 py-1"
+          onChange={(event) =>
+            setMiddlePct(Math.min(99, Math.max(1, Number(event.target.value) || 50)))
+          }
+        />
+        <span>%</span>
+        <button
+          className="rounded border border-panel-hairline px-3 py-2"
+          onClick={() => choose(middlePct)}
+        >
+          {t("animation.middleState")}
         </button>
       </div>
       <p className="mt-2 text-xs text-panel-text-2">{t("animation.endpointHint")}</p>

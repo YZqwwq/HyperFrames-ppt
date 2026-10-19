@@ -11,17 +11,22 @@ export function useCuePlayback(
     index: number;
     phase: "ready" | "running" | "ended";
   } | null>(null);
+  const [fullscreenUnavailable, setFullscreenUnavailable] = useState(false);
+  const ownsFullscreen = useRef(false);
   const ref = useRef(session);
   ref.current = session;
   const options = useRef<{ loop: boolean; rate: number } | null>(null);
   const target = useRef<number | null>(null);
+  const resumeTime = useRef<number | null>(null);
   function stopAt(time: number) {
     target.current = null;
+    resumeTime.current = null;
     pause();
     seek(time);
   }
   function exit() {
     target.current = null;
+    resumeTime.current = null;
     pause();
     setSession(null);
     ref.current = null;
@@ -31,7 +36,10 @@ export function useCuePlayback(
       usePlayerStore.getState().setLoopEnabled(saved.loop);
       usePlayerStore.getState().setPlaybackRate(saved.rate);
     }
-    if (document.fullscreenElement === stage.current) void document.exitFullscreen();
+    setFullscreenUnavailable(false);
+    if (ownsFullscreen.current && document.fullscreenElement)
+      void document.exitFullscreen().catch(() => {});
+    ownsFullscreen.current = false;
   }
   function advance() {
     const state = ref.current;
@@ -46,12 +54,14 @@ export function useCuePlayback(
     if (next.transition === "cut") {
       if (!seek(next.end)) return;
       target.current = null;
+      resumeTime.current = null;
       const ended = { index, phase: "ended" as const };
       ref.current = ended;
       setSession(ended);
       return;
     }
-    if (!seek(next.start)) return;
+    if (!seek(resumeTime.current ?? next.start)) return;
+    resumeTime.current = null;
     target.current = next.end;
     ref.current = { index, phase: "running" };
     setSession(ref.current);
@@ -71,19 +81,51 @@ export function useCuePlayback(
       setSession(ref.current);
     }
   }
-  function enter(index: number, ended = false) {
+  function startSession(index: number, ended: boolean, time: number) {
     const range = ranges[index];
     if (!range || timelineDisabled) return;
     pause();
-    if (!seek(ended ? range.end : range.start)) return;
+    if (!seek(time)) return;
+    target.current = null;
+    resumeTime.current = ended ? null : Math.max(range.start, time);
     const store = usePlayerStore.getState();
     options.current = { loop: store.loopEnabled, rate: store.playbackRate };
     store.setLoopEnabled(false);
     store.setPlaybackRate(1);
     ref.current = { index, phase: ended ? "ended" : "ready" };
     setSession(ref.current);
-    if (!stage.current?.matches(":popover-open"))
-      void stage.current?.requestFullscreen?.().catch(() => {});
+    setFullscreenUnavailable(false);
+    // A visible popover cannot itself enter fullscreen. Fullscreen its ancestor
+    // instead, keeping the presentation in the top layer without losing activation.
+    const fullscreenTarget = stage.current?.ownerDocument.documentElement;
+    if (!fullscreenTarget?.requestFullscreen) {
+      setFullscreenUnavailable(true);
+      return;
+    }
+    if (document.fullscreenElement) return;
+    ownsFullscreen.current = true;
+    void fullscreenTarget.requestFullscreen().catch(() => {
+      ownsFullscreen.current = false;
+      if (ref.current) setFullscreenUnavailable(true);
+    });
+  }
+  function enter(index: number, ended = false) {
+    const range = ranges[index];
+    if (range) startSession(index, ended, ended ? range.end : range.start);
+  }
+  function enterFromCurrentTime() {
+    const time = liveTime.latest();
+    if (!Number.isFinite(time) || ranges.length === 0) return;
+    // A completed segment owns its resting frame, including the gap before
+    // the next segment. Inside a transition, resume from the visible time.
+    const next = ranges.findIndex((range) => range.end > time);
+    if (next === -1) {
+      startSession(ranges.length - 1, true, time);
+    } else if (next > 0 && time <= ranges[next].start) {
+      startSession(next - 1, true, time);
+    } else {
+      startSession(next, false, time);
+    }
   }
   const actions = useRef({ advance, previous, exit });
   actions.current = { advance, previous, exit };
@@ -119,7 +161,7 @@ export function useCuePlayback(
       else actions.current.advance();
     };
     const fullscreen = () => {
-      if (!document.fullscreenElement) actions.current.exit();
+      if (ownsFullscreen.current && !document.fullscreenElement) actions.current.exit();
     };
     window.addEventListener("keydown", onKey, true);
     document.addEventListener("fullscreenchange", fullscreen);
@@ -138,5 +180,5 @@ export function useCuePlayback(
     },
     [projectId],
   );
-  return { session, enter, exit, advance, previous };
+  return { session, fullscreenUnavailable, enter, enterFromCurrentTime, exit, advance, previous };
 }

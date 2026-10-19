@@ -13,7 +13,9 @@ export function resizeRoute(animations: GsapAnimation[], fetchedAnimations: Gsap
   // If the element already has a scale-group tween, resize should modify scale
   // (the user is resizing something whose visual size is driven by scale).
   // Otherwise, use the size group (width/height).
-  const hasScaleGroup = allKnownAnimations.some((a) => a.propertyGroup === "scale");
+  const hasScaleGroup = allKnownAnimations.some((a) =>
+    animationWritesAnyProperty(a, new Set(["scale", "scaleX", "scaleY"])),
+  );
   const resizeGroup: PropertyGroupName = hasScaleGroup ? "scale" : "size";
   const resizeProperties =
     resizeGroup === "scale" ? new Set(["scale", "scaleX", "scaleY"]) : new Set(["width", "height"]);

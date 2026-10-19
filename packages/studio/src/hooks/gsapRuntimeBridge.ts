@@ -73,9 +73,9 @@ export async function resolveGroupTween(
 ): Promise<{ anim: GsapAnimation; animations: GsapAnimation[] } | null> {
   const inGroup = (list: GsapAnimation[]) => {
     const endpoint = animationEndpointTarget(_selection, list, time);
-    if (endpoint) return endpoint;
-    const tagged = list.filter((a) => a.propertyGroup === group);
     const props = new Set(PROPERTY_GROUPS[group]);
+    if (endpoint && animationWritesAnyProperty(endpoint, props)) return endpoint;
+    const tagged = list.filter((a) => a.propertyGroup === group);
     const mixed = list.filter((a) => !a.propertyGroup && animationWritesAnyProperty(a, props));
     return pickClosestToPlayhead(tagged.length > 0 ? tagged : mixed, time);
   };

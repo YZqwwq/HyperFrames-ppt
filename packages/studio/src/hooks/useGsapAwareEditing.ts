@@ -15,6 +15,7 @@ import { useCallback } from "react";
 import type { GsapAnimation } from "@hyperframes/core/gsap-parser";
 import type { DomEditSelection } from "../components/editor/domEditingTypes";
 import { tryGsapDragIntercept, tryGsapRotationIntercept } from "./gsapRuntimeBridge";
+import { resizeRoute } from "./gsapResizePreflight";
 import { tryGsapResizeIntercept } from "./gsapResizeIntercept";
 import { computeDraggedGsapPosition, freezeDragStamp } from "./draggedGsapPosition";
 import { whileScriptWrites } from "../player/previewReloading";
@@ -231,7 +232,7 @@ export function useGsapAwareEditing({
           trackGsapInteractionFailure(error, selection, "resize", "Resize animated layer");
           throw error;
         }
-        const scaleRoute = targetAnimations.some((anim) => anim.propertyGroup === "scale");
+        const scaleRoute = resizeRoute(targetAnimations, []).resizeGroup === "scale";
         const selector = selectorFromSelection(selection);
         const hasLivePositionTween = selector
           ? hasNonHoldTweenForElement(

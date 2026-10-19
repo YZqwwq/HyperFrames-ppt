@@ -477,7 +477,10 @@ export async function tryGsapResizeIntercept(
     // the same commit.
     const positionTween = pickClosestToPlayhead(
       currentAnimations.filter(
-        (a) => a.propertyGroup === "position" && !isInstantHold(a) && resolveTweenDuration(a) > 0,
+        (a) =>
+          animationWritesAnyProperty(a, POSITION_XY) &&
+          !isInstantHold(a) &&
+          resolveTweenDuration(a) > 0,
       ),
       moment.time,
     );
