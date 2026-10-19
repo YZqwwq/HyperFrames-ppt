@@ -19,6 +19,7 @@ export const RenderQueuePanel = memo(function RenderQueuePanel() {
     <RenderQueue
       jobs={renderQueue.jobs as RenderJob[]}
       projectId={projectId}
+      onBeforeProjectExport={waitForPendingDomEditSaves}
       onDelete={renderQueue.deleteRender}
       onCancel={renderQueue.cancelRender}
       loadError={renderQueue.loadError}
