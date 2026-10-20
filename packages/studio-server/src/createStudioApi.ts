@@ -1,3 +1,4 @@
+import { registerProjectExportRoutes } from "./routes/projectExport.js";
 import { Hono } from "hono";
 import type { StudioApiAdapter } from "./types.js";
 import { registerProjectRoutes } from "./routes/projects.js";
@@ -64,6 +65,7 @@ export function createStudioApi(adapter: StudioApiAdapter): Hono {
   });
 
   registerProjectRoutes(api, adapter);
+  registerProjectExportRoutes(api, adapter);
   registerFileRoutes(api, adapter);
   registerPreviewRoutes(api, adapter);
   registerLintRoutes(api, adapter);

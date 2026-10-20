@@ -1,3 +1,4 @@
+import { EditableProjectExport } from "./EditableProjectExport";
 import { memo, useState, useRef, useEffect, useLayoutEffect, useId } from "react";
 import { createPortal } from "react-dom";
 import { CANVAS_DIMENSIONS } from "@hyperframes/parsers";
@@ -33,6 +34,7 @@ export interface RenderQueueProps {
   onDelete: (jobId: string) => void;
   onCancel?: (jobId: string) => void;
   onClearCompleted: () => void;
+  onBeforeProjectExport?: () => Promise<void>;
   onStartRender: StartRenderHandler;
   isRendering: boolean;
   /** History fetch failure (null when the last load succeeded). */
@@ -435,6 +437,7 @@ export const RenderQueue = memo(function RenderQueue({
   onCancel,
   onClearCompleted,
   onStartRender,
+  onBeforeProjectExport,
   isRendering,
   loadError,
   onRetryLoad,
@@ -463,15 +466,17 @@ export const RenderQueue = memo(function RenderQueue({
   return (
     <div className="flex flex-col h-full">
       <div className="px-3 py-3 border-b border-border shrink-0">
-        <FormatExportButton
-          onStartRender={onStartRender}
-          isRendering={isRendering}
-          compositionDimensions={compositionDimensions}
-          lastRenderDurationMs={lastRenderDurationMs}
-          ffmpeg={ffmpeg}
-          ffmpegChecking={ffmpegChecking}
-          onRecheckFfmpeg={onRecheckFfmpeg}
-        />
+        <EditableProjectExport projectId={projectId} beforeExport={onBeforeProjectExport}>
+          <FormatExportButton
+            onStartRender={onStartRender}
+            isRendering={isRendering}
+            compositionDimensions={compositionDimensions}
+            lastRenderDurationMs={lastRenderDurationMs}
+            ffmpeg={ffmpeg}
+            ffmpegChecking={ffmpegChecking}
+            onRecheckFfmpeg={onRecheckFfmpeg}
+          />
+        </EditableProjectExport>
       </div>
 
       {actionError && (

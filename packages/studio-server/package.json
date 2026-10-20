@@ -186,6 +186,7 @@
   "dependencies": {
     "@hyperframes/core": "workspace:*",
     "@hyperframes/parsers": "workspace:*",
+    "fflate": "^0.8.3",
     "hono": "^4.0.0",
     "linkedom": "^0.18.12",
     "postcss": "^8.5.8",
