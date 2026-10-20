@@ -81,3 +81,31 @@ it("refuses linked directories rather than following them outside the project", 
   await symlink(outside, join(dir, "assets"), "junction");
   expect((await app.request("/projects/demo/export/editable")).status).toBe(422);
 });
+it("downloads standalone presentation HTML and reports missing presentation stops", async () => {
+  const { app, put } = await setup();
+  await put(
+    "index.html",
+    '<html><head></head><body><div id="root" data-composition-id="root" data-no-timeline data-width="800" data-height="450" data-duration="3">演示</div></body></html>',
+  );
+  expect((await app.request("/projects/demo/export/presentation")).status).toBe(422);
+  await put(
+    "presentation-cues.json",
+    JSON.stringify({
+      version: 1,
+      segments: [
+        {
+          id: "first",
+          label: "演示",
+          start: { clipId: null, offset: 0 },
+          end: { clipId: null, offset: 2 },
+          transition: "cut",
+        },
+      ],
+    }),
+  );
+  const response = await app.request("/projects/demo/export/presentation");
+  expect(response.status).toBe(200);
+  expect(response.headers.get("content-type")).toContain("text/html");
+  expect(response.headers.get("content-disposition")).toContain("presentation.html");
+  expect(await response.text()).toContain('id="start"');
+});

@@ -1,3 +1,4 @@
+import { isCropBarTarget, useCropPresetBarStore } from "../components/editor/cropPresetStore";
 import type { OverlayRect } from "../components/editor/domEditOverlayGeometry";
 import type { DomEditSelection } from "../components/editor/domEditing";
 import {
@@ -6,7 +7,7 @@ import {
 } from "../components/editor/domEditOverlayCrop";
 
 /** Selection-box crop hug: the outline that makes the selection box hug the
- *  element's committed inset crop. Crop is always-on (no mode) — the draggable
+ *  element's committed inset crop. In crop mode the draggable
  *  handles live in {@link DomEditCropHandles}; this only shapes the box border.
  *  The box div itself always sits at the FULL element bounds; the hug is purely
  *  visual — the element's inset clip-path scaled into overlay space. */
@@ -15,6 +16,8 @@ export function useCropOverlay(params: {
   overlayRect: OverlayRect | null;
 }) {
   const { selection, overlayRect } = params;
+  const target = useCropPresetBarStore((state) => state.openFor);
+  const cropping = selection && isCropBarTarget(selection.element, target);
 
   const cropInsets =
     selection && !isElementCropLifted(selection.element)
@@ -32,7 +35,7 @@ export function useCropOverlay(params: {
   const sx = overlayRect && overlayRect.editScaleX > 0 ? overlayRect.editScaleX : 1;
   const sy = overlayRect && overlayRect.editScaleY > 0 ? overlayRect.editScaleY : 1;
   const cropOutlineInsetPx =
-    cropInsets && hasCropInsets
+    cropInsets && hasCropInsets && cropping
       ? {
           top: cropInsets.top * sy,
           right: cropInsets.right * sx,

@@ -151,7 +151,7 @@ export function PreviewPane({
               borderRadius: 0,
               paddingTop: presenting ? 0 : 64,
               paddingLeft: presenting ? 0 : 240,
-              paddingBottom: presenting ? 0 : 80,
+              paddingBottom: 0,
             }
           : { position: "relative" }
       }
@@ -170,6 +170,7 @@ export function PreviewPane({
         <div className="absolute inset-0 overflow-hidden">
           <NLEPreview
             fillBox={presenting}
+            fixedView={browsing || presenting}
             projectId={projectId}
             iframeRef={iframeRef}
             onIframeLoad={onIframeLoad}

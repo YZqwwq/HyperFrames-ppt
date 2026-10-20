@@ -95,7 +95,7 @@ const EDGES: CropEdge[] = ["top", "right", "bottom", "left"];
 const NO_CROP = { top: 0, right: 0, bottom: 0, left: 0, radius: 0 };
 
 /**
- * Always-on crop, integrated with the selection (no crop "mode"): while a
+ * Crop-mode controls: while a
  * croppable element is selected its clip is lifted so the FULL content shows and
  * the cropped-away area is dimmed, with a dashed outline + an edge handle per
  * side on the crop boundary. Dragging an edge crops that side (a rule-of-thirds

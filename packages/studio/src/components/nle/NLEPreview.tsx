@@ -1,3 +1,5 @@
+import { resolvePreviewStageSize } from "./previewStageSize";
+export { resolvePreviewStageSize } from "./previewStageSize";
 import {
   readPreviewCompositionSize,
   type PreviewCompositionSize,
@@ -51,6 +53,8 @@ interface NLEPreviewProps extends Pick<
   onCompositionSizeChange?: (size: PreviewCompositionSize | null) => void;
   /** Draws the picture edge to edge in this box, without Studio's inset band. */
   fillBox?: boolean;
+  /** Presentation modes always show the complete frame, without editor gestures. */
+  fixedView?: boolean;
   compositionSizeHint?: PreviewCompositionSize;
 }
 
@@ -78,40 +82,6 @@ const SHADOW_IFRAME_STYLE: React.CSSProperties = {
   pointerEvents: "none",
 };
 
-export function resolvePreviewStageSize(
-  viewportWidth: number,
-  viewportHeight: number,
-  compositionSize: PreviewCompositionSize | null,
-  portrait: boolean | undefined,
-  gutterPx = 0,
-  insetPx = PREVIEW_STAGE_INSET_PX,
-): { width: number; height: number } {
-  const availableWidth = Math.max(0, viewportWidth - 2 * (insetPx + gutterPx));
-  const availableHeight = Math.max(0, viewportHeight - 2 * (insetPx + gutterPx));
-  const aspectRatio =
-    compositionSize && compositionSize.width > 0 && compositionSize.height > 0
-      ? compositionSize.width / compositionSize.height
-      : portrait
-        ? 9 / 16
-        : 16 / 9;
-
-  if (availableWidth === 0 || availableHeight === 0) {
-    return { width: 0, height: 0 };
-  }
-
-  let width = availableWidth;
-  let height = width / aspectRatio;
-  if (height > availableHeight) {
-    height = availableHeight;
-    width = height * aspectRatio;
-  }
-
-  return {
-    width: toDomPrecision(width),
-    height: toDomPrecision(height),
-  };
-}
-
 export const NLEPreview = memo(function NLEPreview({
   projectId,
   iframeRef,
@@ -129,6 +99,7 @@ export const NLEPreview = memo(function NLEPreview({
   onStageRef,
   onCompositionSizeChange,
   fillBox,
+  fixedView = false,
   compositionSizeHint,
 }: NLEPreviewProps) {
   const activeKey = getPreviewPlayerKey({ projectId, directUrl });
@@ -151,7 +122,8 @@ export const NLEPreview = memo(function NLEPreview({
   const reportPreviewFirstFrame = usePreviewFirstFrameTelemetry(previewSlots);
   const [compositionSize, setCompositionSize] = useState<PreviewCompositionSize | null>(null);
   const poster = usePreviewPoster(projectId, activeKey, directUrl);
-  const gutterPx = usePreviewGuidesStore((s) => (s.rulerVisible ? RULER_GUTTER_PX : 0));
+  const rulerVisible = usePreviewGuidesStore((s) => s.rulerVisible);
+  const gutterPx = !fixedView && rulerVisible ? RULER_GUTTER_PX : 0;
   const insetPx = fillBox ? 0 : PREVIEW_STAGE_INSET_PX;
   const [stageSize, setStageSize] = useState(() => resolvePreviewStageSize(0, 0, null, portrait));
   const hintWidth = compositionSizeHint?.width;
@@ -252,12 +224,17 @@ export const NLEPreview = memo(function NLEPreview({
   const zoomProjectRef = useRef(projectId);
   // Before paint, so the next project never shows a frame at the previous one's zoom.
   useLayoutEffect(() => {
-    if (zoomProjectRef.current === projectId) return;
+    if (zoomProjectRef.current === projectId && !fixedView) return;
+    dragRef.current = null;
+    if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
+    if (hudTimerRef.current) clearTimeout(hudTimerRef.current);
+    zoomingRef.current = false;
+    if (hudRef.current) hudRef.current.style.opacity = "0";
     zoomProjectRef.current = projectId;
     zoomRef.current = DEFAULT_PREVIEW_ZOOM;
     writeTransform(DEFAULT_PREVIEW_ZOOM);
     setSettledZoom(DEFAULT_PREVIEW_ZOOM);
-  }, [projectId, writeTransform]);
+  }, [projectId, fixedView, writeTransform]);
 
   const applyTransform = useCallback(
     (next: PreviewZoomState, showHud: boolean) => {
@@ -369,6 +346,10 @@ export const NLEPreview = memo(function NLEPreview({
         return;
       }
 
+      if (fixedView) {
+        event.preventDefault();
+        return;
+      }
       const isZoomGesture = event.ctrlKey || event.metaKey;
 
       if (isZoomGesture) {
@@ -412,9 +393,10 @@ export const NLEPreview = memo(function NLEPreview({
 
     document.addEventListener("wheel", handleWheel, { passive: false, capture: true });
     return () => document.removeEventListener("wheel", handleWheel, { capture: true });
-  }, [applyZoom, applyPan]);
+  }, [applyZoom, applyPan, fixedView]);
 
   useEffect(() => {
+    if (fixedView) return;
     const isInsideViewport = (clientX: number, clientY: number): DOMRect | null => {
       const viewport = viewportRef.current;
       if (!viewport) return null;
@@ -489,7 +471,7 @@ export const NLEPreview = memo(function NLEPreview({
       document.removeEventListener("pointercancel", finishDrag, { capture: true });
       document.removeEventListener("auxclick", handleAuxClick, { capture: true });
     };
-  }, [applyPan]);
+  }, [applyPan, fixedView]);
 
   const initial = zoomRef.current;
 
@@ -585,15 +567,17 @@ export const NLEPreview = memo(function NLEPreview({
           style={{ opacity: 0, transition: "opacity 200ms ease-in" }}
           aria-live="polite"
         />
-        <PreviewZoomOverlay
-          zoom={settledZoom}
-          stageSize={stageSize}
-          onFit={() => {
-            applyZoom(DEFAULT_PREVIEW_ZOOM);
-            viewportRef.current?.focus();
-          }}
-          navigatorRegionRef={setNavigatorRegion}
-        />
+        {!fixedView && (
+          <PreviewZoomOverlay
+            zoom={settledZoom}
+            stageSize={stageSize}
+            onFit={() => {
+              applyZoom(DEFAULT_PREVIEW_ZOOM);
+              viewportRef.current?.focus();
+            }}
+            navigatorRegionRef={setNavigatorRegion}
+          />
+        )}
       </div>
     </div>
   );

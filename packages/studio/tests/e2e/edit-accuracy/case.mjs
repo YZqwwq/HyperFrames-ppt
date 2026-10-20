@@ -582,6 +582,9 @@ async function handlePoint(ctx, m, gesture) {
     return [h.x, h.y];
   }
   if (gesture === "crop") {
+    const entry = await ctx.page.$("[data-dom-edit-crop-entry]");
+    if (entry) await entry.click();
+    await ctx.page.waitForSelector("[data-dom-edit-crop-frame]");
     const [h] = await overlayRect(ctx.page, '[aria-label="Crop right"]');
     if (!h) throw new Error("no crop right handle");
     return [h.x, h.y];

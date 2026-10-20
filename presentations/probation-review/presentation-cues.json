@@ -3,109 +3,97 @@
     {
       "id": "slide-01-to-02",
       "label": "01 → 02 · 目录",
-      "transition": "cut",
+      "transition": "animate",
       "start": {
-        "offset": 0.1,
+        "offset": 7.7,
         "clipId": "page-01"
       },
       "end": {
-        "offset": 0.1,
+        "offset": 0.35,
         "clipId": "page-02"
       }
     },
     {
       "id": "slide-02-to-03",
       "label": "02 → 03 · 实习阶段",
-      "transition": "cut",
+      "transition": "animate",
       "start": {
-        "offset": 0.1,
+        "offset": 7.7,
         "clipId": "page-02"
       },
       "end": {
-        "offset": 0.1,
+        "offset": 0.35,
         "clipId": "page-03"
       }
     },
     {
       "id": "slide-03-to-04",
       "label": "03 → 04 · 实习期工作",
-      "transition": "cut",
+      "transition": "animate",
       "start": {
-        "offset": 0.1,
+        "offset": 7.7,
         "clipId": "page-03"
       },
       "end": {
-        "offset": 0.1,
+        "offset": 0.35,
         "clipId": "page-04"
       }
     },
     {
       "id": "slide-04-to-05",
       "label": "04 → 05 · 实习期收获",
-      "transition": "cut",
+      "transition": "animate",
       "start": {
-        "offset": 0.1,
+        "offset": 7.7,
         "clipId": "page-04"
       },
       "end": {
-        "offset": 0.1,
+        "offset": 0.35,
         "clipId": "page-05"
       }
     },
     {
       "id": "slide-05-to-06",
       "label": "05 → 06 · 试用期",
-      "transition": "cut",
+      "transition": "animate",
       "start": {
-        "offset": 0.1,
+        "offset": 7.7,
         "clipId": "page-05"
       },
       "end": {
-        "offset": 0.1,
+        "offset": 0.35,
         "clipId": "page-06"
       }
     },
     {
       "id": "slide-06-to-07",
       "label": "06 → 07 · RN小程序业务交付",
-      "transition": "cut",
+      "transition": "animate",
       "start": {
-        "offset": 0.1,
+        "offset": 7.7,
         "clipId": "page-06"
       },
       "end": {
-        "offset": 0.1,
+        "offset": 0.35,
         "clipId": "page-07"
       }
     },
     {
       "id": "slide-07-to-08",
       "label": "07 → 08 · 工具与 AI",
-      "transition": "cut",
+      "transition": "animate",
       "start": {
-        "offset": 0.1,
+        "offset": 7.7,
         "clipId": "page-07"
       },
       "end": {
-        "offset": 0,
+        "offset": 0.35,
         "clipId": "page-08"
       }
     },
     {
-      "id": "slide-08-reveal",
-      "label": "08 · 工具与 AI · 展开内容",
-      "start": {
-        "clipId": "page-08",
-        "offset": 0
-      },
-      "end": {
-        "clipId": "page-08",
-        "offset": 2.1
-      }
-    },
-    {
       "id": "slide-08-to-09",
-      "label": "08 → 09 · 从工具聚焦项目",
+      "label": "08 → 09 · 行业主题评分",
       "start": {
         "clipId": "page-08",
         "offset": 2.1
@@ -113,109 +101,137 @@
       "end": {
         "clipId": "page-09",
         "offset": 0.65
-      }
+      },
+      "transition": "animate"
     },
     {
       "id": "slide-09-to-10",
-      "label": "09 → 10 · 从案例展开四个环节",
+      "label": "09 → 10 · 全量迁移",
       "start": {
         "clipId": "page-09",
-        "offset": 11.1
+        "offset": 10.7
       },
       "end": {
         "clipId": "page-10",
         "offset": 0.65
-      }
+      },
+      "transition": "animate"
     },
     {
       "id": "slide-10-to-11",
-      "label": "10 → 11 · Skill Manager",
-      "transition": "cut",
+      "label": "10 → 11 · Skill Manager核心能力",
+      "transition": "animate",
       "start": {
-        "offset": 0.65,
+        "offset": 7.7,
         "clipId": "page-10"
       },
       "end": {
-        "offset": 0.1,
-        "clipId": "page-11"
+        "clipId": "skill-capabilities",
+        "offset": 0.35
       }
     },
     {
-      "id": "slide-11-to-12",
-      "label": "11 → 12 · 运营播客",
-      "transition": "cut",
+      "id": "skill-capabilities-to-work",
+      "label": "11 → 12 · Skill Manager工作与交付",
+      "transition": "animate",
       "start": {
-        "offset": 0.1,
-        "clipId": "page-11"
+        "clipId": "skill-capabilities",
+        "offset": 7.0
       },
       "end": {
-        "offset": 0.1,
-        "clipId": "page-12"
+        "clipId": "page-11",
+        "offset": 0.7
       }
     },
     {
-      "id": "slide-12-to-13",
-      "label": "12 → 13 · Agent 节点设计",
-      "transition": "cut",
+      "id": "skill-work-to-podcast-flow",
+      "transition": "animate",
       "start": {
-        "offset": 0.1,
-        "clipId": "page-12"
+        "clipId": "page-11",
+        "offset": 7.7
       },
       "end": {
-        "offset": 0.1,
-        "clipId": "page-13"
+        "clipId": "podcast-flow",
+        "offset": 0.35
+      },
+      "label": "12 → 13 · 运营播客原流程"
+    },
+    {
+      "id": "podcast-flow-to-unified",
+      "label": "13 → 14 · 运营播客一次提交",
+      "transition": "animate",
+      "start": {
+        "clipId": "podcast-flow",
+        "offset": 7.05
+      },
+      "end": {
+        "clipId": "podcast-unified",
+        "offset": 1.25
       }
     },
     {
-      "id": "slide-13-to-14",
-      "label": "13 → 14 · 完整产物",
-      "transition": "cut",
+      "id": "podcast-unified-to-page-13",
+      "label": "14 → 15 · 节点设计与运营干预",
+      "transition": "animate",
       "start": {
-        "offset": 0.1,
-        "clipId": "page-13"
+        "clipId": "podcast-unified",
+        "offset": 7.7
       },
       "end": {
-        "offset": 0.1,
-        "clipId": "page-14"
+        "clipId": "page-13",
+        "offset": 0.35
       }
     },
     {
-      "id": "slide-14-to-15",
-      "label": "14 → 15 · 个人成长",
-      "transition": "cut",
+      "id": "page-13-to-page-16",
+      "label": "15 → 16 · 成长与计划",
+      "transition": "animate",
       "start": {
-        "offset": 0.1,
-        "clipId": "page-14"
+        "clipId": "page-13",
+        "offset": 7.7
       },
       "end": {
-        "offset": 0.1,
-        "clipId": "page-15"
+        "clipId": "page-16",
+        "offset": 0.35
       }
     },
     {
-      "id": "slide-15-to-16",
-      "label": "15 → 16 · 未来计划",
-      "transition": "cut",
+      "id": "page-16-to-page-15",
+      "label": "16 → 17 · 个人成长",
+      "transition": "animate",
       "start": {
-        "offset": 0.1,
-        "clipId": "page-15"
+        "clipId": "page-16",
+        "offset": 7.7
       },
       "end": {
-        "offset": 0.1,
-        "clipId": "page-16"
+        "clipId": "page-15",
+        "offset": 0.35
       }
     },
     {
-      "id": "slide-16-to-17",
-      "label": "16 → 17 · 计划与评估",
-      "transition": "cut",
+      "id": "page-15-to-page-17",
+      "label": "17 → 18 · 任务与节点",
+      "transition": "animate",
       "start": {
-        "offset": 0.1,
-        "clipId": "page-16"
+        "clipId": "page-15",
+        "offset": 7.7
       },
       "end": {
-        "offset": 0.1,
-        "clipId": "page-17"
+        "clipId": "page-17",
+        "offset": 0.35
+      }
+    },
+    {
+      "id": "plan-to-acceptance",
+      "label": "18 → 19 · 交付与验收",
+      "transition": "animate",
+      "start": {
+        "clipId": "page-17",
+        "offset": 7.7
+      },
+      "end": {
+        "clipId": "plan-acceptance-host",
+        "offset": 0.35
       }
     }
   ],

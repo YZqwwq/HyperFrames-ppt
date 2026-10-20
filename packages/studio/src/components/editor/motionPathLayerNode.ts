@@ -1,7 +1,7 @@
 type Point = { x: number; y: number };
 
 const LAYER_BOX = '[data-dom-edit-selection-box="true"]';
-export const SELECTION_CHROME = `${LAYER_BOX}, [data-dom-edit-chrome="true"], [data-dom-edit-crop-frame="true"]`;
+export const SELECTION_CHROME = `${LAYER_BOX}, [data-dom-edit-chrome="true"], [data-dom-edit-crop-frame="true"], [data-dom-edit-crop-entry="true"], [data-dom-edit-crop-bar="true"]`;
 
 /** How far a node's dot reaches; a selected node draws it larger. */
 export const dotRadius = (r: number, selected: boolean) => (selected ? r * 1.5 : r);

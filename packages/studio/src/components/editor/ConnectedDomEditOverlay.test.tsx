@@ -87,8 +87,15 @@ describe("ConnectedDomEditOverlay", () => {
     expect(props).not.toHaveProperty("recordingState");
     expect(props).not.toHaveProperty("onToggleRecording");
     for (const [prop, handler] of Object.entries(WIRING)) {
-      expect(props[prop], prop).toBe(ctx.actions[handler]);
+      if (prop !== "onBlockedMove") expect(props[prop], prop).toBe(ctx.actions[handler]);
     }
+    const blocked = props.onBlockedMove;
+    if (typeof blocked !== "function") throw new Error("Missing blocked-move callback");
+    blocked(ctx.selection.domEditSelection, "runtime animation");
+    expect(ctx.actions.handleBlockedDomMove).toHaveBeenCalledWith(
+      ctx.selection.domEditSelection,
+      "runtime animation",
+    );
     expect(props).toMatchObject({
       iframeRef,
       activeCompositionPath: "index.html",

@@ -1,16 +1,39 @@
-项目快照：初步动画
+转正答辩演示项目（18页，144秒）
 
-本目录是可编辑的完整演示素材，包含页面、背景、跨页圆、字体、图片和演示打点。
-保留所有子目录的相对路径。在项目根目录完成 bun install 与 bun run build 后运行：
-node packages/cli/dist/cli.js preview presentations/probation-review --port 5194
+这是可继续编辑的 HyperFrames HTML 演示项目，不是 .pptx 文件。
+包含页面、背景、共享动画主体、真实字体、截图、GSAP 和演示打点。
+请保留所有子目录及相对路径。
 
-中文字体使用 Git LFS。换设备克隆后先执行 git lfs pull。
-圆动画基准为 36px；放大后 604px，分裂后每个圆 64px。
-局部时间：2.1–2.9 放大；14.35–15.05 收缩；15.05–15.95 分裂。
-每段的位置与缩放由唯一动画控制，不得叠加覆盖全程的位置 tween。
+推荐迁移方式（保留本项目编辑器的定制功能）：
+1. 在新设备安装 Git、Git LFS、Node.js 22+（建议24）和 Bun。
+2. 克隆仓库并切换到 setup/ppt-foundation：
+   git clone --branch setup/ppt-foundation https://github.com/YZqwwq/HyperFrames-ppt.git
+   cd HyperFrames-ppt
+   git lfs install
+   git lfs pull
+3. 将 probation-review-editable.zip 解压得到的 probation-review 文件夹
+   放入仓库 presentations/ 下，替换原有同名目录（建议先备份旧目录）。
+   此压缩包是最新演示内容；本次 Git 提交仅更新程序源码。
+4. 安装依赖和构建：
+   bun install --frozen-lockfile
+   bun run build
+5. 启动：
+   node packages/cli/dist/cli.js preview presentations/probation-review --port 5194
+6. 浏览器打开终端输出的本地地址。
 
-验证：设置 HYPERFRAMES_BROWSER_PATH 为本机 Chrome/Edge 可执行文件后：
-node tools/verify-circle-endpoints.mjs
+若只使用演示素材压缩包，将 probation-review 放入同版本仓库的 presentations/ 下。
+压缩包包含实际字体与图片；通过 Git 克隆则必须拉取 LFS 素材。
+渲染/浏览器检查需要 Chrome：可运行 node packages/cli/dist/cli.js browser ensure，
+或设置 HYPERFRAMES_BROWSER_PATH 指向本机 Chrome/Edge 可执行文件。
 
-本快照保存在仓库内；原 deliverables 目录仍供当前预览使用。
-后续请优先打开本目录编辑，避免两份素材独立变化。
+当前结构：
+11 核心能力；12 Skill Manager工作与交付；13 运营播客原流程；14 一次提交；
+15 节点设计与运营干预；16 个人成长；17 未来计划；18 计划与评估。
+
+关键动画：
+08→09：58.1–58.5 内容淡出，58.5–59.3 圆放大，59.3–59.9 内容淡入，59.95停留。
+13→14：三台电脑融合，图片延长淡入，105.25秒停留。
+演示打点保存在 presentation-cues.json；手动修改该文件后需刷新 Studio。
+本演示固定16:9。
+
+11→12：87.0–87.3文字淡出，87.3–88.2卡片展开，88.2–88.65工作内容淡入，88.7秒停留。

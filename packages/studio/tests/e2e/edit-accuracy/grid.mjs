@@ -25,7 +25,7 @@ export function localAsset(url) {
   return statSync(file, { throwIfNoEntry: false })?.isFile() ? file : undefined;
 }
 
-// Studio has corner handles only (ResizeHandle is nw|ne|sw|se); its edge strips crop, so there is no edge resize.
+// This grid exercises proportional corner resize; independent edge resize has its own browser gate.
 const GESTURES = ["move", "resize", "rotate", "crop", "nudge"];
 // Trimmed from 2061 cases: across 444 historical result snapshots, zoom 200, the pct and center placements and most nested
 // keyframed cases never failed where a kept case with the same gesture, GSAP mode and playhead did not. Drag paths and

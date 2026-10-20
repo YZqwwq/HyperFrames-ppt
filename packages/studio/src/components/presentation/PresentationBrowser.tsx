@@ -1,5 +1,6 @@
 import { PresentationThumbnail } from "./PresentationThumbnail";
 import { useEffect, useState } from "react";
+import { ArrowLeft } from "@phosphor-icons/react";
 import { t } from "../../i18n";
 import { useNLEContext } from "../nle/NLEContext";
 import type { PresentationCue } from "./presentationCues";
@@ -67,10 +68,34 @@ export function PresentationBrowser({
         data-presentation-mode="browse"
         className="absolute inset-x-0 top-0 h-16 flex items-center justify-between px-5 border-b border-white/15 text-white"
       >
-        <strong>{t("presentation.browseTitle")}</strong>
+        <div className="flex items-center gap-3">
+          <strong>{t("presentation.browseTitle")}</strong>
+          {status !== "ready" && (
+            <span role="status" className="text-sm text-white/60">
+              {status === "failed" ? t("presentation.seekFailed") : t("presentation.loading")}
+              {status === "failed" && (
+                <button className={button + " ml-2"} onClick={() => setRetry((value) => value + 1)}>
+                  {t("presentation.retry")}
+                </button>
+              )}
+            </span>
+          )}
+        </div>
         <div className="flex gap-3">
-          <button className={button} onClick={onClose}>
-            {t("presentation.backEditor")}
+          <button
+            className={button + " flex items-center justify-center"}
+            onClick={onClose}
+            aria-label={t("presentation.backEditor")}
+            title={t("presentation.backEditor")}
+          >
+            <ArrowLeft size={20} aria-hidden="true" />
+          </button>
+          <button
+            className={button}
+            disabled={!ranges.length || status !== "ready"}
+            onClick={() => onPresent(0, false)}
+          >
+            {t("presentation.playFromStart")}
           </button>
           <button
             className={button + " bg-emerald-700"}
@@ -83,6 +108,7 @@ export function PresentationBrowser({
       </header>
       <aside
         className="absolute left-0 top-16 bottom-0 w-60 overflow-y-auto border-r border-white/15 p-3 text-white"
+        style={{ backgroundColor: "#2c2a27" }}
         aria-label={t("presentation.groups")}
       >
         {ranges.map((item, index) => (
@@ -117,31 +143,6 @@ export function PresentationBrowser({
         ))}
         {!ranges.length && <p role="status">{t("presentation.noStates")}</p>}
       </aside>
-      <footer className="absolute bottom-0 right-0 left-60 h-20 border-t border-white/15 px-5 flex items-center justify-between text-white gap-3">
-        <span className="text-sm">
-          {range?.cue.label}
-          <br />
-          {status === "failed"
-            ? t("presentation.seekFailed")
-            : status === "loading"
-              ? t("presentation.loading")
-              : t("presentation.waiting")}
-          {status === "failed" && (
-            <button className={button} onClick={() => setRetry((value) => value + 1)}>
-              {t("presentation.retry")}
-            </button>
-          )}
-        </span>
-        <button
-          className={button}
-          disabled={
-            !range || status !== "ready" || (selected.ended && selected.index === ranges.length - 1)
-          }
-          onClick={() => onPresent(selected.index, selected.ended)}
-        >
-          {t("presentation.play")}
-        </button>
-      </footer>
     </>
   );
 }

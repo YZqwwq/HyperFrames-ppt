@@ -1,4 +1,4 @@
-import type { RefObject } from "react";
+import { useEffect, type RefObject } from "react";
 import { type DomEditSelection } from "./domEditing";
 import {
   type GroupOverlayItem,
@@ -10,17 +10,23 @@ import type { createDomEditOverlayGestureHandlers } from "./useDomEditOverlayGes
 import { DomEditCropHandles } from "./DomEditCropHandles";
 import { DomEditRotateHandle } from "./DomEditRotateHandle";
 import { resolveRotatedResizeCursor } from "./domEditResizeLocal";
+import { t } from "../../i18n";
+import { isCropBarTarget, useCropPresetBarStore } from "./cropPresetStore";
 import { usePreviewReadOnly } from "./previewReadOnlyContext";
 
-// Corner resize handles, Canva-style: one per corner, diagonal cursors.
+// Corners resize proportionally; edge midpoints resize a single axis.
 // Corners scale about the element center; the translate keeps the center
 // planted, so they need the manual-offset capability in addition to manual-size.
 const RESIZE_HANDLE_DEFS: Array<{
   handle: ResizeHandle;
   cursor: string;
-  x: "left" | "right";
-  y: "top" | "bottom";
+  x: "left" | "right" | "center";
+  y: "top" | "bottom" | "center";
 }> = [
+  { handle: "w", cursor: "ew-resize", x: "left", y: "center" },
+  { handle: "e", cursor: "ew-resize", x: "right", y: "center" },
+  { handle: "n", cursor: "ns-resize", x: "center", y: "top" },
+  { handle: "s", cursor: "ns-resize", x: "center", y: "bottom" },
   { handle: "nw", cursor: "nwse-resize", x: "left", y: "top" },
   { handle: "ne", cursor: "nesw-resize", x: "right", y: "top" },
   { handle: "sw", cursor: "nesw-resize", x: "left", y: "bottom" },
@@ -42,18 +48,22 @@ function resizeHandleLayout(
   // above it — rather than as children where the parent border can visually
   // overlap the dot circle at the corner.
   const cornerX =
-    def.x === "left"
-      ? overlayRect.left + inset.left
-      : overlayRect.left + overlayRect.width - inset.right;
+    def.x === "center"
+      ? overlayRect.left + overlayRect.width / 2
+      : def.x === "left"
+        ? overlayRect.left + inset.left
+        : overlayRect.left + overlayRect.width - inset.right;
   const cornerY =
-    def.y === "top"
-      ? overlayRect.top + inset.top
-      : overlayRect.top + overlayRect.height - inset.bottom;
+    def.y === "center"
+      ? overlayRect.top + overlayRect.height / 2
+      : def.y === "top"
+        ? overlayRect.top + inset.top
+        : overlayRect.top + overlayRect.height - inset.bottom;
   const slideOutToFreeMiddleX =
-    (def.x === "left" ? -1 : 1) *
+    (def.x === "center" ? 0 : def.x === "left" ? -1 : 1) *
     Math.max(0, half - (overlayRect.width - inset.left - inset.right) / 4);
   const slideOutToFreeMiddleY =
-    (def.y === "top" ? -1 : 1) *
+    (def.y === "center" ? 0 : def.y === "top" ? -1 : 1) *
     Math.max(0, half - (overlayRect.height - inset.top - inset.bottom) / 4);
   return {
     style: {
@@ -178,6 +188,11 @@ export function DomEditSelectionChrome({
   const editing = inlineText?.editing ?? false;
   const readOnly = usePreviewReadOnly();
   const canManipulate = allowCanvasMovement && !readOnly;
+  const cropTarget = useCropPresetBarStore((state) => state.openFor);
+  const openCrop = useCropPresetBarStore((state) => state.open);
+  const closeCrop = useCropPresetBarStore((state) => state.close);
+  const cropping = isCropBarTarget(selection.element, cropTarget);
+  useEffect(() => closeCrop, [selection.element, closeCrop]);
 
   return (
     <>
@@ -189,16 +204,19 @@ export function DomEditSelectionChrome({
           transform: overlayRect.angle ? `rotate(${overlayRect.angle}deg)` : undefined,
         }}
       >
-        {canManipulate && !editing && selection.capabilities.canApplyManualRotation && (
-          <DomEditRotateHandle
-            overlayRect={overlayRect}
-            cropOutlineInsetPx={cropOutlineInsetPx}
-            onStartRotate={(e) => {
-              e.stopPropagation();
-              gestures.startGesture("rotate", e);
-            }}
-          />
-        )}
+        {canManipulate &&
+          !cropping &&
+          !editing &&
+          selection.capabilities.canApplyManualRotation && (
+            <DomEditRotateHandle
+              overlayRect={overlayRect}
+              cropOutlineInsetPx={cropOutlineInsetPx}
+              onStartRotate={(e) => {
+                e.stopPropagation();
+                gestures.startGesture("rotate", e);
+              }}
+            />
+          )}
         <div
           key={selectionKey}
           ref={boxRef}
@@ -254,6 +272,7 @@ export function DomEditSelectionChrome({
           overlayRect origin, matching the old child-relative offsets. */}
         {canManipulate &&
           !editing &&
+          !cropping &&
           selection.capabilities.canApplyManualSize &&
           RESIZE_HANDLE_DEFS.map((def) => {
             if (def.handle !== "se" && !selection.capabilities.canApplyManualOffset) return null;
@@ -261,6 +280,14 @@ export function DomEditSelectionChrome({
             return (
               <div
                 key={def.handle}
+                data-dom-edit-resize-handle={def.handle}
+                title={
+                  def.handle === "e" || def.handle === "w"
+                    ? t("canvasResize.width")
+                    : def.handle === "n" || def.handle === "s"
+                      ? t("canvasResize.height")
+                      : t("canvasResize.size")
+                }
                 className="pointer-events-auto absolute flex h-4 w-4 items-center justify-center"
                 style={{
                   ...layout.style,
@@ -284,20 +311,48 @@ export function DomEditSelectionChrome({
                   className="pointer-events-none absolute"
                   style={layout.anchor}
                 />
-                <div className="pointer-events-none h-[12px] w-[12px] rounded-full border-[1.5px] border-studio-accent bg-white shadow-[0_0_3px_rgba(0,0,0,0.45)]" />
+                <div
+                  className={`pointer-events-none ${def.handle.length === 2 ? "h-[12px] w-[12px] rounded-full" : def.x === "center" ? "h-[5px] w-[16px] rounded-sm" : "h-[16px] w-[5px] rounded-sm"} border-[1.5px] border-studio-accent bg-white shadow-[0_0_3px_rgba(0,0,0,0.45)]`}
+                />
               </div>
             );
           })}
       </div>
+      {selection.capabilities.canCrop &&
+        !editing &&
+        canManipulate &&
+        groupSelectionCount <= 1 &&
+        !cropping && (
+          <button
+            type="button"
+            data-dom-edit-crop-entry="true"
+            className="pointer-events-auto absolute z-20 rounded-md border border-panel-hairline bg-panel-bg px-2 py-1 text-xs text-panel-text-1 shadow-sm"
+            style={{ left: overlayRect.left, top: Math.max(4, overlayRect.top - 36) }}
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              openCrop({
+                hfId: selection.element.getAttribute("data-hf-id") ?? undefined,
+                id: selection.element.id,
+              });
+            }}
+          >
+            {t("canvasResize.crop")}
+          </button>
+        )}
       {/* Crop owns its element-local oriented frame. Keep it outside the chrome's
           rotated plane or a rotated selection applies the angle twice. */}
-      {selection.capabilities.canCrop && !editing && !readOnly && groupSelectionCount <= 1 && (
-        <DomEditCropHandles
-          selection={selection}
-          overlayRect={overlayRect}
-          onStyleCommit={onStyleCommit}
-        />
-      )}
+      {selection.capabilities.canCrop &&
+        cropping &&
+        !editing &&
+        !readOnly &&
+        groupSelectionCount <= 1 && (
+          <DomEditCropHandles
+            selection={selection}
+            overlayRect={overlayRect}
+            onStyleCommit={onStyleCommit}
+          />
+        )}
     </>
   );
 }

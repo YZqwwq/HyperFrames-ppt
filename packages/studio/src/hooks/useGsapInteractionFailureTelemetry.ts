@@ -1,3 +1,4 @@
+import { offerLayoutTrial } from "../components/editor/layoutTrialEvents";
 import { useCallback } from "react";
 import type { DomEditSelection } from "../components/editor/domEditing";
 import { trackStudioEditBlocked, trackStudioSaveFailure } from "../utils/studioSaveDiagnostics";
@@ -34,6 +35,8 @@ export function useGsapInteractionFailureTelemetry(
         targetSelector: selection?.selector,
         targetSourceFile: selection?.sourceFile,
       });
+      if (mutationType === "drag" && isGsapEditBlockedError(error))
+        offerLayoutTrial(selection?.element?.ownerDocument);
       const message = failureToast(error, toast !== false);
       if (message) showToast(message, "error");
     },

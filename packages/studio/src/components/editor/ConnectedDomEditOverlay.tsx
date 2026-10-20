@@ -1,3 +1,4 @@
+import { offerLayoutTrial } from "./layoutTrialEvents";
 import type { ComponentProps } from "react";
 import { DomEditOverlay } from "./DomEditOverlay";
 import {
@@ -68,7 +69,10 @@ export function ConnectedDomEditOverlay({
       onCanvasPointerMove={handlePreviewCanvasPointerMove}
       onCanvasPointerLeave={handlePreviewCanvasPointerLeave}
       onSelectionChange={applyDomSelection}
-      onBlockedMove={handleBlockedDomMove}
+      onBlockedMove={(selection, reason) => {
+        handleBlockedDomMove(selection, reason);
+        offerLayoutTrial(selection.element?.ownerDocument);
+      }}
       onManualDragStart={handleDomManualDragStart}
       onPathOffsetCommit={handleDomPathOffsetCommit}
       onGroupPathOffsetCommit={handleDomGroupPathOffsetCommit}

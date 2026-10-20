@@ -1,3 +1,4 @@
+import { t } from "../../i18n";
 import { useEffect } from "react";
 import type { ClipPathInsetSides } from "./clipPathHelpers";
 import { CROP_ASPECT_PRESETS, centredCropInsets } from "./cropPresets";
@@ -35,14 +36,14 @@ export function CropPresetBar({
   return (
     <div
       role="toolbar"
-      aria-label="Crop presets"
+      aria-label={t("canvasResize.crop")}
       data-dom-edit-crop-bar="true"
       className="pointer-events-auto absolute z-20 flex gap-1 rounded-md border border-white/15 bg-neutral-900/95 p-1 shadow-lg"
       style={{ left, top: Math.max(4, top - 34), transform: "translateX(-50%)" }}
       onPointerDown={(event) => event.stopPropagation()}
     >
-      <button type="button" className={CHIP} title="Drag the edges freely">
-        Free
+      <button type="button" className={CHIP} title={t("canvasResize.cropHint")}>
+        {t("canvasResize.free")}
       </button>
       {CROP_ASPECT_PRESETS.map((preset) => (
         <button
@@ -55,14 +56,14 @@ export function CropPresetBar({
         </button>
       ))}
       <button type="button" className={CHIP} onClick={() => onApply(null)}>
-        Reset
+        {t("canvasResize.reset")}
       </button>
       <button
         type="button"
         className="rounded-sm border border-studio-accent bg-studio-accent px-1.5 py-0.5 text-[10px] font-semibold text-black"
         onClick={onDone}
       >
-        Done
+        {t("canvasResize.done")}
       </button>
     </div>
   );

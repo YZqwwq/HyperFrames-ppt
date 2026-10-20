@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 
+import { LAYOUT_TRIAL_OFFER_EVENT } from "../components/editor/layoutTrialEvents";
 import React, { act } from "react";
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import type { DomEditSelection } from "../components/editor/domEditingTypes";
@@ -46,7 +47,15 @@ describe("useGsapInteractionFailureTelemetry", () => {
     const showToast = vi.fn();
     const { report, root } = mountFailureTelemetry(showToast);
 
-    act(() => report(new GsapEditBlockedError("unroll-required"), selection, "drag", "Move"));
+    const offered = vi.fn();
+    window.addEventListener(LAYOUT_TRIAL_OFFER_EVENT, offered);
+    try {
+      act(() => report(new GsapEditBlockedError("unroll-required"), selection, "drag", "Move"));
+      expect(offered).toHaveBeenCalledOnce();
+      expect(offered.mock.calls[0][0].detail).toBe(document);
+    } finally {
+      window.removeEventListener(LAYOUT_TRIAL_OFFER_EVENT, offered);
+    }
 
     expect(showToast).toHaveBeenCalledWith(
       "This motion comes from a helper or loop. Choose Unroll to edit it explicitly.",

@@ -62,6 +62,7 @@ export function resolveCenterResizeScale(input: {
  * ratio cancels the scale.
  */
 export function resolveCenterResizeSize(input: {
+  handle?: ResizeHandle;
   baseWidth: number;
   baseHeight: number;
   pointer: { x: number; y: number };
@@ -70,6 +71,24 @@ export function resolveCenterResizeSize(input: {
 }): { width: number; height: number } {
   const baseWidth = Math.max(input.baseWidth, MIN_RESIZE_LOCAL_PX);
   const baseHeight = Math.max(input.baseHeight, MIN_RESIZE_LOCAL_PX);
+  if (input.handle?.length === 1) {
+    // Project onto the grabbed edge's outward axis: perpendicular movement must
+    // not change size, including on rotated elements. Keep the existing center pin.
+    const axis = {
+      x: input.pointerStart.x - input.centerStart.x,
+      y: input.pointerStart.y - input.centerStart.y,
+    };
+    const lengthSquared = axis.x * axis.x + axis.y * axis.y;
+    const scale =
+      lengthSquared < DEGENERATE_START_DIST_PX ** 2
+        ? 1
+        : ((input.pointer.x - input.centerStart.x) * axis.x +
+            (input.pointer.y - input.centerStart.y) * axis.y) /
+          lengthSquared;
+    return input.handle === "e" || input.handle === "w"
+      ? { width: Math.max(MIN_RESIZE_LOCAL_PX, baseWidth * scale), height: baseHeight }
+      : { width: baseWidth, height: Math.max(MIN_RESIZE_LOCAL_PX, baseHeight * scale) };
+  }
   const rawScale = resolveCenterResizeScale({
     pointer: input.pointer,
     pointerStart: input.pointerStart,
@@ -99,6 +118,10 @@ const CURSORS_8 = [
 /** Base outward diagonal angle of each corner, in degrees, screen convention
  *  (0° = up, clockwise). NW points up-left = 315°, NE up-right = 45°, etc. */
 const CORNER_BASE_ANGLE_DEG: Record<ResizeHandle, number> = {
+  n: 0,
+  e: 90,
+  s: 180,
+  w: 270,
   nw: 315,
   ne: 45,
   se: 135,

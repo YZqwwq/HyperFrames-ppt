@@ -209,3 +209,39 @@ it("shifts nothing for a box that renders with no area", () => {
   const sizes = { wanted: { width: 300.6, height: 150.3 }, written: { width: 301, height: 150 } };
   expect(resizeRemainderShift(corners, { x: 1, y: 1 }, sizes)).toEqual({ x: 0, y: 0 });
 });
+
+describe("edge resize", () => {
+  it.each(["e", "w", "n", "s"] as const)(
+    "changes only the %s axis and ignores perpendicular drift",
+    (handle) => {
+      const horizontal = handle === "e" || handle === "w";
+      const sign = handle === "e" || handle === "s" ? 1 : -1;
+      const out = resolveCenterResizeSize({
+        handle,
+        baseWidth: 200,
+        baseHeight: 100,
+        centerStart: { x: 0, y: 0 },
+        pointerStart: horizontal ? { x: sign * 100, y: 0 } : { x: 0, y: sign * 50 },
+        pointer: horizontal ? { x: sign * 150, y: 200 } : { x: 200, y: sign * 75 },
+      });
+      expect(out).toEqual(horizontal ? { width: 300, height: 100 } : { width: 200, height: 150 });
+    },
+  );
+  it("uses the rotated width axis and clamps instead of flipping", () => {
+    const input = {
+      handle: "e" as const,
+      baseWidth: 200,
+      baseHeight: 100,
+      centerStart: { x: 0, y: 0 },
+      pointerStart: { x: 0, y: 100 },
+    };
+    expect(resolveCenterResizeSize({ ...input, pointer: { x: 500, y: 150 } })).toEqual({
+      width: 300,
+      height: 100,
+    });
+    expect(resolveCenterResizeSize({ ...input, pointer: { x: 0, y: -100 } })).toEqual({
+      width: 1,
+      height: 100,
+    });
+  });
+});

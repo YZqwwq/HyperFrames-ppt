@@ -71,33 +71,33 @@
       },
       {
         "page": "11",
+        "title": "重点项目 02 · 核心能力",
+        "clipId": "skill-capabilities",
+        "source": "backgrounds/skill-capabilities.html"
+      },
+      {
+        "page": "12",
         "title": "重点项目 02",
         "clipId": "page-11",
         "source": "backgrounds/frame-11.html"
       },
       {
-        "page": "12",
-        "title": "重点项目 03",
-        "clipId": "page-12",
-        "source": "backgrounds/frame-12.html"
-      },
-      {
         "page": "13",
-        "title": "重点项目·运营播客",
-        "clipId": "page-13",
-        "source": "backgrounds/frame-13.html"
+        "title": "重点项目 03 · 原流程",
+        "clipId": "podcast-flow",
+        "source": "backgrounds/podcast-flow.html"
       },
       {
         "page": "14",
-        "title": "重点项目·运营播客",
-        "clipId": "page-14",
-        "source": "backgrounds/frame-14.html"
+        "title": "重点项目 03 · 统一流程",
+        "clipId": "podcast-unified",
+        "source": "backgrounds/podcast-unified.html"
       },
       {
         "page": "15",
-        "title": "个人总结",
-        "clipId": "page-15",
-        "source": "backgrounds/frame-15.html"
+        "title": "重点项目·运营播客",
+        "clipId": "page-13",
+        "source": "backgrounds/frame-13.html"
       },
       {
         "page": "16",
@@ -107,9 +107,21 @@
       },
       {
         "page": "17",
+        "title": "个人总结",
+        "clipId": "page-15",
+        "source": "backgrounds/frame-15.html"
+      },
+      {
+        "page": "18",
         "title": "下一阶段",
         "clipId": "page-17",
         "source": "backgrounds/frame-17.html"
+      },
+      {
+        "page": "19",
+        "title": "下一阶段",
+        "clipId": "plan-acceptance-host",
+        "source": "backgrounds/plan-acceptance.html"
       }
     ]
   }

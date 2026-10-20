@@ -3,6 +3,7 @@ import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { expect, it, vi } from "vitest";
 import { PresentationBrowser } from "./PresentationBrowser";
+import { t } from "../../i18n";
 const { seek, pause } = vi.hoisted(() => ({ seek: vi.fn(() => true), pause: vi.fn() }));
 vi.mock("../nle/NLEContext", () => ({ useNLEContext: () => ({ seek, pause, projectId: "demo" }) }));
 vi.mock("./PresentationThumbnail", () => ({
@@ -33,13 +34,28 @@ it("selects master states and presents from the selected endpoint", () => {
       root.render(<PresentationBrowser ranges={ranges} onClose={close} onPresent={present} />),
     );
     expect(seek).toHaveBeenLastCalledWith(10);
+    expect(host.querySelector("footer")).toBeNull();
     const states = host.querySelectorAll<HTMLButtonElement>("button[aria-pressed]");
     act(() => states[1].click());
     expect(seek).toHaveBeenLastCalledWith(12);
     expect(states[1].getAttribute("aria-pressed")).toBe("true");
     expect(host.querySelectorAll("img")[1].src).toContain("thumbnail/index.html?t=12");
-    act(() => host.querySelectorAll<HTMLButtonElement>("header button")[1].click());
+    act(() =>
+      Array.from(host.querySelectorAll<HTMLButtonElement>("header button"))
+        .find((button) => button.textContent === t("presentation.play"))!
+        .click(),
+    );
     expect(present).toHaveBeenLastCalledWith(0, true);
+    const restart = Array.from(host.querySelectorAll<HTMLButtonElement>("header button")).find(
+      (button) => button.textContent === t("presentation.playFromStart"),
+    )!;
+    act(() => restart.click());
+    expect(present).toHaveBeenLastCalledWith(0, false);
+    const back = host.querySelector<HTMLButtonElement>("header button[aria-label]")!;
+    expect(back.getAttribute("aria-label")).toBe(t("presentation.backEditor"));
+    expect(back.textContent).toBe("");
+    act(() => back.click());
+    expect(close).toHaveBeenCalledTimes(1);
     act(() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })));
     expect(close).toHaveBeenCalled();
   } finally {
@@ -69,7 +85,9 @@ it("waits for a pending player and enables presenting once it becomes ready", ()
     act(() =>
       root.render(<PresentationBrowser ranges={ranges} onClose={() => {}} onPresent={() => {}} />),
     );
-    const play = host.querySelectorAll<HTMLButtonElement>("header button")[1];
+    const play = Array.from(host.querySelectorAll<HTMLButtonElement>("header button")).find(
+      (button) => button.textContent === t("presentation.play"),
+    )!;
     expect(play.disabled).toBe(true);
     seek.mockReturnValue(true);
     act(() => vi.advanceTimersByTime(150));

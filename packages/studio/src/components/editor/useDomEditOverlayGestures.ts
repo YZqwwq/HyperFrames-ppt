@@ -252,6 +252,7 @@ export function createDomEditOverlayGestureHandlers(opts: UseDomEditOverlayGestu
       // Corner resize scales proportionally about the center, without edge snapping.
       const grab = g.resizePressFromCorner ?? { x: 0, y: 0 };
       const nextSize = resolveCenterResizeSize({
+        handle: g.resizeHandle,
         baseWidth: g.actualWidth,
         baseHeight: g.actualHeight,
         pointer: { x: e.clientX - grab.x, y: e.clientY - grab.y },

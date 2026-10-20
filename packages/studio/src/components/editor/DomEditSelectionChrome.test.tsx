@@ -6,6 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { DomEditSelection } from "./domEditing";
 import { DomEditGroupChrome, DomEditSelectionChrome } from "./DomEditSelectionChrome";
 import { RESIZE_HANDLE_HIT_PX } from "./domEditOverlayGeometry";
+import { useCropPresetBarStore } from "./cropPresetStore";
 import { SELECTION_CHROME } from "./motionPathLayerNode";
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -118,6 +119,10 @@ describe("DomEditSelectionChrome crop composition", () => {
       );
     });
 
+    expect(host.querySelector("[data-dom-edit-crop-frame]")).toBeNull();
+    expect(host.querySelectorAll("[data-dom-edit-resize-handle]")).toHaveLength(8);
+    act(() => host.querySelector<HTMLButtonElement>("[data-dom-edit-crop-entry]")!.click());
+    expect(host.querySelectorAll("[data-dom-edit-resize-handle]")).toHaveLength(0);
     const cropFrame = host.querySelector<HTMLElement>("[data-dom-edit-crop-frame]")!;
     const rotations: string[] = [];
     for (
@@ -133,6 +138,10 @@ describe("DomEditSelectionChrome crop composition", () => {
     const controls = [...host.querySelectorAll(".pointer-events-auto, button")];
     expect(controls.length).toBeGreaterThan(8);
     for (const control of controls) expect(control.closest(SELECTION_CHROME)).not.toBeNull();
+    act(() => useCropPresetBarStore.getState().close());
+    expect(host.querySelector("[data-dom-edit-crop-frame]")).toBeNull();
+    expect(host.querySelectorAll("[data-dom-edit-resize-handle]")).toHaveLength(8);
+    expect(element.style.clipPath).toBe("inset(10px)");
     act(() => root.unmount());
   });
 });
@@ -293,6 +302,19 @@ describe("DomEditSelectionChrome with body drag off", () => {
     });
     press(host.querySelector('[aria-label="Rotate selection"]')!);
     expect(gestures.startGesture).toHaveBeenCalledWith("rotate", expect.anything());
+    cleanup();
+  });
+
+  it("routes side handles to independent axis resize", () => {
+    const { host, gestures, cleanup } = renderChrome(true);
+    for (const handle of ["n", "s", "e", "w"]) {
+      press(host.querySelector(`[data-dom-edit-resize-handle="${handle}"]`)!);
+      expect(gestures.startGesture).toHaveBeenLastCalledWith(
+        "resize",
+        expect.anything(),
+        expect.objectContaining({ resizeHandle: handle }),
+      );
+    }
     cleanup();
   });
 

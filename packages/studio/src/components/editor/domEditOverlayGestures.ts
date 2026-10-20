@@ -18,7 +18,7 @@ import { roundTo3 } from "../../utils/rounding";
 export type GestureKind = "drag" | "resize" | "rotate";
 
 /** Which corner handle initiated a resize gesture. */
-export type ResizeHandle = "nw" | "ne" | "sw" | "se";
+export type ResizeHandle = "nw" | "ne" | "sw" | "se" | "n" | "s" | "e" | "w";
 
 export const BLOCKED_MOVE_THRESHOLD_PX = 4;
 

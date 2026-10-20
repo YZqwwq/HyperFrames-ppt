@@ -135,6 +135,144 @@
       "key": "animation.endpointHint"
     },
     {
+      "file": "src/components/editor/CropPresetBar.tsx",
+      "line": 39,
+      "column": 19,
+      "key": "canvasResize.crop"
+    },
+    {
+      "file": "src/components/editor/CropPresetBar.tsx",
+      "line": 45,
+      "column": 53,
+      "key": "canvasResize.cropHint"
+    },
+    {
+      "file": "src/components/editor/CropPresetBar.tsx",
+      "line": 46,
+      "column": 10,
+      "key": "canvasResize.free"
+    },
+    {
+      "file": "src/components/editor/CropPresetBar.tsx",
+      "line": 59,
+      "column": 10,
+      "key": "canvasResize.reset"
+    },
+    {
+      "file": "src/components/editor/CropPresetBar.tsx",
+      "line": 66,
+      "column": 10,
+      "key": "canvasResize.done"
+    },
+    {
+      "file": "src/components/editor/DomEditSelectionChrome.tsx",
+      "line": 286,
+      "column": 23,
+      "key": "canvasResize.width"
+    },
+    {
+      "file": "src/components/editor/DomEditSelectionChrome.tsx",
+      "line": 288,
+      "column": 25,
+      "key": "canvasResize.height"
+    },
+    {
+      "file": "src/components/editor/DomEditSelectionChrome.tsx",
+      "line": 289,
+      "column": 25,
+      "key": "canvasResize.size"
+    },
+    {
+      "file": "src/components/editor/DomEditSelectionChrome.tsx",
+      "line": 340,
+      "column": 14,
+      "key": "canvasResize.crop"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 47,
+      "column": 14,
+      "key": "layoutTrial.blocked"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 64,
+      "column": 12,
+      "key": "layoutTrial.enter"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 123,
+      "column": 19,
+      "key": "layoutTrial.title"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 130,
+      "column": 22,
+      "key": "layoutTrial.title"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 131,
+      "column": 55,
+      "key": "layoutTrial.help"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 134,
+      "column": 14,
+      "key": "layoutTrial.cancel"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 148,
+      "column": 22,
+      "key": "layoutTrial.title"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 183,
+      "column": 29,
+      "key": "layoutTrial.drag"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 214,
+      "column": 66,
+      "key": "layoutTrial.unsaved"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 216,
+      "column": 42,
+      "key": "layoutTrial.objects"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 248,
+      "column": 29,
+      "key": "layoutTrial.copied"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 250,
+      "column": 29,
+      "key": "layoutTrial.copyFailed"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 254,
+      "column": 18,
+      "key": "layoutTrial.copy"
+    },
+    {
+      "file": "src/components/editor/LayoutTrial.tsx",
+      "line": 263,
+      "column": 18,
+      "key": "layoutTrial.reset"
+    },
+    {
       "file": "src/components/editor/MotionDependencyNotice.tsx",
       "line": 41,
       "column": 8,
@@ -328,13 +466,13 @@
     },
     {
       "file": "src/components/editor/PropertyPanelFlat.tsx",
-      "line": 551,
+      "line": 541,
       "column": 20,
       "key": "property.basicSettings"
     },
     {
       "file": "src/components/editor/PropertyPanelFlat.tsx",
-      "line": 560,
+      "line": 550,
       "column": 68,
       "key": "animation.states"
     },
@@ -670,87 +808,87 @@
     },
     {
       "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 70,
-      "column": 18,
+      "line": 72,
+      "column": 20,
       "key": "presentation.browseTitle"
     },
     {
       "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 73,
-      "column": 14,
+      "line": 75,
+      "column": 38,
+      "key": "presentation.seekFailed"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 75,
+      "column": 69,
+      "key": "presentation.loading"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 78,
+      "column": 20,
+      "key": "presentation.retry"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 88,
+      "column": 25,
       "key": "presentation.backEditor"
     },
     {
       "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 80,
+      "line": 89,
+      "column": 20,
+      "key": "presentation.backEditor"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 98,
+      "column": 14,
+      "key": "presentation.playFromStart"
+    },
+    {
+      "file": "src/components/presentation/PresentationBrowser.tsx",
+      "line": 105,
       "column": 14,
       "key": "presentation.play"
     },
     {
       "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 86,
+      "line": 112,
       "column": 21,
       "key": "presentation.groups"
     },
     {
       "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 109,
+      "line": 135,
       "column": 34,
       "key": "presentation.endState"
     },
     {
       "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 109,
+      "line": 135,
       "column": 63,
       "key": "presentation.startState"
     },
     {
       "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 112,
+      "line": 138,
       "column": 28,
       "key": "presentation.endState"
     },
     {
       "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 112,
+      "line": 138,
       "column": 57,
       "key": "presentation.startState"
     },
     {
       "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 118,
+      "line": 144,
       "column": 46,
       "key": "presentation.noStates"
-    },
-    {
-      "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 125,
-      "column": 15,
-      "key": "presentation.seekFailed"
-    },
-    {
-      "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 127,
-      "column": 17,
-      "key": "presentation.loading"
-    },
-    {
-      "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 128,
-      "column": 17,
-      "key": "presentation.waiting"
-    },
-    {
-      "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 131,
-      "column": 16,
-      "key": "presentation.retry"
-    },
-    {
-      "file": "src/components/presentation/PresentationBrowser.tsx",
-      "line": 142,
-      "column": 12,
-      "key": "presentation.play"
     },
     {
       "file": "src/components/presentation/PresentationControls.tsx",
@@ -904,15 +1042,21 @@
     },
     {
       "file": "src/components/presentation/PresentationThumbnail.tsx",
-      "line": 57,
+      "line": 67,
       "column": 15,
       "key": "presentation.thumbnailFailed"
     },
     {
       "file": "src/components/presentation/PresentationThumbnail.tsx",
-      "line": 58,
-      "column": 15,
+      "line": 69,
+      "column": 17,
       "key": "presentation.loading"
+    },
+    {
+      "file": "src/components/presentation/PresentationThumbnail.tsx",
+      "line": 70,
+      "column": 17,
+      "key": "presentation.thumbnailPending"
     },
     {
       "file": "src/components/StudioHeader.tsx",

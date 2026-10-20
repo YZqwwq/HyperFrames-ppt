@@ -6,6 +6,7 @@ import type { DomEditSelection } from "./domEditing";
 import type { OverlayRect } from "./domEditOverlayGeometry";
 import { DomEditCropHandles } from "./DomEditCropHandles";
 import { isElementCropLifted } from "./domEditOverlayCrop";
+import { t } from "../../i18n";
 import { useCropPresetBarStore } from "./cropPresetStore";
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -330,7 +331,7 @@ describe("DomEditCropHandles preset bar", () => {
     click("1:1");
     await act(async () => {});
     expect(commits[0]).toBe("inset(0px 50px 0px 50px)");
-    click("Reset");
+    click(t("canvasResize.reset"));
     await act(async () => {});
     expect(commits[1]).toBe("");
     act(() => root.unmount());
@@ -341,7 +342,7 @@ describe("DomEditCropHandles preset bar", () => {
     const a = makeEl("a", "");
     useCropPresetBarStore.getState().open({ id: "a" });
     render(a);
-    click("Done");
+    click(t("canvasResize.done"));
     expect(useCropPresetBarStore.getState().openFor).toBeNull();
   });
 });

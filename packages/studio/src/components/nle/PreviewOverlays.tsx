@@ -1,3 +1,4 @@
+import { LayoutTrialLauncher } from "../editor/LayoutTrial";
 import { useCallback } from "react";
 import { CaptionOverlay } from "../../captions/components/CaptionOverlay";
 import { useCaptionStore } from "../../captions/store";
@@ -56,7 +57,7 @@ export function PreviewOverlays({
     store.setEditMode(true);
   }, []);
 
-  const { domEditSelection } = useDomEditSelectionContext();
+  const { domEditSelection, domEditGroupSelections } = useDomEditSelectionContext();
 
   if (blockPreview) {
     return (
@@ -139,6 +140,20 @@ export function PreviewOverlays({
         isGestureRecording={isGestureRecording}
       />
       <SnapToolbar />
+      {!readOnly &&
+        !isPlaying &&
+        !compositionLoading &&
+        !isGestureRecording &&
+        shouldShowSelectedDomBounds &&
+        domEditSelection && (
+          <LayoutTrialLauncher
+            key={activeCompPath}
+            iframeRef={previewIframeRef}
+            selections={
+              domEditGroupSelections.length > 1 ? domEditGroupSelections : [domEditSelection]
+            }
+          />
+        )}
       {!readOnly && (
         <MotionPathOverlay
           iframeRef={previewIframeRef}

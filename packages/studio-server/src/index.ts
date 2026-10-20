@@ -76,3 +76,4 @@ export {
   createStudioMotionRenderBodyScript,
   type StudioMotionRenderScriptOptions,
 } from "./helpers/studioMotionRenderScript.js";
+export { exportPresentation } from "./helpers/presentationExport.js";
