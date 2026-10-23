@@ -17,7 +17,7 @@ import {
 } from "dockview-react";
 import { readStudioUiPreferences, writeStudioUiPreferences } from "../../utils/studioUiPreferences";
 import { installDockAccessibility } from "./dockAccessibility";
-import { DockStripActions } from "./DockStripActions";
+import { DockHeaderActions, PreviewToolbarProvider } from "./PreviewToolbarSlot";
 import { DockTab } from "./DockTab";
 import { installTabFill } from "./dockTabFill";
 import { addRegisteredPanel, applySideMinimums, buildEditLayout } from "./dockLayout";
@@ -230,20 +230,22 @@ function Root({
   );
 
   return (
-    <SlotsContext.Provider value={{ slots, registerSlot }}>
-      <DockviewReact
-        key={projectId ?? ""}
-        className="hf-dock flex-1 min-h-0"
-        components={COMPONENTS}
-        defaultTabComponent={DockTab}
-        rightHeaderActionsComponent={DockStripActions}
-        defaultRenderer="always"
-        disableFloatingGroups
-        disableTabsOverflowList
-        onReady={onReady}
-      />
-      {children}
-    </SlotsContext.Provider>
+    <PreviewToolbarProvider>
+      <SlotsContext.Provider value={{ slots, registerSlot }}>
+        <DockviewReact
+          key={projectId ?? ""}
+          className="hf-dock flex-1 min-h-0"
+          components={COMPONENTS}
+          defaultTabComponent={DockTab}
+          rightHeaderActionsComponent={DockHeaderActions}
+          defaultRenderer="always"
+          disableFloatingGroups
+          disableTabsOverflowList
+          onReady={onReady}
+        />
+        {children}
+      </SlotsContext.Provider>
+    </PreviewToolbarProvider>
   );
 }
 

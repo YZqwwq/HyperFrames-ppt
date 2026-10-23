@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
-import { LAYOUT_TRIAL_OFFER_EVENT } from "./layoutTrialEvents";
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
+import { LAYOUT_TRIAL_OFFER_EVENT, LAYOUT_TRIAL_REQUEST_EVENT } from "./layoutTrialEvents";
 import { createPortal } from "react-dom";
 import { liveTime } from "../../player/store/playerStore";
 import { t } from "../../i18n";
@@ -23,14 +23,32 @@ export function LayoutTrialLauncher({
   const [snapshot, setSnapshot] = useState<LayoutTrialSnapshot | null>(null);
   const [error, setError] = useState("");
   const [offered, setOffered] = useState(false);
+  const openTrial = useCallback(() => {
+    try {
+      if (!iframeRef.current) return;
+      setSnapshot(captureLayoutTrial(iframeRef.current, selections, liveTime.latest()));
+      setError("");
+      setOffered(false);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : String(reason));
+    }
+  }, [iframeRef, selections]);
   useEffect(() => {
     const offer = (event: Event) => {
       if (event instanceof CustomEvent && event.detail === iframeRef.current?.contentDocument)
         setOffered(true);
     };
+    const request = (event: Event) => {
+      if (event instanceof CustomEvent && event.detail === iframeRef.current?.contentDocument)
+        openTrial();
+    };
     window.addEventListener(LAYOUT_TRIAL_OFFER_EVENT, offer);
-    return () => window.removeEventListener(LAYOUT_TRIAL_OFFER_EVENT, offer);
-  }, [iframeRef]);
+    window.addEventListener(LAYOUT_TRIAL_REQUEST_EVENT, request);
+    return () => {
+      window.removeEventListener(LAYOUT_TRIAL_OFFER_EVENT, offer);
+      window.removeEventListener(LAYOUT_TRIAL_REQUEST_EVENT, request);
+    };
+  }, [iframeRef, openTrial]);
   return (
     <>
       <div
@@ -50,16 +68,7 @@ export function LayoutTrialLauncher({
         <button
           type="button"
           className="rounded border border-panel-hairline bg-panel-bg px-3 py-2 text-xs text-panel-text-1 shadow"
-          onClick={() => {
-            try {
-              if (!iframeRef.current) return;
-              setSnapshot(captureLayoutTrial(iframeRef.current, selections, liveTime.latest()));
-              setError("");
-              setOffered(false);
-            } catch (reason) {
-              setError(reason instanceof Error ? reason.message : String(reason));
-            }
-          }}
+          onClick={openTrial}
         >
           {t("layoutTrial.enter")}
         </button>

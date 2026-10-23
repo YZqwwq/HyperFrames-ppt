@@ -1,3 +1,6 @@
+import { sampledPercentage } from "./planIntermediateKeyframe";
+import { useDomEditActionsContextOptional } from "../../contexts/DomEditContext";
+import { IntermediateKeyframe } from "./MiddleKeyframeEditor";
 import { defaultAnimationEndpoint } from "../../hooks/defaultAnimationEndpoint";
 import {
   setAnimationEndpointTarget,
@@ -37,6 +40,7 @@ export function AnimationEndpoints({
   onSetAllKeyframeEases?: GsapAnimationEditCallbacks["onSetAllKeyframeEases"];
 }) {
   const player = useNLEContextOptional();
+  const actions = useDomEditActionsContextOptional();
   const runs = animations.filter(
     (a) => !a.global && a.method !== "set" && resolveTweenDuration(a) > 0,
   );
@@ -45,6 +49,7 @@ export function AnimationEndpoints({
   const [middlePct, setMiddlePct] = useState(50);
   const initialized = useRef<HTMLElement | null>(null);
   const active = usePlayerStore((s) => s.activeKeyframePct);
+  const editingKeyframes = usePlayerStore((s) => s.autoKeyframeEnabled);
   const time = usePlayerStore((s) => s.currentTime);
   const ready = usePlayerStore((s) => s.timelineReady);
   const target = useRef<number | null>(null);
@@ -112,20 +117,8 @@ export function AnimationEndpoints({
     const choice = defaultAnimationEndpoint(runs, usePlayerStore.getState().currentTime - offset);
     if (!choice) return;
     initialized.current = element.element;
-    const chosen = runs[choice.index]!;
+    // Selection chooses the nearest segment without changing time or edit mode.
     setIndex(choice.index);
-    pauseRef.current();
-    pendingChoice.current = afterStudioPendingEdits(() => {
-      seekRef.current(
-        (resolveTweenStart(chosen) ?? 0) +
-          offset +
-          (resolveTweenDuration(chosen) * choice.pct) / 100,
-      );
-      const store = usePlayerStore.getState();
-      store.setAutoKeyframeEnabled(true);
-      store.setActiveKeyframePct(choice.pct);
-      setAnimationEndpointTarget(element, chosen, choice.pct);
-    });
   }, [ready, runs, element, offset]);
   if (!run || !element.capabilities.canEditStyles) return null;
   const choose = (pct: number) => {
@@ -137,12 +130,35 @@ export function AnimationEndpoints({
     pendingChoice.current = afterStudioPendingEdits(() => {
       seek(
         (percentageToAbsoluteForAnimation(pct, run) ??
-          start - offset + ((end - start) * pct) / 100) + offset,
+          start - offset + ((end - start) * pct) / 100) +
+          offset +
+          (pct > 0 && pct < 100 ? 0.00001 : 0),
       );
       store.setAutoKeyframeEnabled(true);
       store.setActiveKeyframePct(pct);
       setAnimationEndpointTarget(element, run, pct);
       onChoose?.();
+    });
+  };
+  const adjustWholeMotion = () => {
+    pendingChoice.current?.();
+    target.current = null;
+    setPreviewing(false);
+    pause();
+    clearAnimationEndpointTarget(element.element);
+    const store = usePlayerStore.getState();
+    store.setActiveKeyframePct(null);
+    store.setAutoKeyframeEnabled(false);
+  };
+  const locateMiddle = () => {
+    adjustWholeMotion();
+    pendingChoice.current = afterStudioPendingEdits(() => {
+      const at =
+        (percentageToAbsoluteForAnimation(middlePct, run) ??
+          start - offset + ((end - start) * middlePct) / 100) + offset;
+      seek(at + 0.00001);
+      const pct = sampledPercentage(element, run, actions?.previewIframeRef.current ?? null, at);
+      if (pct !== null && pct > 0 && pct < 100) setMiddlePct(pct);
     });
   };
   const preview = () => {
@@ -165,6 +181,17 @@ export function AnimationEndpoints({
       data-animation-endpoints
     >
       <div className="mb-2 text-sm font-medium">{t("animation.states")}</div>
+      <p role="status" className="mb-2 text-xs text-panel-text-2">
+        {editingKeyframes ? t("animation.scopeKeyframe") : t("animation.scopeWhole")}
+      </p>
+      <button
+        type="button"
+        className="mb-3 rounded border border-panel-hairline px-3 py-2 aria-pressed:bg-panel-hover"
+        aria-pressed={!editingKeyframes}
+        onClick={adjustWholeMotion}
+      >
+        {t("animation.adjustWhole")}
+      </button>
       {runs.length > 1 && (
         <select
           className="mb-2 w-full bg-panel-bg"
@@ -220,24 +247,31 @@ export function AnimationEndpoints({
       <div className="mt-2 flex items-center gap-2">
         <input
           type="number"
-          min={1}
-          max={99}
-          step={1}
+          min={0.001}
+          max={99.999}
+          step={0.001}
           value={middlePct}
           aria-label={t("animation.middlePercent")}
           className="w-16 rounded border border-panel-hairline px-2 py-1"
           onChange={(event) =>
-            setMiddlePct(Math.min(99, Math.max(1, Number(event.target.value) || 50)))
+            setMiddlePct(Math.min(99.999, Math.max(0.001, Number(event.target.value) || 50)))
           }
         />
         <span>%</span>
-        <button
-          className="rounded border border-panel-hairline px-3 py-2"
-          onClick={() => choose(middlePct)}
-        >
-          {t("animation.middleState")}
+        <button className="rounded border border-panel-hairline px-3 py-2" onClick={locateMiddle}>
+          {t("animation.locateMiddle")}
         </button>
       </div>
+      <IntermediateKeyframe
+        key={`${element.sourceFile}:${element.id}:${run.id}`}
+        element={element}
+        animation={run}
+        percentage={middlePct}
+        onEdit={(pct) => {
+          setMiddlePct(pct);
+          choose(pct);
+        }}
+      />
       <p className="mt-2 text-xs text-panel-text-2">{t("animation.endpointHint")}</p>
     </section>
   );

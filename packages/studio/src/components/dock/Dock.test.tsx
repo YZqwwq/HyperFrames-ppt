@@ -125,6 +125,25 @@ describe("Dock on React 19", () => {
     expect(useDockLayoutStore.getState().openPanels).toEqual(new Set(DEFAULT_OPEN));
   });
 
+  it("shares the preview heading with tools and keeps tabs when panels are grouped", () => {
+    const host = mount("p1");
+    expect(
+      host.querySelector('[data-preview-header="single"] .hf-preview-toolbar-slot'),
+    ).not.toBeNull();
+    const preview = dockApi!.getPanel("preview")!;
+    const design = dockApi!.getPanel("design")!;
+    act(() => design.api.moveTo({ group: preview.group }));
+    act(() => preview.api.setActive());
+    expect(
+      host.querySelector('[data-preview-header="tabs"] .hf-preview-toolbar-slot'),
+    ).not.toBeNull();
+    expect(host.querySelector('[data-preview-header="single"]')).toBeNull();
+    act(() => design.api.setActive());
+    expect(host.querySelector(".hf-preview-toolbar-slot")).toBeNull();
+    act(() => preview.api.setActive());
+    expect(host.querySelector(".hf-preview-toolbar-slot")).not.toBeNull();
+  });
+
   it("persists a layout change per project and reads it back through the schema", () => {
     mount("p1");
     act(() => useDockLayoutStore.getState().closePanel("renders"));

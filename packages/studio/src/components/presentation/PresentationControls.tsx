@@ -1,3 +1,6 @@
+import { Menu, MenuItem, MenuSeparator } from "../ui/Menu";
+import { createPortal } from "react-dom";
+import { usePreviewToolbarSlot } from "../dock/PreviewToolbarSlot";
 import { PresentationBrowser } from "./PresentationBrowser";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { useFileManagerContext } from "../../contexts/FileManagerContext";
@@ -26,11 +29,14 @@ export function PresentationControls({
   browsing: boolean;
   onBrowseChange: (active: boolean) => void;
 }) {
+  const toolbarSlot = usePreviewToolbarSlot();
   const files = useFileManagerContext();
   const shell = useStudioShellContext();
   const { projectId, compositionStack, timelineDisabled, pause, seek } = useNLEContext();
   const clips = usePlayerStore((s) => s.elements);
   const duration = usePlayerStore((s) => s.duration);
+  const timelineReady = usePlayerStore((s) => s.timelineReady);
+  const preparing = !timelineReady || !Number.isFinite(duration) || duration <= 0;
   const clipTimingKey = clips.map((c) => `${c.id}:${c.start}:${c.duration}`).join("|");
   const [cues, setCues] = useState<PresentationCue[]>([]);
   const [browserSelection, setBrowserSelection] = useState({ index: 0, ended: false });
@@ -42,7 +48,10 @@ export function PresentationControls({
   const fileRef = useRef(files);
   fileRef.current = files;
   const master = compositionStack.length === 1;
-  const resolved = cues.map((cue) => ({ cue, range: resolveCue(cue, clips, duration) }));
+  const resolved = cues.map((cue) => ({
+    cue,
+    range: preparing ? null : resolveCue(cue, clips, duration),
+  }));
   const playable = resolved.flatMap((item) =>
     item.range ? [{ cue: item.cue, ...item.range, transition: item.cue.transition }] : [],
   );
@@ -116,7 +125,8 @@ export function PresentationControls({
       setPending(null);
     });
   }
-  const disabled = busy || !!error || !!shell.writeBlockedReason || timelineDisabled || !master;
+  const disabled =
+    preparing || busy || !!error || !!shell.writeBlockedReason || timelineDisabled || !master;
   const button =
     "rounded px-2 py-1 text-xs hover:bg-white/15 disabled:opacity-40 whitespace-nowrap";
   if (playback.session) {
@@ -175,15 +185,19 @@ export function PresentationControls({
         onPresent={playback.enter}
       />
     );
-  return (
+  const toolbar = (
     <div
       data-presentation-controls="true"
-      className="border-t border-white/10 px-2 py-1 text-white"
+      onPointerDown={(event) => event.stopPropagation()}
+      onDoubleClick={(event) => event.stopPropagation()}
+      className={
+        toolbarSlot ? "hf-presentation-toolbar" : "border-t border-white/10 px-2 py-1 text-white"
+      }
     >
       <div className="flex items-center gap-1 flex-wrap">
         <button
           className={button + " bg-emerald-700"}
-          disabled={busy || !master || timelineDisabled || !!error}
+          disabled={preparing || busy || !master || timelineDisabled || !!error}
           onClick={() => {
             pause();
             onBrowseChange(true);
@@ -191,26 +205,11 @@ export function PresentationControls({
         >
           {t("presentation.browseTitle")}
         </button>
-        <span className="text-xs">{t("presentation.title")}</span>
-        <button
-          className={button}
-          disabled={disabled}
-          onClick={() => {
-            pause();
-            setPending(anchorAt(liveTime.latest(), clips));
-          }}
-        >
-          {t("presentation.start")}
-        </button>
-        <button className={button} disabled={disabled || !pending} onClick={markEnd}>
-          {t("presentation.end")}
-        </button>
-        {pending && <span className="text-xs">{t("presentation.pending")}</span>}
         <select
           aria-label={t("presentation.segments")}
           className="max-w-64 bg-neutral-800 text-white text-xs rounded p-1"
           value={selected}
-          disabled={busy || !master}
+          disabled={preparing || busy || !master}
           onChange={(e) => {
             setSelected(e.target.value);
             const item = resolved.find((x) => x.cue.id === e.target.value);
@@ -224,34 +223,14 @@ export function PresentationControls({
           {resolved.map(({ cue, range }) => (
             <option key={cue.id} value={cue.id}>
               {cue.label}
-              {range
-                ? ` (${range.start.toFixed(2)}–${range.end.toFixed(2)}s)`
-                : ` · ${t("presentation.invalid")}`}
+              {preparing
+                ? ` · ${t("presentation.loading")}`
+                : range
+                  ? ` (${range.start.toFixed(2)}–${range.end.toFixed(2)}s)`
+                  : ` · ${t("presentation.invalid")}`}
             </option>
           ))}
         </select>
-        <button
-          className={button}
-          disabled={disabled || !selected}
-          onClick={() => {
-            const cue = cues.find((c) => c.id === selected);
-            if (!cue) return;
-            const label = window.prompt(t("presentation.name"), cue.label);
-            if (label?.trim())
-              void save(cues.map((c) => (c.id === selected ? { ...c, label: label.trim() } : c)));
-          }}
-        >
-          {t("presentation.rename")}
-        </button>
-        <button
-          className={button}
-          disabled={disabled || !selected}
-          onClick={() =>
-            void save(cues.filter((c) => c.id !== selected)).then(() => setSelected(""))
-          }
-        >
-          {t("presentation.delete")}
-        </button>
         <button
           className={button + " bg-emerald-700"}
           disabled={disabled || playable.length === 0}
@@ -259,6 +238,49 @@ export function PresentationControls({
         >
           {t("presentation.play")}
         </button>
+        <Menu
+          aria-label={t("presentation.title")}
+          align="end"
+          trigger={
+            <button className={button} title={pending ? t("presentation.pending") : undefined}>
+              {t("presentation.title")} ▾{pending ? " •" : ""}
+            </button>
+          }
+        >
+          <MenuItem
+            disabled={disabled}
+            onClick={() => {
+              pause();
+              setPending(anchorAt(liveTime.latest(), clips));
+            }}
+          >
+            {t("presentation.start")}
+          </MenuItem>
+          <MenuItem disabled={disabled || !pending} onClick={markEnd}>
+            {t("presentation.end")}
+          </MenuItem>
+          <MenuSeparator />
+          <MenuItem
+            disabled={disabled || !selected}
+            onClick={() => {
+              const cue = cues.find((c) => c.id === selected);
+              if (!cue) return;
+              const label = window.prompt(t("presentation.name"), cue.label);
+              if (label?.trim())
+                void save(cues.map((c) => (c.id === selected ? { ...c, label: label.trim() } : c)));
+            }}
+          >
+            {t("presentation.rename")}
+          </MenuItem>
+          <MenuItem
+            disabled={disabled || !selected}
+            onClick={() =>
+              void save(cues.filter((c) => c.id !== selected)).then(() => setSelected(""))
+            }
+          >
+            {t("presentation.delete")}
+          </MenuItem>
+        </Menu>
       </div>
       {!master && <p className="text-xs text-neutral-400">{t("presentation.masterOnly")}</p>}
       {error && (
@@ -268,4 +290,5 @@ export function PresentationControls({
       )}
     </div>
   );
+  return toolbarSlot ? createPortal(toolbar, toolbarSlot) : toolbar;
 }

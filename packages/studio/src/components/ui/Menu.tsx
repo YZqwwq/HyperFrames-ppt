@@ -73,7 +73,7 @@ const menuPopup = cn(popupSurface, "min-w-36 p-1 shadow-menu");
 /** One row. `data-highlighted` is set by keyboard and pointer alike, so the seen row is the Enter row. */
 const itemBase = cn(
   "flex cursor-default select-none items-center justify-between gap-6 rounded-sm px-2 py-1.5",
-  "text-step-11 whitespace-nowrap text-text-1",
+  "text-step-13 whitespace-nowrap text-text-1",
   "outline-hidden transition-colors ease-out-quint duration-hover",
   "data-[highlighted]:bg-hover data-[highlighted]:text-text-0",
   "data-[preview-state=hover]:bg-hover data-[preview-state=hover]:text-text-0",

@@ -9,7 +9,7 @@
 .hf-dock {
   --dv-group-view-background-color: var(--panel-card-bg);
   --dv-tabs-and-actions-container-background-color: var(--panel-strip-bg);
-  --dv-tabs-and-actions-container-height: 36px;
+  --dv-tabs-and-actions-container-height: 42px;
   --dv-icon-hover-background-color: var(--color-hover);
   --dv-tabs-container-scrollbar-color: var(--color-text-muted);
   /* The fill paints the shown tab, so every tab state is transparent. */
@@ -29,8 +29,8 @@
   --dv-active-sash-color: var(--color-panel-accent);
   --dv-drag-over-background-color: color-mix(in srgb, var(--color-panel-accent) 12%, transparent);
   --dv-drag-over-border-color: var(--color-panel-accent);
-  --dv-tab-font-size: 12.5px;
-  --dv-tabs-and-actions-container-font-size: 12.5px;
+  --dv-tab-font-size: 14px;
+  --dv-tabs-and-actions-container-font-size: 14px;
   background-color: var(--panel-shell-bg);
 }
 
@@ -60,7 +60,7 @@
 }
 
 .hf-dock .dv-scrollable {
-  height: 30px;
+  height: 36px;
   min-width: 0;
 }
 
@@ -97,7 +97,7 @@
   z-index: 1;
   display: flex;
   align-items: center;
-  height: 30px;
+  height: 36px;
   padding: 0 6px;
   border-radius: 6px 6px 0 0;
   white-space: nowrap;
@@ -125,7 +125,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  height: 30px;
+  height: 36px;
   border-radius: 6px 6px 0 0;
   background-color: var(--panel-card-bg);
   pointer-events: none;
@@ -201,5 +201,81 @@
 
   .hf-dock-tab-icon {
     animation: none;
+  }
+}
+
+/* Share the existing preview heading row with its tools; never consume a canvas row. */
+.hf-dock-header-actions {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  height: 36px;
+}
+.hf-dock .dv-right-actions-container:has([data-preview-header]) {
+  flex: 1;
+  min-width: 0;
+}
+.hf-dock .dv-tabs-and-actions-container:has([data-preview-header="single"]) > .dv-scrollable {
+  display: none;
+}
+.hf-dock .dv-tabs-and-actions-container:has([data-preview-header="tabs"]) > .dv-scrollable {
+  max-width: 35%;
+}
+.hf-preview-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  padding: 0 10px;
+  font-size: 14px;
+  color: var(--color-text-1);
+}
+.hf-preview-toolbar-slot {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.hf-presentation-toolbar {
+  color: var(--color-text-1);
+  padding: 0 4px;
+}
+.hf-presentation-toolbar > div {
+  flex-wrap: nowrap;
+  width: max-content;
+}
+.hf-presentation-toolbar button {
+  flex: none;
+  white-space: nowrap;
+  min-height: 32px;
+  padding: 5px 8px;
+  font-size: 13px;
+}
+.hf-presentation-toolbar button.bg-emerald-700 {
+  color: white;
+}
+.hf-presentation-toolbar select {
+  background: var(--panel-card-bg);
+  color: var(--color-text-1);
+  max-width: 220px;
+  font-size: 13px;
+}
+.hf-presentation-toolbar p {
+  margin: 0;
+  font-size: 12px;
+}
+.hf-dock .dv-tabs-and-actions-container:has([data-preview-header]) > .dv-void-container {
+  flex: 0;
+}
+.hf-preview-toolbar-slot {
+  container-type: inline-size;
+}
+@container (max-width: 650px) {
+  .hf-presentation-toolbar select {
+    max-width: 140px;
+  }
+  .hf-presentation-toolbar > div > span:first-of-type {
+    display: none;
   }
 }

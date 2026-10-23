@@ -7,7 +7,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { Dock } from "./Dock";
 import { useDockLayoutStore } from "./dockLayoutStore";
-import { PANEL_IDS, type PanelId } from "./panelRegistry";
+import { PANEL_DEFINITIONS, PANEL_IDS, type PanelId } from "./panelRegistry";
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -135,7 +135,7 @@ describe("dock tabs", () => {
 
   it("name the close control after the panel, and close only that panel", async () => {
     const close = tab("design")?.querySelector<HTMLElement>(".hf-dock-tab-close");
-    expect(close?.getAttribute("aria-label")).toBe("Close Design");
+    expect(close?.getAttribute("aria-label")).toBe(`Close ${PANEL_DEFINITIONS.design.title}`);
     await act(async () => close?.click());
     expect(useDockLayoutStore.getState().openPanels.has("design")).toBe(false);
     expect(useDockLayoutStore.getState().openPanels.has("layers")).toBe(true);

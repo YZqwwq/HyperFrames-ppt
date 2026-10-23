@@ -4,18 +4,24 @@ import { PANEL_DEFINITIONS, PANEL_IDS, isPanelId, type PanelId } from "./panelRe
 
 const MIN_PREVIEW_W = 360;
 const MIN_PREVIEW_H = 200;
-const MIN_TIMELINE_H = 100;
+const MIN_TIMELINE_H = 200;
 const MIN_SIDE_W = 200;
 const MIN_SIDE_W_FLOOR = 120;
-const DEFAULT_TIMELINE_H = 360;
+
 const DEFAULT_LEFT = ["compositions", "assets", "code", "catalog"] as const;
 const DEFAULT_RIGHT = ["design", "layers", "renders", "variables"] as const;
 
 /** Preferred side widths; when they overflow the preview's floor the right yields first, then the left. */
 export function defaultSideWidths(viewportWidth: number) {
   const floor = sideMinimumWidth(viewportWidth);
-  const left = Math.max(floor, Math.min(384, Math.round(viewportWidth * 0.257)));
-  const right = Math.max(Math.min(280, floor), Math.min(424, Math.round(viewportWidth * 0.284)));
+  const left = Math.max(
+    floor,
+    Math.min(viewportWidth <= 1440 ? 260 : 384, Math.round(viewportWidth * 0.257)),
+  );
+  const right = Math.max(
+    Math.min(280, floor),
+    Math.min(viewportWidth <= 1440 ? 300 : 424, Math.round(viewportWidth * 0.284)),
+  );
   const excess = left + right - Math.max(0, viewportWidth - MIN_PREVIEW_W);
   if (excess <= 0) return { left, right };
   const shrunkRight = Math.max(floor, right - excess);
@@ -54,7 +60,12 @@ export function applySideMinimums(api: DockviewApi, dockWidth = window.innerWidt
       group.api.setConstraints({ minimumWidth: MIN_PREVIEW_W });
       continue;
     }
-    group.api.setConstraints({ minimumWidth });
+    group.api.setConstraints({
+      minimumWidth,
+      ...(group.panels.some((panel) => panel.id === "timeline")
+        ? { minimumHeight: MIN_TIMELINE_H }
+        : {}),
+    });
     const zone = sideZone(group);
     const limit = zone === "right" ? cap.right : cap.left;
     if (zone && minimumWidth < MIN_SIDE_W && group.width > limit) {
@@ -114,5 +125,7 @@ export function buildEditLayout(
   applySideMinimums(api, viewportWidth);
   if (left) api.getPanel(left)?.group.api.setSize({ width: widths.left });
   if (right) api.getPanel(right)?.group.api.setSize({ width: widths.right });
-  api.getPanel("timeline")?.group.api.setSize({ height: DEFAULT_TIMELINE_H });
+  api.getPanel("timeline")?.group.api.setSize({
+    height: Math.max(MIN_TIMELINE_H, Math.min(320, Math.round(api.height * 0.3))),
+  });
 }

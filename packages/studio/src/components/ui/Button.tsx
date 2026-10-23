@@ -72,13 +72,13 @@ export const buttonVariants: Record<ButtonVariant, string> = {
 };
 
 /**
- * The three control heights, 24 / 28 / 32 px, from `--spacing-ctl-*`.
+ * The three control heights, 28 / 32 / 36 px, from `--spacing-ctl-*`.
  * Exported so the Capture download `<a href>` can wear the same recipe as a Button.
  */
 export const buttonSizes: Record<ButtonSize, string> = {
-  sm: "h-ctl-sm px-2 gap-1 rounded-sm text-step-11",
-  md: "h-ctl px-3 gap-1.5 rounded-md text-step-12",
-  lg: "h-ctl-lg px-4 gap-2 rounded-md text-step-13",
+  sm: "h-ctl-sm px-2 gap-1 rounded-sm text-step-13",
+  md: "h-ctl px-3 gap-1.5 rounded-md text-step-14",
+  lg: "h-ctl-lg px-4 gap-2 rounded-md text-step-14",
 };
 
 function Spinner() {

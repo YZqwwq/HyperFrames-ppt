@@ -93,7 +93,7 @@ describe("studio theme", () => {
     expect(new Set([accent, selection, playhead]).size).toBe(3);
   });
 
-  it("names every micro type step in use and leaves the Tailwind sizes alone", async () => {
+  it("names every micro type step and uses readable editor auxiliary text", async () => {
     const steps = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
     const css = await build(
       "studio.css",
@@ -105,7 +105,7 @@ describe("studio theme", () => {
       expect(vars.get(`--text-step-${step}`)).toBe(`${step}px`);
       expect(css).toContain(`.text-step-${step} {`);
     }
-    expect(vars.get("--text-xs")).toBe("0.75rem");
+    expect(vars.get("--text-xs")).toBe("13px");
     expect(vars.get("--text-sm")).toBe("0.875rem");
     expect(vars.get("--text-lg")).toBe("1.125rem");
   });

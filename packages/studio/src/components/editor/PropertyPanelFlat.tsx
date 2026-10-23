@@ -1,5 +1,5 @@
+import { ElementEditingControls } from "./ElementEditingControls";
 import { t } from "../../i18n";
-import { AnimationEndpoints } from "./AnimationEndpoints";
 import { selectionTimeOffset } from "../../hooks/selectionClock";
 import { scopedElementKey } from "../../hooks/gsapKeyframeCacheHelpers";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -509,6 +509,11 @@ export function PropertyPanelFlat({
   const beforeOpen = openIndex === -1 ? groups : groups.slice(0, openIndex);
   const openGroup = openIndex === -1 ? null : groups[openIndex];
   const afterOpen = openIndex === -1 ? [] : groups.slice(openIndex + 1);
+  const geometryDisabled: [boolean, boolean, boolean] = [
+    manualOffsetEditingDisabled,
+    manualSizeEditingDisabled,
+    manualRotationEditingDisabled,
+  ];
   const renderClosedGroup = (group: FlatGroupDescriptor) =>
     closedGroupHeader(group, toggleOpen, justToggledIds);
   return (
@@ -534,6 +539,16 @@ export function PropertyPanelFlat({
           data-flat-panel-body="true"
           className="flex min-h-0 flex-1 flex-col overflow-y-auto"
         >
+          {!audioSelection && (
+            <ElementEditingControls
+              element={element}
+              disabled={geometryDisabled}
+              animations={gsapAnimations}
+              onSeek={onSeekToTime}
+              onUpdateMeta={onUpdateGsapMeta}
+              onSetAllKeyframeEases={onSetAllKeyframeEases}
+            />
+          )}
           {textGroup && (
             <DesignPanelInputProvider section="text">
               <details open className="shrink-0 border-b border-panel-hairline">
@@ -546,16 +561,6 @@ export function PropertyPanelFlat({
               </details>
             </DesignPanelInputProvider>
           )}
-          <details className="shrink-0 border-b border-panel-hairline">
-            <summary className="cursor-pointer px-4 py-3 text-sm">{t("animation.states")}</summary>
-            <AnimationEndpoints
-              element={element}
-              animations={gsapAnimations}
-              onSeek={onSeekToTime}
-              onUpdateMeta={onUpdateGsapMeta}
-              onSetAllKeyframeEases={onSetAllKeyframeEases}
-            />
-          </details>
           {beforeOpen.map(renderClosedGroup)}
           {openGroup && (
             <DesignPanelInputProvider section={slugifyDesignInput(openGroup.title)}>

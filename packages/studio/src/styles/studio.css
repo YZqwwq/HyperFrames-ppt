@@ -55,3 +55,8 @@ body {
    */
   overflow: clip;
 }
+
+/* Editor text remains readable at browser 100%; compositions have their own iframe styles. */
+@theme {
+  --text-xs: 13px;
+}

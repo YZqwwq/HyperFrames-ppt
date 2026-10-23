@@ -37,7 +37,7 @@ describe("sideMinimumWidth", () => {
 describe("defaultSideWidths", () => {
   it.each([
     [1680, 384, 424],
-    [1280, 329, 364],
+    [1280, 260, 300],
     [860, 221, 244],
     [560, 120, 120],
   ])("at %ipx gives %i / %i", (viewport, left, right) => {
@@ -74,6 +74,20 @@ describe("applySideMinimums", () => {
     expect(api.getPanel("compositions")?.group.width).toBe(120);
     expect(api.getPanel("design")?.group.width).toBe(120);
     expect(api.getPanel("preview")?.group.minimumWidth).toBe(360);
+  });
+
+  it("keeps timeline tracks visible when restoring a collapsed saved layout", () => {
+    api.layout(1280, 680);
+    buildEditLayout(api, 1280);
+    const timeline = api.getPanel("timeline")?.group;
+    if (!timeline) throw new Error("missing timeline");
+    expect(timeline.height).toBeGreaterThanOrEqual(200);
+    expect(timeline.height).toBeLessThanOrEqual(220);
+    timeline.api.setConstraints({ minimumHeight: 100 });
+    timeline.api.setSize({ height: 100 });
+    applySideMinimums(api, 1280);
+    expect(timeline.minimumHeight).toBe(200);
+    expect(timeline.height).toBeGreaterThanOrEqual(200);
   });
 
   it("leaves a wide window's user-chosen widths alone", () => {

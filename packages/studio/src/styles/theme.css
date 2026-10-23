@@ -246,11 +246,11 @@
    * not have to know which step of the scale it sits on. */
   --radius-button: var(--radius-md);
 
-  /* Control heights: 24, 28 and 32 px. `--spacing-*` gives `h-ctl`, `min-h-ctl`
+  /* Control heights: 28, 32 and 36 px. `--spacing-*` gives `h-ctl`, `min-h-ctl`
    * and friends. */
-  --spacing-ctl-sm: 24px;
-  --spacing-ctl: 28px;
-  --spacing-ctl-lg: 32px;
+  --spacing-ctl-sm: 28px;
+  --spacing-ctl: 32px;
+  --spacing-ctl-lg: 36px;
 
   /* ------------------------------------------------------------------ type */
 
