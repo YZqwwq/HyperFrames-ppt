@@ -301,7 +301,13 @@ export function buildStableSelector(el: HTMLElement): string | undefined {
   const group = el.getAttribute("data-hf-group");
   if (group) return `[data-hf-group="${escapeCssString(group)}"]`;
 
-  return getPreferredClassSelector(el);
+  const classSelector = getPreferredClassSelector(el);
+  if (classSelector) return classSelector;
+
+  // Source stamping also identifies plain h2/p/span nodes that have no id or
+  // class. They must survive layer hit-testing instead of selecting a wrapper.
+  const hfId = el.getAttribute("data-hf-id");
+  return hfId?.trim() ? `[data-hf-id="${escapeCssString(hfId)}"]` : undefined;
 }
 
 function getPreferredClassSelector(el: HTMLElement): string | undefined {

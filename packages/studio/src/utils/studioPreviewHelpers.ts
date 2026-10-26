@@ -1,3 +1,4 @@
+import { withPickablePreviewText } from "./previewTextHitTest";
 import type { DomEditViewport } from "../components/editor/domEditing";
 import {
   getDomLayerPatchTarget,
@@ -200,11 +201,16 @@ export function getPreviewTargetFromPointer(
   const localPointer = resolvePreviewLocalPointer(iframe, doc, win, clientX, clientY);
   if (!localPointer) return null;
 
-  // Hit-test without touching the preview document: any style added here, even
-  // briefly, restyles every element in the film on each click and hover.
+  // Ordinary picking stays read-only. Only click-through text under the pointer
+  // temporarily opts into native hit-testing, preserving paint order and clipping.
   if (typeof doc.elementsFromPoint === "function") {
-    const elements = doc.elementsFromPoint(localPointer.x, localPointer.y);
-    const candidates = filterAuthorInteractiveTargets(elements, activeCompositionPath);
+    const hitDoc = doc;
+    const candidates = withPickablePreviewText(doc, localPointer.x, localPointer.y, () =>
+      filterAuthorInteractiveTargets(
+        hitDoc.elementsFromPoint(localPointer.x, localPointer.y),
+        activeCompositionPath,
+      ),
+    );
     const visualTarget =
       candidates.find((el) => !isFullBleedTarget(el, localPointer.viewport)) ?? null;
     if (visualTarget) return visualTarget;
@@ -250,10 +256,13 @@ export function getAllPreviewTargetsFromPointer(
   if (!localPointer) return [];
 
   if (typeof doc.elementsFromPoint === "function") {
-    const elements = doc.elementsFromPoint(localPointer.x, localPointer.y);
-    return filterAuthorInteractiveTargets(elements, activeCompositionPath).filter(
-      (el) => !isFullBleedTarget(el, localPointer.viewport),
-    );
+    const hitDoc = doc;
+    return withPickablePreviewText(doc, localPointer.x, localPointer.y, () =>
+      filterAuthorInteractiveTargets(
+        hitDoc.elementsFromPoint(localPointer.x, localPointer.y),
+        activeCompositionPath,
+      ),
+    ).filter((el) => !isFullBleedTarget(el, localPointer.viewport));
   }
   const fallback = getEventTargetElement(doc.elementFromPoint(localPointer.x, localPointer.y));
   if (!fallback || !getDomLayerPatchTarget(fallback, activeCompositionPath)) return [];
